@@ -3,8 +3,8 @@
     if(isset($_SESSION['admin_Id'])) {
       header('Location: Admin/dashboard.php');
       exit();
-    } elseif(isset($_SESSION['user_Id'])) {
-      header('Location: User/profile.php');
+    } elseif(isset($_SESSION['Id'])) {
+      header('Location: User/index.php');
       exit();
     }
 ?>
@@ -31,4 +31,9 @@
  <!--  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> -->
+  <style>
+    .form-control:not([type="email"]):not([type="password"]) {
+      text-transform: capitalize;
+    }
+  </style>
 </head>

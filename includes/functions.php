@@ -267,10 +267,115 @@
 
 
 
+
+// ************************************* FUNCTION CLIENT ************************************* \\
+	
+	// SAVE CLIENT - ADMIN/CLIENT_MGMT.PHP
+	function saveClient($conn, $page) {
+		$firstname        = mysqli_real_escape_string($conn, $_POST['firstname']);
+		$middlename       = mysqli_real_escape_string($conn, $_POST['middlename']);
+		$lastname         = mysqli_real_escape_string($conn, $_POST['lastname']);
+		$suffix           = mysqli_real_escape_string($conn, $_POST['suffix']);
+		$email		      = mysqli_real_escape_string($conn, $_POST['email']);
+		$address		  = mysqli_real_escape_string($conn, $_POST['address']);
+		$password         = md5($_POST['password']);
+		$date_registered  = date('Y-m-d');
+
+	    $check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0) {
+	        displayErrorMessage("Email already exists!", $page);
+	    } else {
+	        $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		    if (mysqli_num_rows($check_email2) > 0) {
+		        displayErrorMessage("Email already exists!", $page);
+		    } else {
+		    	$save = mysqli_query($conn, "INSERT INTO clients (firstname, middlename, lastname, suffix, email, address, password, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$password', '$date_registered')");
+	            	displaySaveMessage($save, $page);
+			}
+	    }
+	}
+
+
+
+	// UPDATE CLIENT - CLIENT_MGMT.PHP
+	function updateClient($conn, $Id, $page) {
+		$Id         = $_POST['Id'];
+		$firstname  = mysqli_real_escape_string($conn, $_POST['firstname']);
+		$middlename = mysqli_real_escape_string($conn, $_POST['middlename']);
+		$lastname   = mysqli_real_escape_string($conn, $_POST['lastname']);
+		$suffix     = mysqli_real_escape_string($conn, $_POST['suffix']);
+		$email		= mysqli_real_escape_string($conn, $_POST['email']);
+		$address    = mysqli_real_escape_string($conn, $_POST['address']);
+
+		$update = mysqli_query($conn, "UPDATE clients SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address' WHERE Id='$Id'");
+        displayUpdateMessage($update, "Client information has been updated!", $page);
+	}
+	
+
+// ************************************* END FUNCTION CLIENT ************************************* \\
+
+
+
+
+// ************************************* FUNCTION MECHANIC ************************************* \\
+	
+	// SAVE MECHANIC - ADMIN/MECHANIC_MGMT.PHP
+	function saveMechanic($conn, $page) {
+		$firstname        = mysqli_real_escape_string($conn, $_POST['firstname']);
+		$middlename       = mysqli_real_escape_string($conn, $_POST['middlename']);
+		$lastname         = mysqli_real_escape_string($conn, $_POST['lastname']);
+		$suffix           = mysqli_real_escape_string($conn, $_POST['suffix']);
+		$email		      = mysqli_real_escape_string($conn, $_POST['email']);
+		$address		  = mysqli_real_escape_string($conn, $_POST['address']);
+		$date_registered  = date('Y-m-d');
+
+	    $check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0) {
+	        displayErrorMessage("Email already exists!", $page);
+	    } else {
+	        $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		    if (mysqli_num_rows($check_email2) > 0) {
+		        displayErrorMessage("Email already exists!", $page);
+		    } else {
+		    	$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+			    if (mysqli_num_rows($check_email3) > 0) {
+			        displayErrorMessage("Email already exists!", $page);
+			    } else {
+			    	$save = mysqli_query($conn, "INSERT INTO mechanic (firstname, middlename, lastname, suffix, email, address, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$date_registered')");
+		            	displaySaveMessage($save, $page);
+				}
+			}
+	    }
+	}
+
+
+
+	// UPDATE MECHANIC - MECHANIC_MGMT.PHP
+	function updateMechanic($conn, $Id, $page) {
+		$Id         = $_POST['Id'];
+		$firstname  = mysqli_real_escape_string($conn, $_POST['firstname']);
+		$middlename = mysqli_real_escape_string($conn, $_POST['middlename']);
+		$lastname   = mysqli_real_escape_string($conn, $_POST['lastname']);
+		$suffix     = mysqli_real_escape_string($conn, $_POST['suffix']);
+		$email		= mysqli_real_escape_string($conn, $_POST['email']);
+		$address    = mysqli_real_escape_string($conn, $_POST['address']);
+
+		$update = mysqli_query($conn, "UPDATE mechanic SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address' WHERE Id='$Id'");
+        displayUpdateMessage($update, "Mechanic information has been updated!", $page);
+	}
+	
+
+// ************************************* END FUNCTION MECHANIC ************************************* \\
+
+
+
+
+
 // ************************************* FUNCTION PRODUCTS ************************************* \\
 
 	// SAVE PRODUCT - PRODUCT_MGMT.PHP
 	function saveProduct($conn, $page, $qr_image_path) {
+		$cat_Id       = $_POST['cat_Id'];
 		$prod_Id      = $_POST['prod_Id'];
 		$prod_name    = mysqli_real_escape_string($conn, ucwords($_POST['prod_name']));
 		$prod_stock   = mysqli_real_escape_string($conn, ucwords($_POST['prod_stock']));
@@ -316,7 +421,7 @@
 		    }
 
 		    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-		        $save = mysqli_query($conn, "INSERT INTO product (prod_Id, prod_name, prod_stock, prod_item_no, prod_image, prod_qr, date_added) VALUES ('$prod_Id', '$prod_name', '$prod_stock', '$prod_item_no', '$file', '$qr_image_filename', '$date_today')");
+		        $save = mysqli_query($conn, "INSERT INTO product (cat_Id, prod_Id, prod_name, prod_stock, prod_item_no, prod_image, prod_qr, date_added) VALUES ('$cat_Id', '$prod_Id', '$prod_name', '$prod_stock', '$prod_item_no', '$file', '$qr_image_filename', '$date_today')");
             	displaySaveMessage($save, $page);
 		    } else {
 		        displayErrorMessage("There was an error uploading your file.", $page);
@@ -328,6 +433,7 @@
 	// UPDATE PRODUCT - PRODUCT_MGMT.PHP
 	function updateProduct($conn, $p_Id, $page) {
 		$p_Id         = $_POST['p_Id'];
+		$cat_Id       = $_POST['cat_Id'];
 		$prod_Id      = $_POST['prod_Id'];
 		$prod_name    = mysqli_real_escape_string($conn, ucwords($_POST['prod_name']));
 		$prod_stock   = mysqli_real_escape_string($conn, ucwords($_POST['prod_stock']));
@@ -335,7 +441,7 @@
 		$file         = basename($_FILES["fileToUpload"]["name"]);
 
 		if(empty($file)) {
-			$update = mysqli_query($conn, "UPDATE product SET prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_item_no='$prod_item_no' WHERE p_Id='$p_Id'");
+			$update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_item_no='$prod_item_no' WHERE p_Id='$p_Id'");
             displayUpdateMessage($update, "Product information has been updated!", $page);
 		} else {
 			$target_dir = "../images-product/";
@@ -361,7 +467,7 @@
 		    }
 
 		    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-		        $update = mysqli_query($conn, "UPDATE product SET prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_item_no='$prod_item_no', prod_image='$file' WHERE p_Id='$p_Id'");
+		        $update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_item_no='$prod_item_no', prod_image='$file' WHERE p_Id='$p_Id'");
             	displayUpdateMessage($update, "Product information has been updated!", $page);
 		    } else {
 		        displayErrorMessage("There was an error uploading your file.", $page);
@@ -370,6 +476,238 @@
 	}
 
 // ************************************* FUNCTION PRODUCTS ************************************* \\
+
+
+
+
+// ************************************* FUNCTION CATEGORY ************************************* \\
+
+	// SAVE CATEGORY - CATEGORY_ADD.PHP
+	function saveCategory($conn, $cat_name, $cat_description, $page) {
+	    $fetch = mysqli_query($conn, "SELECT * FROM category WHERE cat_name='$cat_name'");
+		if(mysqli_num_rows($fetch) > 0) {
+			displayErrorMessage("Category already exists.", $page);
+		} else {
+			$save = mysqli_query($conn, "INSERT INTO category (cat_name, cat_description, date_created) VALUES ('$cat_name', '$cat_description', NOW())");
+			if($save) {
+				displaySaveMessage($save, $page);
+			} else {
+				displayErrorMessage("Something went wrong while saving the information.", $page);
+			}
+		}
+	}
+
+
+	// UPDATE CATEGORY - CATEGORY_UPDATE_DELETE.PHP
+	function updateCategory($conn, $cat_Id, $cat_name, $cat_description, $page) {
+	    $fetch = mysqli_query($conn, "SELECT * FROM category WHERE cat_name='$cat_name' AND cat_Id != '$cat_Id' ");
+		if(mysqli_num_rows($fetch) > 0) {
+			displayErrorMessage("Category already exists.", $page);
+		} else {
+			$update = mysqli_query($conn, "UPDATE category SET cat_name='$cat_name', cat_description='$cat_description' WHERE cat_Id = '$cat_Id'");
+			if($update) {
+				displayUpdateMessage($update, "Category information has been updated!", $page);
+			} else {
+				displayErrorMessage("Something went wrong while updating the information.", $page);
+			}
+		}
+	}
+
+
+// ************************************* FUNCTION CATEGORY ************************************* \\
+
+
+
+
+
+
+// ************************************* FUNCTION SCHEDULE ************************************* \\
+
+	// SAVE SCHEDULE - USER/SCHEDULE_MGMT.PHP
+	function saveSchedule($conn, $page) {
+		$client_Id     = $_POST['client_Id'];
+		$selectedDate  = $_POST['selectedDate'];
+		$selectedTime  = $_POST['selectedTime'];
+		$services      = $_POST['services'];
+		$otherServices = $_POST['otherServices'];
+		$mechanic_Id   = $_POST['mechanic_Id'];
+		$save = mysqli_query($conn, "INSERT INTO schedule (client_Id, selectedDate, selectedTime, services, otherServices, mechanic_Id, date_added) VALUES ('$client_Id', '$selectedDate', '$selectedTime', '$services', '$otherServices', '$mechanic_Id', NOW())");
+    	displaySaveMessage($save, $page);
+	}
+	
+
+	// UPDATE SCHEDULE STATAUS - SCHEDULE_VIEW_DELETE.PHP
+	function updateScheduleStatus($conn, $sched_Id, $status, $page) {
+		if($status == 1) {
+			$update = mysqli_query($conn, "UPDATE schedule SET status='$status', date_approved=NOW() WHERE sched_Id = '$sched_Id'");
+			if($update) {
+				$fetch = mysqli_query($conn, "SELECT *, clients.email AS client_email, 
+	                    CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
+	                    FROM schedule 
+	                    JOIN clients ON schedule.client_Id = clients.Id 
+	                    JOIN mechanic ON schedule.mechanic_Id = mechanic.Id 
+	                    WHERE sched_Id = '$sched_Id'");
+
+				if(mysqli_num_rows($fetch) > 0) {
+				    $row = mysqli_fetch_array($fetch);
+
+				    $stat_text = "";
+				    if($status == 0) {
+				    	$stat_text = "Pending";
+				    } elseif($status == 1) {
+				    	$stat_text = "Approved";
+				    } else {
+				    	$stat_text = "Denied";
+				    }
+
+				    $name = $row['full_name'];
+				    $email = $row['client_email'];
+				    $subject = "Schedule status: ".$stat_text;
+			        $message = '<p>Good day sir/maam '.$name.', This is to inform you that the schedule you have set was moved to status: <b>'.$stat_text.'</b></p> 
+			        <p><b>NOTE:</b> This is a system generated email. Please do not reply.</p> ';
+
+				    $mail = new PHPMailer(true);
+				    try {
+				        // Server settings
+				        $mail->isSMTP();
+				        $mail->Host = 'smtp.gmail.com';
+				        $mail->SMTPAuth = true;
+				        $mail->Username = 'tatakmedellin@gmail.com';
+				        $mail->Password = 'nzctaagwhqlcgbqq';
+				        $mail->SMTPOptions = array(
+				            'ssl' => array(
+				                'verify_peer' => false,
+				                'verify_peer_name' => false,
+				                'allow_self_signed' => true
+				            )
+				        );
+				        $mail->SMTPSecure = 'ssl';
+				        $mail->Port = 465;
+
+				        // Send Email
+				        $mail->setFrom('tatakmedellin@gmail.com');
+
+				        // Recipients
+				        $mail->addAddress($email);
+				        $mail->addReplyTo('tatakmedellin@gmail.com');
+
+				        // Content
+				        $mail->isHTML(true);
+				        $mail->Subject = $subject;
+				        $mail->Body = $message;
+
+				        $mail->send();
+
+				        displayUpdateMessage($mail, "Schedule status has been set to ".$stat_text.". ", $page);
+
+				    } catch (Exception $e) {
+				        $_SESSION['success'] = "Message could not be sent. Mailer Error: " . $mail->ErrorInfo;
+				        header("Location: $page");
+				    }
+
+				} else {
+					displayErrorMessage("Schedule not found.", $page);
+				}
+				
+			} else {
+				displayErrorMessage("Something went wrong while updating the information.", $page);
+			}
+		} else {
+			$update = mysqli_query($conn, "UPDATE schedule SET status='$status' WHERE sched_Id = '$sched_Id'");
+			if($update) {
+				$fetch = mysqli_query($conn, "SELECT *, clients.email AS client_email, 
+	                    CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
+	                    FROM schedule 
+	                    JOIN clients ON schedule.client_Id = clients.Id 
+	                    JOIN mechanic ON schedule.mechanic_Id = mechanic.Id 
+	                    WHERE sched_Id = '$sched_Id'");
+
+				if(mysqli_num_rows($fetch) > 0) {
+				    $row = mysqli_fetch_array($fetch);
+
+				    $stat_text = "";
+				    if($status == 0) {
+				    	$stat_text = "Pending";
+				    } elseif($status == 1) {
+				    	$stat_text = "Approved";
+				    } else {
+				    	$stat_text = "Denied";
+				    }
+
+				    $name = $row['full_name'];
+				    $email = $row['client_email'];
+				    $subject = "Schedule status: ".$stat_text;
+			        $message = '<p>Good day sir/maam '.$name.', This is to inform you that the schedule you have set was moved to status: <b>'.$stat_text.'</b></p> 
+			        <p><b>NOTE:</b> This is a system generated email. Please do not reply.</p> ';
+
+				    $mail = new PHPMailer(true);
+				    try {
+				        // Server settings
+				        $mail->isSMTP();
+				        $mail->Host = 'smtp.gmail.com';
+				        $mail->SMTPAuth = true;
+				        $mail->Username = 'tatakmedellin@gmail.com';
+				        $mail->Password = 'nzctaagwhqlcgbqq';
+				        $mail->SMTPOptions = array(
+				            'ssl' => array(
+				                'verify_peer' => false,
+				                'verify_peer_name' => false,
+				                'allow_self_signed' => true
+				            )
+				        );
+				        $mail->SMTPSecure = 'ssl';
+				        $mail->Port = 465;
+
+				        // Send Email
+				        $mail->setFrom('tatakmedellin@gmail.com');
+
+				        // Recipients
+				        $mail->addAddress($email);
+				        $mail->addReplyTo('tatakmedellin@gmail.com');
+
+				        // Content
+				        $mail->isHTML(true);
+				        $mail->Subject = $subject;
+				        $mail->Body = $message;
+
+				        $mail->send();
+
+				        displayUpdateMessage($mail, "Schedule status has been set to ".$stat_text.". ", $page);
+
+				    } catch (Exception $e) {
+				        $_SESSION['success'] = "Message could not be sent. Mailer Error: " . $mail->ErrorInfo;
+				        header("Location: $page");
+				    }
+
+				} else {
+					displayErrorMessage("Schedule not found.", $page);
+				}
+				
+			} else {
+				displayErrorMessage("Something went wrong while updating the information.", $page);
+			}
+	    }
+	}
+
+
+	// UPDATE SCHEDULE - USER/SCHEDULE_MGMT.PHP
+	function updateSchedule($conn, $sched_Id, $page) {
+		$selectedDate  = $_POST['selectedDate'];
+		$selectedTime  = $_POST['selectedTime'];
+		$services      = $_POST['services'];
+		$otherServices = $_POST['otherServices'];
+		$mechanic_Id   = $_POST['mechanic_Id'];
+		$update = mysqli_query($conn, "UPDATE schedule SET selectedDate='$selectedDate', selectedTime='$selectedTime', services='$services', otherServices='$otherServices', mechanic_Id='$mechanic_Id' WHERE sched_Id = '$sched_Id'");
+		if($update) {
+			displayUpdateMessage($update, "Schedule has been updated.", $page);
+		} else {
+			displayErrorMessage("Something went wrong while updating the information.", $page);
+		}
+	}
+
+// ************************************* FUNCTION SCHEDULE ************************************* \\
+
+
 
 
 

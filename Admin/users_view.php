@@ -1,4 +1,4 @@
-<title>IMS| User's info</title>
+<title>IMS| Supplier's info</title>
 <?php 
     include 'navbar.php';
 
@@ -14,12 +14,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>User's info</h3>
+            <h3>Supplier's info</h3>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-              <li class="breadcrumb-item active">User's info</li>
+              <li class="breadcrumb-item active">Supplier's info</li>
             </ol>
           </div>
         </div>

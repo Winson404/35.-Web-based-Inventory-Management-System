@@ -58,6 +58,24 @@
                         </div>
                         <div class="col-lg-12 col col-md-12 col-sm-12 col-12">
                           <div class="form-group">
+                              <span class="text-dark"><b>Category</b></span>
+                              <select class="form-control" name="cat_Id" required>
+                                <option selected disabled value="">Select category</option>
+                                <?php
+                                  $cat = mysqli_query($conn, "SELECT * FROM category ORDER BY cat_name"); 
+                                  if(mysqli_num_rows($cat) > 0) {
+                                    while ($row_cat = mysqli_fetch_array($cat)) {
+                                      echo '<option value="'.$row_cat['cat_Id'].'">'.$row_cat['cat_name'].'</option>';
+                                    }
+                                  } else {
+                                    echo '<option value="">No record found</option>';
+                                  }
+                                ?>
+                              </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col col-md-12 col-sm-12 col-12">
+                          <div class="form-group">
                               <span class="text-dark"><b>Product name</b></span>
                               <input type="text" class="form-control"  placeholder="Product name" name="prod_name" required>
                           </div>
@@ -157,6 +175,25 @@
                           <div class="form-group">
                             <span class="text-dark"><b>Product ID</b></span>
                             <input type="text" class="form-control"  placeholder="Product ID" name="prod_Id" required value="<?php echo $row['prod_Id']; ?>" readonly>
+                          </div>
+                      </div>
+                      <div class="col-lg-12 col col-md-12 col-sm-12 col-12">
+                        <div class="form-group">
+                            <span class="text-dark"><b>Category</b></span>
+                            <select class="form-control" name="cat_Id" required>
+                              <option selected disabled value="">Select category</option>
+                              <?php
+                                $cat = mysqli_query($conn, "SELECT * FROM category ORDER BY cat_name"); 
+                                if(mysqli_num_rows($cat) > 0) {
+                                  while ($row_cat = mysqli_fetch_array($cat)) { 
+                              ?>
+                                    <option value="<?= $row_cat['cat_Id']; ?>" <?php if($row_cat['cat_Id'] == $row['cat_Id']) { echo 'selected'; } ?>><?= $row_cat['cat_name']; ?></option>
+                              <?php }
+                                } else {
+                                  echo '<option value="">No record found</option>';
+                                }
+                              ?>
+                            </select>
                           </div>
                       </div>
                       <div class="col-lg-12 col col-md-12 col-sm-12 col-12">

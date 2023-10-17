@@ -1,4 +1,4 @@
-<title>Information System | Log history records</title>
+<title>IMS | Mechanic records</title>
 <?php include 'navbar.php'; ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -8,12 +8,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>Log history records</h3>
+            <h3>Mechanic records</h3>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-              <li class="breadcrumb-item active">Log history records</li>
+              <li class="breadcrumb-item active">Mechanic records</li>
             </ol>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header p-2">
-                <!-- <a href="users_mgmt.php?page=create" class="btn btn-sm bg-primary ml-2"><i class="fa-sharp fa-solid fa-square-plus"></i> New User</a> -->
+                <a href="mechanic_mgmt.php?page=create" class="btn btn-sm bg-primary ml-2"><i class="fa-sharp fa-solid fa-square-plus"></i> New Mechanic</a>
 
                 <div class="card-tools mr-1 mt-3">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -38,27 +38,33 @@
               </div>
               <div class="card-body p-3">
 
-                 <table id="example111" class="table table-bordered table-hover text-sm">
+                 <table id="example11" class="table table-bordered table-hover text-sm">
                   <thead>
                   <tr> 
-                    <th>#</th>
-                    <th>DATE AND TIME LOGGED IN</th>
-                    <th>DATE AND TIME LOGGED OUT</th>
+                    <th>NAME</th>
+                    <th>EMAIL</th>
+                    <th>ADDRESS</th>
+                    <th>DATE ADDED</th>
+                    <th>TOOLS</th>
                   </tr>
                   </thead>
                   <tbody id="users_data">
                       <?php 
-                        $i = 1;
-                        $sql = mysqli_query($conn, "SELECT * FROM log_history WHERE user_Id = '$id'");
+                        $sql = mysqli_query($conn, "SELECT * FROM mechanic ");
                         while ($row = mysqli_fetch_array($sql)) {
                       ?>
                     <tr>
-                        <td><?php echo $i++; ?></td>
-                        <td><?php echo date("F d, Y h:i A",strtotime($row['login_time'])); ?></td>
-                        <td><?php if($row['logout_time'] != '') { echo date("F d, Y h:i A",strtotime($row['logout_time'])); } else { echo 'On-going session'; } ?></td> 
+                        <td><?php echo ' '.$row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'].' '; ?></td>
+                        <td><?php echo $row['email']; ?></td>
+                        <td><?php echo $row['address']; ?></td>
+                        <td class="text-primary"><?php echo date("F d, Y",strtotime($row['date_registered'])); ?></td>
+                        <td>
+                          <a class="btn btn-info btn-sm" href="mechanic_mgmt.php?page=<?php echo $row['Id']; ?>"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['Id']; ?>"><i class="fas fa-trash"></i> Delete</button>
+                        </td> 
                     </tr>
 
-                    <?php } ?>
+                    <?php include 'mechanic_delete.php'; } ?>
                      
 
                   </tbody>
@@ -71,7 +77,16 @@
       </div>
     </section>
   </div>
-
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 <?php include '../includes/footer.php';  ?>
 <!-- <script>
   window.addEventListener("load", window.print());

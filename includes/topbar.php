@@ -62,6 +62,9 @@
     .nav-treeview > .nav-item > .nav-link p {
       margin-bottom: 0;
     }
+    .form-control:not([type="email"]):not([type="password"]) {
+      text-transform: capitalize;
+    }
   </style>
 </head>
 <!-- LIGHT MODE -->

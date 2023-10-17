@@ -1,4 +1,4 @@
-<title>IMS | User info</title>
+<title>IMS | Supplier info</title>
 <?php 
     include 'navbar.php'; 
     if(isset($_GET['page'])) {
@@ -17,12 +17,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>New User</h3>
+            <h3>New Supplier</h3>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-              <li class="breadcrumb-item active">User info</li>
+              <li class="breadcrumb-item active">Supplier info</li>
             </ol>
           </div>
         </div>
@@ -301,12 +301,12 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-6">
-          <h3>Update User</h3>
+          <h3>Update Supplier</h3>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active">User info</li>
+            <li class="breadcrumb-item active">Supplier info</li>
           </ol>
         </div>
       </div>

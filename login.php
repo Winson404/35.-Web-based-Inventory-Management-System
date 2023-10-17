@@ -12,20 +12,21 @@
           <label for="">Email</label>
           <input type="email" placeholder="email@gmail.com" name="email" id="email"  onkeydown="validation()" onkeyup="validation()" >
           <!-- FOR INVALID EMAIL -->
-                  <div class="input-group mt-1 mb-3">
-                    <small id="text" style="font-style: italic;"></small>
-                  </div>
+          <div class="input-group mt-1 mb-3">
+            <small id="text" style="font-style: italic;"></small>
+          </div>
         </div>
         <div class="loginInputsContainer">
           <label for="">Password</label>
           <input placeholder="Password" name="password" type="password" id="password"/>
         </div>
         <div class="icheck-primary text-light">
-                  <input type="checkbox" id="remember" id="remember" onclick="myFunction()">
-                  <label for="remember">
-                    Show password
-                  </label>
-                </div>
+          <input type="checkbox" id="remember" id="remember" onclick="myFunction()">
+          <label for="remember">
+            Show password
+          </label>
+          <p>New to site? <a href="register.php">Register here!</a></p>
+        </div>
         <div class="loginButtonContainer">
           <button type="submit" class="btn" name="login" id="submit_button">Login</button>
         </div>

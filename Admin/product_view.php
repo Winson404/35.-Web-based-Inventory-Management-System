@@ -3,7 +3,7 @@
     include 'navbar.php';
     if(isset($_GET['p_Id'])) {
     $p_Id = $_GET['p_Id'];
-    $fetch = mysqli_query($conn, "SELECT * FROM product WHERE p_Id='$p_Id'");
+    $fetch = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE p_Id='$p_Id'");
     $row = mysqli_fetch_array($fetch);
   ?>
   <div class="content-wrapper">
@@ -36,6 +36,9 @@
             <div class="col-12 col-sm-6">
               <h3 class="my-3">Product ID: <?php echo $row['prod_Id']; ?></h3>
               <p>Product name: <?php echo $row['prod_name']; ?></p>
+              <hr>
+
+              <h4>Category : <?php echo $row['cat_name']; ?></h4>
               <hr>
 
               <h4>Stock : <?php echo $row['prod_stock']; ?></h4>

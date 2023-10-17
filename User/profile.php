@@ -1,4 +1,4 @@
-<title>IMS | Admin profile</title>
+<title>IMS | Profile</title>
 <?php include 'navbar.php'; ?>
 
   <!-- Content Wrapper. Contains page content -->

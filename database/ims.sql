@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2023 at 08:04 PM
+-- Generation Time: Oct 17, 2023 at 09:34 PM
 -- Server version: 5.6.20
 -- PHP Version: 5.5.15
 
@@ -23,6 +23,59 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `category`
+--
+
+CREATE TABLE IF NOT EXISTS `category` (
+`cat_Id` int(11) NOT NULL,
+  `cat_name` varchar(255) NOT NULL,
+  `cat_description` varchar(255) NOT NULL,
+  `date_created` varchar(255) NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+
+--
+-- Dumping data for table `category`
+--
+
+INSERT INTO `category` (`cat_Id`, `cat_name`, `cat_description`, `date_created`) VALUES
+(2, 'Pants', 'Pants Sample description', '2022-06-28'),
+(3, 'Perfume', 'Perfume Sample Description', '2022-06-28'),
+(4, 'Electric Fan', 'Electric Fan Sample Description', '2022-06-28'),
+(6, 'Shoes', 'Shoes Sample Description', '2022-06-28'),
+(8, 'T-Shirts', 'T-Shirts Sample Description', '2022-06-30'),
+(9, 'Bags', 'Bags Sample Description', '2022-06-30'),
+(12, 'Shorts', 'Shorts Sample Description', '2022-07-18'),
+(13, 'Dress for Women', 'Dress for Women Sample Description', '2022-07-18');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `clients`
+--
+
+CREATE TABLE IF NOT EXISTS `clients` (
+`Id` int(11) NOT NULL,
+  `firstname` varchar(255) NOT NULL,
+  `middlename` varchar(255) NOT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `suffix` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `address` text NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `verification_code` int(11) NOT NULL,
+  `date_registered` datetime NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=141 ;
+
+--
+-- Dumping data for table `clients`
+--
+
+INSERT INTO `clients` (`Id`, `firstname`, `middlename`, `lastname`, `suffix`, `email`, `address`, `password`, `verification_code`, `date_registered`) VALUES
+(139, 'name', 'name', 'name', 'name', 'client@gmail.com', 'Address', '0192023a7bbd73250516f069df18b500', 0, '2023-10-17 00:00:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `log_history`
 --
 
@@ -31,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `log_history` (
   `user_Id` int(11) NOT NULL,
   `login_time` varchar(100) NOT NULL,
   `logout_time` varchar(100) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=42 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=55 ;
 
 --
 -- Dumping data for table `log_history`
@@ -78,7 +131,44 @@ INSERT INTO `log_history` (`log_Id`, `user_Id`, `login_time`, `logout_time`) VAL
 (38, 131, '2023-10-11 12:04 AM', '2023-10-11 12:11:10'),
 (39, 130, '2023-10-11 12:13 AM', ''),
 (40, 130, '2023-10-11 12:55 AM', ''),
-(41, 130, '2023-10-11 01:15 AM', '');
+(41, 130, '2023-10-11 01:15 AM', ''),
+(42, 130, '2023-10-13 02:13 PM', ''),
+(43, 130, '2023-10-13 03:01 PM', ''),
+(44, 130, '2023-10-13 03:13 PM', ''),
+(45, 130, '2023-10-13 03:32 PM', ''),
+(46, 130, '2023-10-16 12:01 PM', ''),
+(47, 130, '2023-10-16 01:17 PM', '2023-10-16 01:18:13'),
+(48, 130, '2023-10-17 10:04 PM', ''),
+(49, 130, '2023-10-17 10:25 PM', ''),
+(50, 130, '2023-10-18 12:26 AM', '2023-10-18 01:22:54'),
+(51, 130, '2023-10-18 01:33 AM', '2023-10-18 01:33:50'),
+(52, 130, '2023-10-18 02:00 AM', '2023-10-18 02:03:19'),
+(53, 130, '2023-10-18 02:55 AM', '2023-10-18 03:03:07'),
+(54, 130, '2023-10-18 03:03 AM', '2023-10-18 03:06:35');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `mechanic`
+--
+
+CREATE TABLE IF NOT EXISTS `mechanic` (
+`Id` int(11) NOT NULL,
+  `firstname` varchar(255) NOT NULL,
+  `middlename` varchar(255) NOT NULL,
+  `lastname` varchar(255) NOT NULL,
+  `suffix` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `address` text NOT NULL,
+  `date_registered` datetime NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=143 ;
+
+--
+-- Dumping data for table `mechanic`
+--
+
+INSERT INTO `mechanic` (`Id`, `firstname`, `middlename`, `lastname`, `suffix`, `email`, `address`, `date_registered`) VALUES
+(142, 'dsads', 'adsads', 'dsad', 'sadsad', 'sampdsada3la@gmail.com', 'dsfsd', '2023-10-18 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -88,6 +178,7 @@ INSERT INTO `log_history` (`log_Id`, `user_Id`, `login_time`, `logout_time`) VAL
 
 CREATE TABLE IF NOT EXISTS `product` (
 `p_Id` int(11) NOT NULL,
+  `cat_Id` int(11) NOT NULL,
   `prod_Id` varchar(255) NOT NULL,
   `prod_name` varchar(100) NOT NULL,
   `prod_stock` int(11) NOT NULL,
@@ -101,8 +192,38 @@ CREATE TABLE IF NOT EXISTS `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`p_Id`, `prod_Id`, `prod_name`, `prod_stock`, `prod_item_no`, `prod_image`, `prod_qr`, `date_added`) VALUES
-(5, '00000001', 'Aa', 1, 1, '1.jpg', '65258be7c29d05.79956203.png', '2023-10-11');
+INSERT INTO `product` (`p_Id`, `cat_Id`, `prod_Id`, `prod_name`, `prod_stock`, `prod_item_no`, `prod_image`, `prod_qr`, `date_added`) VALUES
+(5, 4, '00000001', 'Aa', 1, 1, '1.jpg', '65258be7c29d05.79956203.png', '2023-10-11'),
+(6, 9, '00000002', 'Bag', 1, 1, '3.jpg', '6528fac02f0625.13464299.png', '2023-10-13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `schedule`
+--
+
+CREATE TABLE IF NOT EXISTS `schedule` (
+`sched_Id` int(11) NOT NULL,
+  `client_Id` int(11) NOT NULL,
+  `selectedDate` varchar(100) NOT NULL,
+  `selectedTime` varchar(50) NOT NULL,
+  `services` varchar(150) NOT NULL,
+  `otherServices` varchar(255) NOT NULL,
+  `mechanic_Id` int(11) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '0' COMMENT '0=Pending, 1=Approved, 2=Denied',
+  `date_approved` varchar(30) NOT NULL,
+  `date_added` varchar(30) NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+
+--
+-- Dumping data for table `schedule`
+--
+
+INSERT INTO `schedule` (`sched_Id`, `client_Id`, `selectedDate`, `selectedTime`, `services`, `otherServices`, `mechanic_Id`, `status`, `date_approved`, `date_added`) VALUES
+(4, 139, 'fds', 'fsf', 'sdf', '', 142, 1, '', ''),
+(5, 139, '2023-11-02', '02:55', 'Major tune up', '', 142, 2, '', '2023-10-18 02:52:05'),
+(6, 139, '2023-10-25', '02:55', 'Others', '', 142, 0, '', '2023-10-18 02:52:26'),
+(7, 139, '2023-10-27', '02:57', 'Tail Light Bulb', 'dfsdfds', 142, 0, '', '2023-10-18 02:53:26');
 
 -- --------------------------------------------------------
 
@@ -157,16 +278,40 @@ INSERT INTO `users` (`user_Id`, `firstname`, `middlename`, `lastname`, `suffix`,
 --
 
 --
+-- Indexes for table `category`
+--
+ALTER TABLE `category`
+ ADD PRIMARY KEY (`cat_Id`);
+
+--
+-- Indexes for table `clients`
+--
+ALTER TABLE `clients`
+ ADD PRIMARY KEY (`Id`);
+
+--
 -- Indexes for table `log_history`
 --
 ALTER TABLE `log_history`
  ADD PRIMARY KEY (`log_Id`);
 
 --
+-- Indexes for table `mechanic`
+--
+ALTER TABLE `mechanic`
+ ADD PRIMARY KEY (`Id`);
+
+--
 -- Indexes for table `product`
 --
 ALTER TABLE `product`
  ADD PRIMARY KEY (`p_Id`);
+
+--
+-- Indexes for table `schedule`
+--
+ALTER TABLE `schedule`
+ ADD PRIMARY KEY (`sched_Id`);
 
 --
 -- Indexes for table `users`
@@ -179,15 +324,35 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `category`
+--
+ALTER TABLE `category`
+MODIFY `cat_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
+--
+-- AUTO_INCREMENT for table `clients`
+--
+ALTER TABLE `clients`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=141;
+--
 -- AUTO_INCREMENT for table `log_history`
 --
 ALTER TABLE `log_history`
-MODIFY `log_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=42;
+MODIFY `log_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=55;
+--
+-- AUTO_INCREMENT for table `mechanic`
+--
+ALTER TABLE `mechanic`
+MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=143;
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
 MODIFY `p_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT for table `schedule`
+--
+ALTER TABLE `schedule`
+MODIFY `sched_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `users`
 --

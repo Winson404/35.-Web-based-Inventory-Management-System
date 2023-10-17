@@ -33,31 +33,39 @@
 		$check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
 		if(mysqli_num_rows($check)===1) {
 			$row = mysqli_fetch_array($check);
-			$position = $row['user_type'];
+			// $position = $row['user_type'];
 
 			$log_ID = $row['user_Id'];
 			$login_time = date("Y-m-d h:i A");
 			$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
 
-			if($position == 'Admin') {
+			// if($position == 'Admin') {
 				$_SESSION['login_attempts'] = 0;
 	    		$_SESSION['last_login_attempt'] = time();
 				$_SESSION['admin_Id'] = $row['user_Id'];
 				$_SESSION['login_time'] = $login_time;
 				header("Location: ../Admin/dashboard.php");
 				exit();
-			} else {
-				$_SESSION['login_attempts'] = 0;
-	    		$_SESSION['last_login_attempt'] = time();
-				$_SESSION['user_Id'] = $row['user_Id'];
-				$_SESSION['login_time'] = $login_time;
-				header("Location: ../User/profile.php");
-				exit();
-			}
+			// } else {
+				// $_SESSION['login_attempts'] = 0;
+	    		// $_SESSION['last_login_attempt'] = time();
+				// $_SESSION['user_Id'] = $row['user_Id'];
+				// $_SESSION['login_time'] = $login_time;
+				// header("Location: ../User/profile.php");
+				// exit();
+			// }
 		} else {
-		    $_SESSION['login_attempts']++;
-		    $_SESSION['last_login_attempt'] = time();
-			displayErrorMessage("Incorrect password.", "../login.php");
+		    $check2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email' AND password='$password'");
+			if(mysqli_num_rows($check2)===1) {
+				$row = mysqli_fetch_array($check2);
+				$_SESSION['Id'] = $row['Id'];
+				header("Location: ../User/index.php");
+				exit();
+			} else {
+			    $_SESSION['login_attempts']++;
+			    $_SESSION['last_login_attempt'] = time();
+				displayErrorMessage("Incorrect password.", "../login.php");
+			}
 		}
 	}
 
@@ -71,6 +79,14 @@
 	}
 
 
+
+
+	// REGISTER CLIENT - REGISTER.PHP
+	if (isset($_POST['register_client'])) {
+		saveClient($conn, "../register.php");
+	}
+
+	
 
 
 
@@ -250,6 +266,111 @@
 
 
 
+
+// ************************************* PROCESS CLIENT  ************************************* \\
+
+	// REGISTER CLIENT - ADMIN/CLIENT_MGMT.PHP
+	if (isset($_POST['save_client'])) {
+		saveClient($conn, "../Admin/client_mgmt.php?page=create");
+	}
+
+
+	// UPDATE CLIENT - ADMIN/CLIENT_MGMT.PHP
+	if (isset($_POST['update_client'])) {
+		$Id		  = mysqli_real_escape_string($conn, $_POST['Id']);
+		updateClient($conn, $Id, "../Admin/client_mgmt.php?page=".$Id);
+	}
+
+
+	// DELETE CLIENT - CLIENT_DELETE.PHP
+	if (isset($_POST['delete_client'])) {
+	    $Id = $_POST['Id'];
+	    deleteRecord($conn, "clients", "Id", $Id, "../Admin/client.php");
+	}
+	
+// ************************************* END PROCESS CLIENT  ************************************* \\
+
+
+
+
+// ************************************* PROCESS MECHANIC  ************************************* \\
+
+	// REGISTER MECHANIC - ADMIN/MECHANIC_MGMT.PHP
+	if (isset($_POST['save_mechanic'])) {
+		saveMechanic($conn, "../Admin/mechanic_mgmt.php?page=create");
+	}
+
+
+	// UPDATE MECHANIC - ADMIN/MECHANIC_MGMT.PHP
+	if (isset($_POST['update_mechanic'])) {
+		$Id		  = mysqli_real_escape_string($conn, $_POST['Id']);
+		updateMechanic($conn, $Id, "../Admin/mechanic_mgmt.php?page=".$Id);
+	}
+
+
+	// DELETE PRODUCT - MECHANIC_DELETE.PHP
+	if (isset($_POST['delete_mechanic'])) {
+	    $Id = $_POST['Id'];
+	    deleteRecord($conn, "mechanic", "Id", $Id, "../Admin/mechanic.php");
+	}
+	
+// ************************************* END PROCESS MECHANIC  ************************************* \\
+
+
+
+
+
+// ************************************* PROCESS SCHEDULES  ************************************* \\
+
+	// SAVE SCHEDULE - USER/SCHEDULE_MGMT.PHP
+	if (isset($_POST['save_Schedule'])) {
+	    saveSchedule($conn, "../User/schedule_mgmt.php?page=create");
+	}
+
+
+	// DELETE SCHEDULE - SCHEDULE_DELETE.PHP
+	if (isset($_POST['delete_schedule'])) {
+	    $sched_Id = $_POST['sched_Id'];
+	    deleteRecord($conn, "schedule", "sched_Id", $sched_Id, "../Admin/schedule.php");
+	}
+
+
+
+	// DELETE SCHEDULE - USER/SCHEDULE_VIEW_DELETE.PHP
+	if (isset($_POST['delete_schedule_byBorrower'])) {
+	    $sched_Id = $_POST['sched_Id'];
+	    deleteRecord($conn, "schedule", "sched_Id", $sched_Id, "../User/schedule.php");
+	}
+
+
+
+	// UPDATE SCHEDULE STATUS - SCHEDULE_DELETE.PHP
+	if (isset($_POST['update_schedule_Status'])) {
+	    $sched_Id = mysqli_real_escape_string($conn, $_POST['sched_Id']);
+	    $status   = mysqli_real_escape_string($conn, $_POST['status']);
+		updateScheduleStatus($conn, $sched_Id, $status, "../Admin/schedule.php");
+	}
+
+
+
+	// UPDATE SCHEDULE - SCHEDULE_DELETE.PHP
+	if (isset($_POST['update_Schedule'])) {
+	    $sched_Id = mysqli_real_escape_string($conn, $_POST['sched_Id']);
+		updateSchedule($conn, $sched_Id, "../User/schedule_mgmt.php?page=".$sched_Id);
+	}
+
+
+	
+
+
+
+	
+// ************************************* END PROCESS SCHEDULES  ************************************* \\
+
+
+
+
+
 // ************************************* LOGGED IN ADMIN PROCESSES ************************************* \\
 
 	// UPDATE ADMIN INFO - PROFILE.PHP
@@ -331,4 +452,33 @@
 // ************************************* END LOGGED IN USER PROCESSES ************************************* \\
 
 
+
+
+// ************************************* CATEGORY PROCESSES ************************************* \\	
+
+	// SAVE CATEGORY - CATEGORY.PHP
+	if(isset($_POST['create_category'])) {
+		$cat_name        = $_POST['cat_name'];
+		$cat_description = $_POST['cat_description'];
+		saveCategory($conn, $cat_name, $cat_description, "../Admin/category.php");
+	}
+
+
+	// UPDATE CATEGORY - CATEGORY_UPDATE_DELETE.PHP
+	if(isset($_POST['update_category'])) {
+		$cat_Id        = $_POST['cat_Id'];
+		$cat_name        = $_POST['cat_name'];
+		$cat_description = $_POST['cat_description'];
+		updateCategory($conn, $cat_Id, $cat_name, $cat_description, "../Admin/category.php");
+	}
+
+
+	// DELETE CATEGORY - CATEGORY_UPDATE_DELETE.PHP
+	if (isset($_POST['delete_category'])) {
+	    $cat_Id = $_POST['cat_Id'];
+	    deleteRecord($conn, "category", "cat_Id", $cat_Id, "../Admin/category.php");
+	}
+	
+
+// ************************************* CATEGORY PROCESSES ************************************* \\
 ?>

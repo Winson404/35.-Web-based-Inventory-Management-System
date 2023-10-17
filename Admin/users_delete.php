@@ -42,7 +42,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
        <div class="modal-header bg-light">
-        <h5 class="modal-title" id="exampleModalLabel">User's photo</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Suppliers's photo</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span>
         </button>
@@ -63,7 +63,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
        <div class="modal-header bg-light">
-        <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-user-large"></i> Delete User</h5>
+        <h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-user-large"></i> Delete Supplier</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true"><i class="fa-solid fa-circle-xmark"></i></span>
         </button>
@@ -71,7 +71,7 @@
       <div class="modal-body">
         <form action="../includes/processes.php" method="POST">
           <input type="hidden" class="form-control" value="<?php echo $row['user_Id']; ?>" name="user_Id">
-          <h6 class="text-center">Delete user record?</h6>
+          <h6 class="text-center">Delete supplier record?</h6>
       </div>
       <div class="modal-footer alert-light">
         <button type="button" class="btn bg-secondary" data-dismiss="modal"><i class="fa-solid fa-ban"></i> Cancel</button>

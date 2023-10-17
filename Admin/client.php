@@ -1,4 +1,4 @@
-<title>IMS | Product records</title>
+<title>IMS | Client records</title>
 <?php include 'navbar.php'; ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -8,12 +8,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>Product records</h3>
+            <h3>Client records</h3>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="dashboard.php">Home</a></li>
-              <li class="breadcrumb-item active">Product records</li>
+              <li class="breadcrumb-item active">Client records</li>
             </ol>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header p-2">
-                <a href="product_mgmt.php?page=create" class="btn btn-sm bg-primary ml-2"><i class="fa-sharp fa-solid fa-square-plus"></i> New Product</a>
+                <a href="client_mgmt.php?page=create" class="btn btn-sm bg-primary ml-2"><i class="fa-sharp fa-solid fa-square-plus"></i> New Client</a>
 
                 <div class="card-tools mr-1 mt-3">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -41,35 +41,31 @@
                  <table id="example11" class="table table-bordered table-hover text-sm">
                   <thead>
                   <tr> 
-                    <th>PRODUCT ID</th>
-                    <th>CATEGORY</th>
-                    <th>PRODUCT NAME</th>
-                    <th>STOCK</th>
-                    <th>ITEM NO</th>
+                    <th>NAME</th>
+                    <th>EMAIL</th>
+                    <th>ADDRESS</th>
                     <th>DATE ADDED</th>
                     <th>TOOLS</th>
                   </tr>
                   </thead>
                   <tbody id="users_data">
                       <?php 
-                        $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id");
+                        $sql = mysqli_query($conn, "SELECT * FROM clients ");
                         while ($row = mysqli_fetch_array($sql)) {
                       ?>
                     <tr>
-                        <td><?php echo $row['prod_Id']; ?></td>
-                        <td><?php echo $row['cat_name']; ?></td>
-                        <td><?php echo $row['prod_name']; ?></td>
-                        <td><?php echo $row['prod_stock']; ?></td>
-                        <td><?php echo $row['prod_item_no']; ?></td>
-                        <td class="text-primary"><?php echo date("F d, Y", strtotime($row['date_added'])); ?></td>
+                        <td><?php echo ' '.$row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'].' '; ?></td>
+                        <td><?php echo $row['email']; ?></td>
+                        <td><?php echo $row['address']; ?></td>
+                        <td class="text-primary"><?php echo date("F d, Y",strtotime($row['date_registered'])); ?></td>
                         <td>
-                          <a class="btn btn-primary btn-sm" href="product_view.php?p_Id=<?php echo $row['p_Id']; ?>"><i class="fas fa-folder"></i> View</a>
-                          <a class="btn btn-info btn-sm" href="product_mgmt.php?page=<?php echo $row['p_Id']; ?>"><i class="fas fa-pencil-alt"></i> Edit</a>
-                          <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['p_Id']; ?>"><i class="fas fa-trash"></i> Delete</button>
+                          <a class="btn btn-info btn-sm" href="client_mgmt.php?page=<?php echo $row['Id']; ?>"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['Id']; ?>"><i class="fas fa-trash"></i> Delete</button>
                         </td> 
                     </tr>
 
-                    <?php include 'product_delete.php'; } ?>
+                    <?php include 'client_delete.php'; } ?>
+                     
 
                   </tbody>
                 </table>

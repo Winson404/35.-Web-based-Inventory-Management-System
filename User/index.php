@@ -1,14 +1,6 @@
-<title>IMS Homepage - Inventory Management System</title>
+<title>IMS | Home</title>
 <?php include 'navbar.php'; ?>
-<body>
-	<div class="header">
-		<div class="homepageContainer">
-			<a class="m-2" href="index.php">Home</a>
-			<a class="m-2" href="about-us.php">About Us</a>
-			<a class="m-2" href="contact-us.php">Contact Us</a>
-			<a class="m-2" href="login.php">Login</a>
-		</div>
-	</div>
+
 	<div class="banner">
 		<div class="homepageContainer">
 			<div class="bannerHeader">

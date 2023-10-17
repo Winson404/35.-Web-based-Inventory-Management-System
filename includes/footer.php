@@ -231,15 +231,14 @@
     if(email.match(pattern)) {
         document.getElementById('text').style.color = 'green';
         document.getElementById('text').innerHTML = '';
-        document.getElementById('create_admin').disabled = false;
-        document.getElementById('create_admin').style.opacity = (1);
+        document.getElementById('submit_button').disabled = false;
+        document.getElementById('submit_button').style.opacity = (1);
     } 
     else {
         document.getElementById('text').style.color = 'red';
         document.getElementById('text').innerHTML = 'Domain must be @gmail.com';
-        document.getElementById('create_admin').disabled = true;
-        document.getElementById('create_admin').style.opacity = (0.4);
-        
+        document.getElementById('submit_button').disabled = true;
+        document.getElementById('submit_button').style.opacity = (0.4);
     }
   }
 
