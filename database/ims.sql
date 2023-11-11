@@ -1,20 +1,21 @@
 -- phpMyAdmin SQL Dump
--- version 4.2.7.1
--- http://www.phpmyadmin.net
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2023 at 09:34 PM
--- Server version: 5.6.20
--- PHP Version: 5.5.15
+-- Generation Time: Nov 11, 2023 at 02:45 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `ims`
@@ -26,12 +27,12 @@ SET time_zone = "+00:00";
 -- Table structure for table `category`
 --
 
-CREATE TABLE IF NOT EXISTS `category` (
-`cat_Id` int(11) NOT NULL,
+CREATE TABLE `category` (
+  `cat_Id` int(11) NOT NULL,
   `cat_name` varchar(255) NOT NULL,
   `cat_description` varchar(255) NOT NULL,
   `date_created` varchar(255) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `category`
@@ -53,8 +54,8 @@ INSERT INTO `category` (`cat_Id`, `cat_name`, `cat_description`, `date_created`)
 -- Table structure for table `clients`
 --
 
-CREATE TABLE IF NOT EXISTS `clients` (
-`Id` int(11) NOT NULL,
+CREATE TABLE `clients` (
+  `Id` int(11) NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `middlename` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
@@ -64,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `password` varchar(100) NOT NULL,
   `verification_code` int(11) NOT NULL,
   `date_registered` datetime NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=141 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `clients`
@@ -79,12 +80,12 @@ INSERT INTO `clients` (`Id`, `firstname`, `middlename`, `lastname`, `suffix`, `e
 -- Table structure for table `log_history`
 --
 
-CREATE TABLE IF NOT EXISTS `log_history` (
-`log_Id` int(11) NOT NULL,
+CREATE TABLE `log_history` (
+  `log_Id` int(11) NOT NULL,
   `user_Id` int(11) NOT NULL,
   `login_time` varchar(100) NOT NULL,
   `logout_time` varchar(100) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=55 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `log_history`
@@ -144,7 +145,12 @@ INSERT INTO `log_history` (`log_Id`, `user_Id`, `login_time`, `logout_time`) VAL
 (51, 130, '2023-10-18 01:33 AM', '2023-10-18 01:33:50'),
 (52, 130, '2023-10-18 02:00 AM', '2023-10-18 02:03:19'),
 (53, 130, '2023-10-18 02:55 AM', '2023-10-18 03:03:07'),
-(54, 130, '2023-10-18 03:03 AM', '2023-10-18 03:06:35');
+(54, 130, '2023-10-18 03:03 AM', '2023-10-18 03:06:35'),
+(55, 130, '2023-11-11 11:03 AM', ''),
+(56, 130, '2023-11-11 11:44 AM', ''),
+(57, 130, '2023-11-11 03:02 PM', ''),
+(58, 130, '2023-11-11 03:40 PM', ''),
+(59, 130, '2023-11-11 08:27 PM', '');
 
 -- --------------------------------------------------------
 
@@ -152,8 +158,8 @@ INSERT INTO `log_history` (`log_Id`, `user_Id`, `login_time`, `logout_time`) VAL
 -- Table structure for table `mechanic`
 --
 
-CREATE TABLE IF NOT EXISTS `mechanic` (
-`Id` int(11) NOT NULL,
+CREATE TABLE `mechanic` (
+  `Id` int(11) NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `middlename` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
@@ -161,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `mechanic` (
   `email` varchar(100) NOT NULL,
   `address` text NOT NULL,
   `date_registered` datetime NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=143 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `mechanic`
@@ -176,8 +182,8 @@ INSERT INTO `mechanic` (`Id`, `firstname`, `middlename`, `lastname`, `suffix`, `
 -- Table structure for table `product`
 --
 
-CREATE TABLE IF NOT EXISTS `product` (
-`p_Id` int(11) NOT NULL,
+CREATE TABLE `product` (
+  `p_Id` int(11) NOT NULL,
   `cat_Id` int(11) NOT NULL,
   `prod_Id` varchar(255) NOT NULL,
   `prod_name` varchar(100) NOT NULL,
@@ -185,16 +191,17 @@ CREATE TABLE IF NOT EXISTS `product` (
   `prod_item_no` int(11) NOT NULL,
   `prod_image` varchar(255) NOT NULL,
   `prod_qr` varchar(255) NOT NULL,
+  `is_archived` int(11) NOT NULL DEFAULT 0 COMMENT '0=Not Archived, 1=Archived',
   `date_added` varchar(50) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`p_Id`, `cat_Id`, `prod_Id`, `prod_name`, `prod_stock`, `prod_item_no`, `prod_image`, `prod_qr`, `date_added`) VALUES
-(5, 4, '00000001', 'Aa', 1, 1, '1.jpg', '65258be7c29d05.79956203.png', '2023-10-11'),
-(6, 9, '00000002', 'Bag', 1, 1, '3.jpg', '6528fac02f0625.13464299.png', '2023-10-13');
+INSERT INTO `product` (`p_Id`, `cat_Id`, `prod_Id`, `prod_name`, `prod_stock`, `prod_item_no`, `prod_image`, `prod_qr`, `is_archived`, `date_added`) VALUES
+(5, 4, '00000001', 'Aa', 1, 1, '1.jpg', '65258be7c29d05.79956203.png', 0, '2023-10-11'),
+(6, 9, '00000002', 'Bag', 1, 1, '3.jpg', '6528fac02f0625.13464299.png', 0, '2023-10-13');
 
 -- --------------------------------------------------------
 
@@ -202,18 +209,18 @@ INSERT INTO `product` (`p_Id`, `cat_Id`, `prod_Id`, `prod_name`, `prod_stock`, `
 -- Table structure for table `schedule`
 --
 
-CREATE TABLE IF NOT EXISTS `schedule` (
-`sched_Id` int(11) NOT NULL,
+CREATE TABLE `schedule` (
+  `sched_Id` int(11) NOT NULL,
   `client_Id` int(11) NOT NULL,
   `selectedDate` varchar(100) NOT NULL,
   `selectedTime` varchar(50) NOT NULL,
   `services` varchar(150) NOT NULL,
   `otherServices` varchar(255) NOT NULL,
   `mechanic_Id` int(11) NOT NULL,
-  `status` int(11) NOT NULL DEFAULT '0' COMMENT '0=Pending, 1=Approved, 2=Denied',
+  `status` int(11) NOT NULL DEFAULT 0 COMMENT '0=Pending, 1=Approved, 2=Denied',
   `date_approved` varchar(30) NOT NULL,
   `date_added` varchar(30) NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `schedule`
@@ -223,7 +230,8 @@ INSERT INTO `schedule` (`sched_Id`, `client_Id`, `selectedDate`, `selectedTime`,
 (4, 139, 'fds', 'fsf', 'sdf', '', 142, 1, '', ''),
 (5, 139, '2023-11-02', '02:55', 'Major tune up', '', 142, 2, '', '2023-10-18 02:52:05'),
 (6, 139, '2023-10-25', '02:55', 'Others', '', 142, 0, '', '2023-10-18 02:52:26'),
-(7, 139, '2023-10-27', '02:57', 'Tail Light Bulb', 'dfsdfds', 142, 0, '', '2023-10-18 02:53:26');
+(7, 139, '2023-11-11', '02:57', 'Belt Drive', '', 142, 0, '', '2023-10-18 02:53:26'),
+(8, 139, '2025-07-10', '10:42', 'Spark Plug', '', 142, 1, '2023-11-11 12:52:03', '2023-11-11 10:40:55');
 
 -- --------------------------------------------------------
 
@@ -231,8 +239,8 @@ INSERT INTO `schedule` (`sched_Id`, `client_Id`, `selectedDate`, `selectedTime`,
 -- Table structure for table `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
-`user_Id` int(11) NOT NULL,
+CREATE TABLE `users` (
+  `user_Id` int(11) NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `middlename` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
@@ -259,7 +267,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `user_type` varchar(20) NOT NULL DEFAULT 'User',
   `verification_code` int(11) NOT NULL,
   `date_registered` datetime NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=139 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -268,7 +276,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 INSERT INTO `users` (`user_Id`, `firstname`, `middlename`, `lastname`, `suffix`, `dob`, `age`, `birthplace`, `gender`, `civilstatus`, `occupation`, `religion`, `email`, `contact`, `house_no`, `street_name`, `purok`, `zone`, `barangay`, `municipality`, `province`, `region`, `password`, `image`, `user_type`, `verification_code`, `date_registered`) VALUES
 (130, 'Admin', 'Admin', 'Admin', '', '2023-06-27', '2 weeks old', 'image', 'Male', 'Married', 'image', 'Methodist', 'admin@gmail.com', '9359428963', 'image', 'image', 'image', 'image', 'image', 'image', '', 'image', '0192023a7bbd73250516f069df18b500', 'aclc.png', 'Admin', 0, '2023-07-12 01:53:04'),
 (131, 'sample', 'sample', 'sample', '', '2021-03-03', '2 years old', 'sample', 'Male', 'Single', 'sample', 'Evangelical Christianity', 'Sample@gmail.com', '9359428963', 'sample', 'sample', 'sample', 'sample', 'sample', 'sample', '', 'sample', '0192023a7bbd73250516f069df18b500', '1.jpg', 'User', 0, '2023-07-12 01:54:10'),
-(133, 'kini', 'kini', 'kini', '', '2020-03-04', '3 years old', 'kini', 'Male', 'Married', 'kini', 'Evangelical Christianity', 'kini@gmail.com', '9359428963', 'kini', 'kinikini', 'kini', 'kini', 'kini', 'kini', 'kini', 'kini', '$2y$10$9olBkTFKM9nxalDpZ0uAWuv4q9qtklx82TdtAjENCSsLIAlFiHHti', 'images-users/bsu.png', 'User', 0, '2023-07-12 02:10:45'),
+(133, 'kini', 'kini', 'kini', '', '2020-03-04', '3 years old', 'kini', 'Male', 'Married', 'kini', 'Evangelical Christianity', 'kini@gmail.com', '9359428963', 'kini', 'kinikini', 'kini', 'kini', 'kini', 'kini', 'kini', 'kini', '$2y$10$9olBkTFKM9nxalDpZ0uAWuv4q9qtklx82TdtAjENCSsLIAlFiHHti', 'testimonials-2.jpg', 'User', 0, '2023-07-12 02:10:45'),
 (134, 'haha', 'haha', 'haha', '', '2018-01-31', '5 years old', 'haha', 'Female', 'Single', 'haha', 'Islam', 'hahahahahaha@gmail.com', '9359428963', 'haha', 'haha', 'haha', 'haha', 'haha', 'haha', 'haha', 'haha', '$2y$10$xWEWx6pgQE.F6EoyrAVbz.bP0cEflvFMUkm/ovnkfwK5xqBe8YPmO', 'images-users/64ad9d419e109.png', 'User', 0, '2023-07-12 02:19:45'),
 (137, 'dsadasd', 'asdasd', 'asdasd', 'asdsadas', '2023-10-04', '6 days old', 'dsadsa', 'Male', 'Single', 'dsadsa', 'Aglipayan', 'addsadsadsamin@gmail.com', '9359428963', 'dsads', 'adasdsa', 'dasdasdas', 'dasd', 'sadasdsadas', 'dsad', 'sadsad', 'sadsa', 'bfc73950efa4f493a0baa406150efe7f', 'amg.png', 'Staff', 0, '2023-10-10 00:00:00'),
 (138, 'gaga', 'gaga', 'gaga', 'gaga', '2021-04-02', '2 years old', 'gaga', 'Male', 'Married', 'gaga', 'Buddhist', 'gaga@gmail.com', '9359428963', 'gaga', 'gaga', 'gaga', 'gaga', 'gaga', 'gaga', 'gaga', 'gaga', '802cbb98cbe46020906e4b386b1545cc', 'access.png', 'Admin', 0, '2023-10-10 00:00:00');
@@ -281,43 +289,43 @@ INSERT INTO `users` (`user_Id`, `firstname`, `middlename`, `lastname`, `suffix`,
 -- Indexes for table `category`
 --
 ALTER TABLE `category`
- ADD PRIMARY KEY (`cat_Id`);
+  ADD PRIMARY KEY (`cat_Id`);
 
 --
 -- Indexes for table `clients`
 --
 ALTER TABLE `clients`
- ADD PRIMARY KEY (`Id`);
+  ADD PRIMARY KEY (`Id`);
 
 --
 -- Indexes for table `log_history`
 --
 ALTER TABLE `log_history`
- ADD PRIMARY KEY (`log_Id`);
+  ADD PRIMARY KEY (`log_Id`);
 
 --
 -- Indexes for table `mechanic`
 --
 ALTER TABLE `mechanic`
- ADD PRIMARY KEY (`Id`);
+  ADD PRIMARY KEY (`Id`);
 
 --
 -- Indexes for table `product`
 --
 ALTER TABLE `product`
- ADD PRIMARY KEY (`p_Id`);
+  ADD PRIMARY KEY (`p_Id`);
 
 --
 -- Indexes for table `schedule`
 --
 ALTER TABLE `schedule`
- ADD PRIMARY KEY (`sched_Id`);
+  ADD PRIMARY KEY (`sched_Id`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
- ADD PRIMARY KEY (`user_Id`);
+  ADD PRIMARY KEY (`user_Id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -327,37 +335,45 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-MODIFY `cat_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=14;
+  MODIFY `cat_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
 --
 -- AUTO_INCREMENT for table `clients`
 --
 ALTER TABLE `clients`
-MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=141;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=141;
+
 --
 -- AUTO_INCREMENT for table `log_history`
 --
 ALTER TABLE `log_history`
-MODIFY `log_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=55;
+  MODIFY `log_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+
 --
 -- AUTO_INCREMENT for table `mechanic`
 --
 ALTER TABLE `mechanic`
-MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=143;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
+
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-MODIFY `p_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+  MODIFY `p_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
 --
 -- AUTO_INCREMENT for table `schedule`
 --
 ALTER TABLE `schedule`
-MODIFY `sched_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+  MODIFY `sched_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-MODIFY `user_Id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=139;
+  MODIFY `user_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

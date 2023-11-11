@@ -56,7 +56,7 @@
           </div>
         </div>
         <div class="card-footer">
-          <a href="admin.php" class="btn bg-secondary btn-flat float-right"><i class="fas fa-arrow-left"></i> Back</a>
+          <a href="javascript:history.back()" class="btn bg-secondary btn-flat float-right"><i class="fas fa-arrow-left"></i> Back</a>
         </div>
       </div>
     </section>

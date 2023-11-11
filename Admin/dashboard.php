@@ -39,7 +39,7 @@
                 <p>Administrators</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <i class="fas fa-user-shield"></i>
               </div>
               <a href="admin.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -56,7 +56,7 @@
                 <p>Registered Suppliers</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <i class="fas fa-truck"></i>
               </div>
               <a href="users.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -73,7 +73,7 @@
                 <p>Registered clients</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <i class="fas fa-users"></i>
               </div>
               <a href="client.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -90,7 +90,7 @@
                 <p>Registered mechanics</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <i class="fas fa-tools"></i>
               </div>
               <a href="mechanic.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -107,7 +107,7 @@
                 <p>Category</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <i class="fas fa-folder"></i>
               </div>
               <a href="category.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -124,9 +124,9 @@
                 <p>Products</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <i class="fas fa-shopping-cart"></i>
               </div>
-              <a href="products.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+              <a href="product.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <div class="col-lg-3 col-6">
@@ -141,7 +141,7 @@
                 <p>Schedules</p>
               </div>
               <div class="icon">
-                <i class="ion ion-person-add"></i>
+                <i class="fa-solid fa-calendar-days"></i>
               </div>
               <a href="schedule.php" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>

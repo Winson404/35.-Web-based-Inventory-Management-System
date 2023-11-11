@@ -26,9 +26,9 @@
 						              	<div class="form-group mb-3">
 						              		<div class="row">
 						              			<div class="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
-								              		<label for="">Date</label>
-								              		<input type="date" class="form-control" name="selectedDate" required>
-								              	</div>
+											        <label for="selectedDate">Date</label>
+											        <input type="date" class="form-control" name="selectedDate" id="selectedDate" required>
+												</div>
 								              	<div class="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
 								              		<label for="">Time</label>
 						              				<input type="time" class="form-control" name="selectedTime" required>
@@ -88,6 +88,7 @@
 						              </div>
 						              <div class="card-footer">
 						              	<button type="submit" class="btn btn-primary btn-sm float-right" name="save_Schedule"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
+						              	<a href="schedule.php" class="btn btn-dark btn-sm mr-2 float-right"><i class="fa-solid fa-backward"></i> Back </a>
 						              </div>
 						            </form>
 					            </div>
@@ -120,7 +121,7 @@
 					              		<div class="row">
 					              			<div class="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
 							              		<label for="">Date</label>
-							              		<input type="date" class="form-control" name="selectedDate" required value="<?= $row['selectedDate'] ?>">
+							              		<input type="date" class="form-control" name="selectedDate" required value="<?= $row['selectedDate'] ?>" id="selectedDate">
 							              	</div>
 							              	<div class="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
 							              		<label for="">Time</label>
@@ -175,6 +176,7 @@
 					              </div>
 					              <div class="card-footer">
 					              	<button type="submit" class="btn btn-primary btn-sm float-right" name="update_Schedule"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
+					              	<a href="schedule.php" class="btn btn-dark btn-sm mr-2 float-right"><i class="fa-solid fa-backward"></i> Back </a>
 					              </div>
 					            </form>
 				            </div>
@@ -214,6 +216,12 @@
 	            otherServicesTextarea.removeAttribute("required");
 	        }
 	    }
+
+	  // Get today's date in the format 'YYYY-MM-DD'
+	  const today = new Date().toISOString().split('T')[0];
+
+	  // Set the min attribute to the current date
+	  document.getElementById('selectedDate').min = today;
 	</script>
 
 

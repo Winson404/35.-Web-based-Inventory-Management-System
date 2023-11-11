@@ -36,7 +36,11 @@
                 </div>
               </div>
               <div class="card-body p-3">
-
+                 <div class="row mb-2">
+                   <a href="../includes/processes.php?pdfExport=Schedule" class="btn btn-xs bg-danger ml-2"><i class="fas fa-file-pdf"></i> PDF</a>
+                   <a href="../includes/processes.php?ExcelExport=Schedule" class="btn btn-xs bg-success float-right ml-1"><i class="fa-solid fa-file-excel"></i> Excel</a>
+                   <a href="schedule_print.php" class="btn btn-xs bg-secondary float-right ml-1"><i class="fas fa-print"></i> Print</a>
+                 </div>
                  <table id="example11" class="table table-bordered table-hover text-sm">
                   <thead>
                   <tr> 
@@ -68,7 +72,7 @@
                           <?php elseif($row['status'] == 1): ?>
                             <span class="badge bg-success pt-1">Approved</span>
                           <?php else: ?>
-                            <span class="badge bg-danger pt-1">Danger</span>
+                            <span class="badge bg-danger pt-1">Denied</span>
                           <?php endif; ?>
                         </td>
                         <td>

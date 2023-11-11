@@ -37,7 +37,11 @@
                 </div>
               </div>
               <div class="card-body p-3">
-
+                 <div class="row mb-2">
+                   <a href="../includes/processes.php?pdfExport=Product" class="btn btn-xs bg-danger ml-2"><i class="fas fa-file-pdf"></i> PDF</a>
+                   <a href="../includes/processes.php?ExcelExport=Product" class="btn btn-xs bg-success float-right ml-1"><i class="fa-solid fa-file-excel"></i> Excel</a>
+                   <a href="product_print.php" class="btn btn-xs bg-secondary float-right ml-1"><i class="fas fa-print"></i> Print</a>
+                 </div>
                  <table id="example11" class="table table-bordered table-hover text-sm">
                   <thead>
                   <tr> 
@@ -52,7 +56,7 @@
                   </thead>
                   <tbody id="users_data">
                       <?php 
-                        $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id");
+                        $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0");
                         while ($row = mysqli_fetch_array($sql)) {
                       ?>
                     <tr>
@@ -65,6 +69,7 @@
                         <td>
                           <a class="btn btn-primary btn-sm" href="product_view.php?p_Id=<?php echo $row['p_Id']; ?>"><i class="fas fa-folder"></i> View</a>
                           <a class="btn btn-info btn-sm" href="product_mgmt.php?page=<?php echo $row['p_Id']; ?>"><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <button type="button" class="btn bg-warning btn-sm" data-toggle="modal" data-target="#archive<?php echo $row['p_Id']; ?>"><i class="fas fa-archive"></i> Archive</button>
                           <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['p_Id']; ?>"><i class="fas fa-trash"></i> Delete</button>
                         </td> 
                     </tr>

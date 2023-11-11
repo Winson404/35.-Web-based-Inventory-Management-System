@@ -1,6 +1,9 @@
 <?php 
 	include '../config.php';
 	include('../phpqrcode/qrlib.php');
+	include("XLSXLibrary.php");
+	include('../dompdf/autoload.inc.php');
+	use Dompdf\Dompdf;
 	include 'functions.php';
 	// use PHPMailer\PHPMailer\PHPMailer;
     // use PHPMailer\PHPMailer\Exception;
@@ -255,12 +258,27 @@
 	}
 
 
+	// ARCHIVE PRODUCT - PRODUCT_DELETE.PHP
+	if (isset($_POST['archive_product'])) {
+	    $p_Id = $_POST['p_Id'];
+	    archiveProduct($conn, $p_Id, "../Admin/product.php");
+	}
+
+
+	// UNARCHIVE PRODUCT - PRODUCT_DELETE.PHP
+	if (isset($_POST['unarchive_product'])) {
+	    $p_Id = $_POST['p_Id'];
+	    unarchiveProduct($conn, $p_Id, "../Admin/product_archived.php");
+	}
+
+
 	// DELETE PRODUCT - PRODUCT_DELETE.PHP
 	if (isset($_POST['delete_product'])) {
 	    $p_Id = $_POST['p_Id'];
 	    deleteRecord($conn, "product", "p_Id", $p_Id, "../Admin/product.php");
 	}
 	
+
 // ************************************* END PROCESS PRODUCT  ************************************* \\
 
 
@@ -287,7 +305,31 @@
 	    $Id = $_POST['Id'];
 	    deleteRecord($conn, "clients", "Id", $Id, "../Admin/client.php");
 	}
-	
+
+
+	// UPDATE CLIENT - ADMIN/CLIENT_MGMT.PHP
+	if (isset($_POST['update_client_profile'])) {
+		$Id		  = mysqli_real_escape_string($conn, $_POST['Id']);
+		updateClient($conn, $Id, "../User/profile.php");
+	}
+
+
+	// CHANGE PASSWORD CLIENT - USER/REQUESTCHANGEPASS.PHP
+	if(isset($_GET['Id'])) {
+		$Id = $_GET['Id'];
+		requestChangePass($conn, $Id, "../User/requestChangePass.php");
+	}
+
+
+	// UPDATE CLIENT - ADMIN/CLIENT_MGMT.PHP
+	if (isset($_POST['update_client_password'])) {
+		$Id = mysqli_real_escape_string($conn, $_POST['Id']);
+		$password = mysqli_real_escape_string($conn, $_POST['password']);
+		update_client_password($conn, $Id, $password, "../User/profile.php");
+	}
+
+
+
 // ************************************* END PROCESS CLIENT  ************************************* \\
 
 
@@ -480,5 +522,564 @@
 	}
 	
 
-// ************************************* CATEGORY PROCESSES ************************************* \\
+// ************************************* END CATEGORY PROCESSES ************************************* \\
+
+
+// ************************************* EXPORT TO PDF PROCESSES ************************************* \\
+
+// EXPORT CLIENT RECORDS TO PDF
+if(isset($_GET['pdfExport'])) {
+	$pdfExport = $_GET['pdfExport'];
+
+	// CLIENT PDF EXPORT
+	if($pdfExport == 'Client') {
+		$sql = mysqli_query($conn, "SELECT * FROM clients");
+		if(mysqli_num_rows($sql) > 0) {
+		
+			$html = '';
+			// Header with Logo, Business Name, Address, and Contact
+	        $html .= '
+	            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
+				    <h2 style="margin: 0px;">Inventory Management System</h2>
+				    <p style="margin: 0px;">Business Address, City, State, Zip Code</p>
+				    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+				</div>
+
+	        ';
+
+			$html .= '
+				<h2 style="text-align: center; margin-bottom: 20px;">Client Records</h2>
+				<hr style="border-color: #ddd; margin: 10px 0;">
+	            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
+		            <thead style="background-color: #f2f2f2;">
+		                <tr>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Email</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Address</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Registered</th>
+		                </tr>
+		            </thead>
+		            <tbody id="users_data">	
+			';
+		
+			$i = 1;
+			foreach($sql as $row) {
+				$name = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix'];
+				$html .= '
+					<tr>
+						<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($name) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['email']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['address']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_registered'])) . '</td>
+					</tr>
+				';
+			}
+		
+			$html .= '</table>';
+			$dompdf = new DOMPDF();
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper("A4", "portrait");
+			$dompdf->render();
+			$dompdf->stream("Client records.pdf");
+		} else {
+			$_SESSION['message'] = "No record found in the database.";
+	        $_SESSION['text'] = "Please try again.";
+	        $_SESSION['status'] = "error";
+	        header("Location: ../Admin/client.php");
+		}
+	}
+
+	// SUPPLIER PDF EXPORT
+	elseif($pdfExport == 'Supplier') {
+		$sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User'");
+		if(mysqli_num_rows($sql) > 0) {
+		
+			$html = '';
+			// Header with Logo, Business Name, Address, and Contact
+	        $html .= '
+	            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
+				    <h2 style="margin: 0px;">Inventory Management System</h2>
+				    <p style="margin: 0px;">Business Address, City, State, Zip Code</p>
+				    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+				</div>
+
+	        ';
+
+			$html .= '
+				<h2 style="text-align: center; margin-bottom: 20px;">Supplier Records</h2>
+				<hr style="border-color: #ddd; margin: 10px 0;">
+	            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
+		            <thead style="background-color: #f2f2f2;">
+		                <tr>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">DOB</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Age</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Birthplace</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Gender</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Civil Status</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Occupation</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Religion</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Email/Contact</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Address</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Registered</th>
+		                </tr>
+		            </thead>
+		            <tbody id="users_data">	
+			';
+			foreach($sql2 as $row) {
+				$name = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix'];
+				$address = $row['house_no'].' '.$row['street_name'].' '.$row['purok'].' '.$row['zone'].' '.$row['barangay'].' '.$row['municipality'].' '.$row['province'].' '.$row['region'];
+				$html .= '
+					<tr>
+						<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($name) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['dob'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['age'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['birthplace']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['gender']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['civilstatus']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['occupation']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['religion']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['email']) . '<br> +63 ' . $row['contact'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($address) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_registered'])) . '</td>
+					</tr>
+				';
+			}
+		
+			$html .= '</table>';
+			$dompdf = new DOMPDF();
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper("Letter", "landscape");
+			$dompdf->render();
+			$dompdf->stream("Supplier records.pdf");
+		} else {
+			$_SESSION['message'] = "No record found in the database.";
+	        $_SESSION['text'] = "Please try again.";
+	        $_SESSION['status'] = "error";
+	        header("Location: ../Admin/users.php");
+		}
+	}
+
+	// SCHEDULE PDF EXPORT
+	elseif($pdfExport == 'Schedule') {
+		$sql = mysqli_query($conn, "SELECT *, clients.email AS client_email, clients.address AS client_address, 
+                                CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
+                                FROM schedule 
+                                JOIN clients ON schedule.client_Id = clients.Id 
+                                JOIN mechanic ON schedule.mechanic_Id = mechanic.Id ORDER BY selectedDate DESC");
+		if(mysqli_num_rows($sql) > 0) {
+		
+			$html = '';
+			// Header with Logo, Business Name, Address, and Contact
+	        $html .= '
+	            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
+				    <h2 style="margin: 0px;">Inventory Management System</h2>
+				    <p style="margin: 0px;">Business Address, City, State, Zip Code</p>
+				    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+				</div>
+
+	        ';
+
+			$html .= '
+				<h2 style="text-align: center; margin-bottom: 20px;">Schedule Records</h2>
+				<hr style="border-color: #ddd; margin: 10px 0;">
+	            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
+		            <thead style="background-color: #f2f2f2;">
+		                <tr>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Client Name</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Services</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Scheduled Date-Time</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Mechanic name</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Status</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Approved</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
+		                </tr>
+		            </thead>
+		            <tbody id="users_data">	
+			';
+			foreach($sql2 as $row) {
+				$name = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix'];
+				$services = '';
+				if($row['services'] == 'Others') {
+					$services = $row['otherServices'];
+				} else {
+					$services = $row['services'];
+				}
+
+				$status = ''; 
+				if($row['status'] == 0) {
+					$status = 'Pending';
+				} elseif($row['status'] == 1) {
+					$status = 'Approved';
+				} else {
+					$status = 'Denied';
+				}
+				$html .= '
+					<tr>
+						<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['full_name']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($services) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y",strtotime($row['selectedDate'])).' - '.date("h:i A", strtotime($row['selectedTime'])) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($name) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $status . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ($row['date_approved'] != '' ? date("F d, Y", strtotime($row['date_approved'])) : 'N/A') . '</td>
+
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
+					</tr>
+				';
+			}
+		
+			$html .= '</table>';
+			$dompdf = new DOMPDF();
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper("Letter", "landscape");
+			$dompdf->render();
+			$dompdf->stream("Schedule records.pdf");
+		} else {
+			$_SESSION['message'] = "No record found in the database.";
+	        $_SESSION['text'] = "Please try again.";
+	        $_SESSION['status'] = "error";
+	        header("Location: ../Admin/schedule.php");
+		}
+	}
+
+	// PRODUCT RECORDS PDF EXPORT
+	elseif($pdfExport == 'Product') {
+		$sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0");
+		if(mysqli_num_rows($sql) > 0) {
+		
+			$html = '';
+			// Header with Logo, Business Name, Address, and Contact
+	        $html .= '
+	            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
+				    <h2 style="margin: 0px;">Inventory Management System</h2>
+				    <p style="margin: 0px;">Business Address, City, State, Zip Code</p>
+				    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+				</div>
+
+	        ';
+
+			$html .= '
+				<h2 style="text-align: center; margin-bottom: 20px;">Product Records</h2>
+				<hr style="border-color: #ddd; margin: 10px 0;">
+	            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
+		            <thead style="background-color: #f2f2f2;">
+		                <tr>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Product ID</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Stock</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Item No</th>
+		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
+		                </tr>
+		            </thead>
+		            <tbody id="users_data">	
+			';
+		
+			foreach($sql as $row) {
+				$html .= '
+					<tr>
+						<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_Id'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['cat_name']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['prod_name']) . '</td>
+                        <<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_stock'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_item_no'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
+					</tr>
+				';
+			}
+			$html .= '</table>';
+			$dompdf = new DOMPDF();
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper("Letter", "portrait");
+			$dompdf->render();
+			$dompdf->stream("Product records.pdf");
+
+		} else {
+			$_SESSION['message'] = "No record found in the database.";
+	        $_SESSION['text'] = "Please try again.";
+	        $_SESSION['status'] = "error";
+	        header("Location: ../Admin/product.php");
+		}
+	}
+
+	// ARCHIVED PRODUCT RECORDS PDF EXPORT
+	elseif($pdfExport == 'Archived') {
+		$sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1");
+		if(mysqli_num_rows($sql) > 0) {
+			$html = '';
+			// Header with Logo, Business Name, Address, and Contact
+	        $html .= '
+	            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
+				    <h2 style="margin: 0px;">Inventory Management System</h2>
+				    <p style="margin: 0px;">Business Address, City, State, Zip Code</p>
+				    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+				</div>
+	        ';
+
+			$html .= '
+			<h2 style="text-align: center; margin-bottom: 20px;">Archived Product Records</h2>
+			<hr style="border-color: #ddd; margin: 10px 0;">
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
+	            <thead style="background-color: #f2f2f2;">
+	                <tr>
+	                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Product ID</th>
+	                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
+	                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
+	                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Stock</th>
+	                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Item No</th>
+	                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
+	                </tr>
+	            </thead>
+	            <tbody id="users_data">	
+		    ';
+			foreach($sql as $row) {
+				$html .= '
+					<tr>
+						<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_Id'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['cat_name']) . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['prod_name']) . '</td>
+                        <<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_stock'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_item_no'] . '</td>
+                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
+					</tr>
+				';
+			}
+			$html .= '</table>';
+			$dompdf = new DOMPDF();
+			$dompdf->loadHtml($html);
+			$dompdf->setPaper("Letter", "portrait");
+			$dompdf->render();
+			$dompdf->stream("Archived Product records.pdf");
+		} else {
+			$_SESSION['message'] = "No record found in the database.";
+	        $_SESSION['text'] = "Please try again.";
+	        $_SESSION['status'] = "error";
+	        header("Location: ../Admin/product_archived.php");
+		}
+	}
+
+	else {
+		$_SESSION['message'] = "404 : Page not found";
+		$_SESSION['text'] = "Please try again.";
+		$_SESSION['status'] = "error";
+		header("Location: ../Admin/dashboard.php");
+		exit();
+	}
+}
+
+// ************************************* END EXPORT TO PDF PROCESSES ************************************* \\
+
+
+
+// ************************************* EXPORT TO EXCEL PROCESSES ************************************* \\
+
+	// EXPORT CLIENT RECORDS TO EXCEL
+	if(isset($_GET['ExcelExport'])) {
+		$ExcelExport = $_GET['ExcelExport'];
+
+		// CLIENT EXCEL EXPORT
+		if($ExcelExport == 'Client') {
+			
+			$client = [
+		        ['No.', 'Full name', 'Email', 'Address', 'Date registered']
+		      ];
+
+		      $id = 0;
+		      $sql = "SELECT * FROM clients ORDER BY firstname";
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
+		          $id++;
+		          $name = $row['firstname']. ' ' .$row['middlename']. ' ' .$row['lastname']. ' ' .$row['suffix'];
+		          // $address = $row['house_no']. ' ' .$row['street_name']. ', ' .$row['purok']. ' ' .$row['zone']. ' ' .$row['barangay']. ', ' .$row['municipality']. ', ' .$row['province']. ' ' .$row['region'];
+		          $client = array_merge($client, array(array($id, ucwords($name), ucwords($row['email']), ucwords($row['address']), date("F d, Y", strtotime($row['date_registered'])))));
+		        }
+		      } else {
+		        $_SESSION['message'] = "No record found in the database.";
+		        $_SESSION['text'] = "Please try again.";
+		        $_SESSION['status'] = "error";
+		        header("Location: ../Admin/client.php");
+		      }
+
+		      $xlsx = SimpleXLSXGen::fromArray($client);
+		      $xlsx->downloadAs('Client records.xlsx'); // This will download the file to your local system
+
+		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
+
+		      echo "<pre>";
+
+		      print_r($client);
+
+		      header('Location: ../Admin/client.php');
+
+		}
+
+		// SUPPLIER EXCEL EXPORT
+		elseif($ExcelExport == 'Supplier') {
+			
+			$users = [
+		        ['No.', 'Full name', 'DOB', 'Age', 'Birthplace', 'Gender', 'Civil Status', 'Occupation', 'Religion', 'Email', 'Contact', 'Address', 'Date registered']
+		      ];
+
+		      $id = 0;
+		      $sql = "SELECT * FROM users WHERE user_type = 'User'";
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
+		          $id++;
+		          $name = $row['firstname']. ' ' .$row['middlename']. ' ' .$row['lastname']. ' ' .$row['suffix'];
+		          $address = $row['house_no']. ' ' .$row['street_name']. ', ' .$row['purok']. ' ' .$row['zone']. ' ' .$row['barangay']. ', ' .$row['municipality']. ', ' .$row['province']. ' ' .$row['region'];
+		          $users = array_merge($users, array(array($id, ucwords($name), $row['dob'], $row['age'], ucwords($row['birthplace']), ucwords($row['gender']), ucwords($row['civilstatus']), ucwords($row['occupation']), ucwords($row['religion']),  ucwords($row['email']), '+63 '.$row['contact'], ucwords($address), date("F d, Y", strtotime($row['date_registered'])))));
+		        }
+		      } else {
+		        $_SESSION['message'] = "No record found in the database.";
+		        $_SESSION['text'] = "Please try again.";
+		        $_SESSION['status'] = "error";
+		        header("Location: ../Admin/users.php");
+		      }
+
+		      $xlsx = SimpleXLSXGen::fromArray($users);
+		      $xlsx->downloadAs('Supplier records.xlsx'); // This will download the file to your local system
+
+		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
+
+		      echo "<pre>";
+
+		      print_r($users);
+
+		      header('Location: ../Admin/users.php');
+
+		}
+
+		// SCHEDULE EXCEL EXPORT
+		elseif($ExcelExport == 'Schedule') {
+			$schedule = [
+		        ['No.', 'Client Name', 'Services', 'Scheduled Date-Time', 'Mechanic name', 'Status', 'Date Approved', 'Date Added']
+		      ];
+
+		      $id = 0;
+		      $sql = "SELECT *, clients.email AS client_email, clients.address AS client_address, 
+	                                CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
+	                                FROM schedule 
+	                                JOIN clients ON schedule.client_Id = clients.Id 
+	                                JOIN mechanic ON schedule.mechanic_Id = mechanic.Id ORDER BY selectedDate DESC";
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
+		          $id++;
+		          $name = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix'];				
+		          $services = '';
+					if($row['services'] == 'Others') {
+						$services = $row['otherServices'];
+					} else {
+						$services = $row['services'];
+					}
+
+					$status = ''; 
+					if($row['status'] == 0) {
+						$status = 'Pending';
+					} elseif($row['status'] == 1) {
+						$status = 'Approved';
+					} else {
+						$status = 'Denied';
+					}
+
+		          $schedule = array_merge($schedule, array(array($id, ucwords($row['full_name']), ucwords($services),  date("F d, Y",strtotime($row['selectedDate'])).' - '.date("h:i A", strtotime($row['selectedTime'])), ucwords($name), $status, ($row['date_approved'] != '' ? date("F d, Y", strtotime($row['date_approved'])) : 'N/A'), date("F d, Y", strtotime($row['date_added'])) )));
+		        }
+		      } else {
+		        $_SESSION['message'] = "No record found in the database.";
+		        $_SESSION['text'] = "Please try again.";
+		        $_SESSION['status'] = "error";
+		        header("Location: ../Admin/schedule.php");
+		      }
+
+		      $xlsx = SimpleXLSXGen::fromArray($schedule);
+		      $xlsx->downloadAs('Schedule records.xlsx'); // This will download the file to your local system
+
+		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
+
+		      echo "<pre>";
+
+		      print_r($schedule);
+
+		      header('Location: ../Admin/schedule.php');
+		}
+
+		// PRODUCT RECORDS EXCEL EXPORT
+		elseif($ExcelExport == 'Product') {
+			$product = [
+		        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Product Item No', 'Date Added']
+		      ];
+
+		      $id = 0;
+		      $sql = "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0";
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
+		          $id++;
+		          $product = array_merge($product, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], $row['prod_item_no'], date("F d, Y", strtotime($row['date_added'])) )));
+		        }
+		      } else {
+		        $_SESSION['message'] = "No record found in the database.";
+		        $_SESSION['text'] = "Please try again.";
+		        $_SESSION['status'] = "error";
+		        header("Location: ../Admin/product.php");
+		      }
+
+		      $xlsx = SimpleXLSXGen::fromArray($product);
+		      $xlsx->downloadAs('Product records.xlsx'); // This will download the file to your local system
+
+		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
+
+		      echo "<pre>";
+
+		      print_r($product);
+
+		      header('Location: ../Admin/product.php');
+		}
+
+		// ARCHIVED PRODUCT RECORDS EXCEL EXPORT
+		elseif($ExcelExport == 'Archived') {
+			$product_archived = [
+		        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Product Item No', 'Status', 'Date Added']
+		      ];
+
+		      $id = 0;
+		      $sql = "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1";
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
+		          $id++;
+		          $product_archived = array_merge($product_archived, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], $row['prod_item_no'], date("F d, Y", 'Archived', strtotime($row['date_added'])) )));
+		        }
+		      } else {
+		        $_SESSION['message'] = "No record found in the database.";
+		        $_SESSION['text'] = "Please try again.";
+		        $_SESSION['status'] = "error";
+		        header("Location: ../Admin/product_archived.php");
+		      }
+
+		      $xlsx = SimpleXLSXGen::fromArray($product_archived);
+		      $xlsx->downloadAs('Archived Product records.xlsx'); // This will download the file to your local system
+
+		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
+
+		      echo "<pre>";
+
+		      print_r($product_archived);
+
+		      header('Location: ../Admin/product_archived.php');
+		}
+
+		else {
+			$_SESSION['message'] = "404 : Page not found";
+			$_SESSION['text'] = "Please try again.";
+			$_SESSION['status'] = "error";
+			header("Location: ../Admin/dashboard.php");
+			exit();
+		}
+	}
+
+// ************************************* END EXPORT TO EXCEL PROCESSES ************************************* \\
+
 ?>

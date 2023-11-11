@@ -37,18 +37,68 @@
     .form-control:not([type="email"]):not([type="password"]) {
       text-transform: capitalize;
     }
+    /* Style for the dropdown container */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Style for the dropdown toggle link */
+    .profile-dropdown-toggle {
+      cursor: pointer;
+    }
+
+    /* Style for the dropdown content (hidden by default) */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      left: 0; /* Ensure the dropdown is on the right */
+      color: gray;
+    }
+
+    /* Style for the left-aligned links */
+    .left-link {
+      text-align: left; /* Left-align the text within the dropdown */
+      display: block;
+      padding: 12px 16px;
+      text-decoration: none;
+      color: gray;
+    }
+
+    /* Change color of dropdown links on hover */
+    .left-link:hover {
+      background-color: #ddd;
+    }
+
+    /* Show the dropdown content when hovering over the dropdown container */
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <div class="header">
     <div class="homepageContainer">
-      <a class="m-2" href="index.php">Home</a>
-      <a class="m-2" href="schedule.php">Schedule</a>
-      <a class="m-2" href="#">About Us</a>
-      <a class="m-2" href="#">Contact Us</a>
-      <a class="m-2" href="#">Profile</a>
-      <a class="m-5" href="../logout.php">Logout</a>
+  <a class="m-2" href="index.php">Home</a>
+  <a class="m-2" href="schedule.php">Schedule</a>
+  <a class="m-2" href="#">About Us</a>
+  <a class="m-2" href="#">Contact Us</a>
+  <div class="dropdown">
+    <a class="m-2 profile-dropdown-toggle" href="#">Profile</a>
+    <div class="dropdown-content">
+      <a href="profile.php" class="left-link text-dark">Account</a>
+      <a href="requestChangePass.php" class="left-link text-dark">Change Password</a>
     </div>
+  </div>
+  <a class="m-5" href="../logout.php">Logout</a>
+</div>
+
+
+
   </div>
 
 <?php

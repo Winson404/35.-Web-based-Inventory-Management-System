@@ -69,30 +69,40 @@
 	    if (mysqli_num_rows($check_email) > 0) {
 	        displayErrorMessage("Email already exists!", $page);
 	    } else {
-	        $target_dir = $path;
-	        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-	        $uploadOk = 1;
-	        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-	        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-	        if ($check == false) {
-	            displayErrorMessage("File is not an image.", $page);
-	            $uploadOk = 0;
-	        } elseif ($_FILES["fileToUpload"]["size"] > 500000) {
-	            displayErrorMessage("File must be up to 500KB in size.", $page);
-	            $uploadOk = 0;
-	        } elseif ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-	            displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
-	            $uploadOk = 0;
-	        } elseif ($uploadOk == 0) {
-	            displayErrorMessage("Your file was not uploaded.", $page);
-	        } else {
-	            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-	            	$save = mysqli_query($conn, "INSERT INTO users (firstname, middlename, lastname, suffix, dob, age, email, contact, birthplace, gender, civilstatus, occupation, religion, house_no, street_name, purok, zone, barangay, municipality, province, region, image, password, user_type, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$dob', '$age', '$email', '$contact', '$birthplace', '$gender', '$civilstatus', '$occupation', '$religion', '$house_no', '$street_name', '$purok', '$zone', '$barangay', '$municipality', '$province', '$region', '$file', '$password', '$user_type', '$date_registered')");
-	            	displaySaveMessage($save, $page);
-	            } else {
-	            	displayErrorMessage("There was an error uploading your profile picture.", $page); 
-	            }
-	        }
+	    	$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		    if (mysqli_num_rows($check_email2) > 0) {
+		        displayErrorMessage("Email already exists!", $page);
+		    } else {
+		    	$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+			    if (mysqli_num_rows($check_email3) > 0) {
+			        displayErrorMessage("Email already exists!", $page);
+			    } else {
+			    	$target_dir = $path;
+			        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+			        $uploadOk = 1;
+			        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+			        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+			        if ($check == false) {
+			            displayErrorMessage("File is not an image.", $page);
+			            $uploadOk = 0;
+			        } elseif ($_FILES["fileToUpload"]["size"] > 500000) {
+			            displayErrorMessage("File must be up to 500KB in size.", $page);
+			            $uploadOk = 0;
+			        } elseif ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+			            displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
+			            $uploadOk = 0;
+			        } elseif ($uploadOk == 0) {
+			            displayErrorMessage("Your file was not uploaded.", $page);
+			        } else {
+			            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+			            	$save = mysqli_query($conn, "INSERT INTO users (firstname, middlename, lastname, suffix, dob, age, email, contact, birthplace, gender, civilstatus, occupation, religion, house_no, street_name, purok, zone, barangay, municipality, province, region, image, password, user_type, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$dob', '$age', '$email', '$contact', '$birthplace', '$gender', '$civilstatus', '$occupation', '$religion', '$house_no', '$street_name', '$purok', '$zone', '$barangay', '$municipality', '$province', '$region', '$file', '$password', '$user_type', '$date_registered')");
+			            	displaySaveMessage($save, $page);
+			            } else {
+			            	displayErrorMessage("There was an error uploading your profile picture.", $page); 
+			            }
+			        }
+				}
+			}
 	    }
 	}
 
@@ -127,46 +137,56 @@
 		if(mysqli_num_rows($check_email) > 0) {
 	       displayErrorMessage("Email already exists.", $page);
 		} else {
-			if(empty($file)) {
-				$update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region', user_type='$user_type' WHERE user_Id='$user_Id' ");
-				displayUpdateMessage($update, "Record has been updated.", $page);
-			} else {
-				// Check if image file is a actual image or fake image
-				$target_dir = "../images-users/";
-				$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-				$uploadOk = 1;
-				$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-				$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-				if($check == false) {
-				    displayErrorMessage("File is not an image.", $page);
-					$uploadOk = 0;
-				} 
-
-				// Check file size // 500KB max size
-				elseif ($_FILES["fileToUpload"]["size"] > 500000) {
-				    displayErrorMessage("File must be up to 500KB in size.", $page);
-					$uploadOk = 0;
-				}
-
-				// Allow certain file formats
-				elseif($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
-				    displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
-				    $uploadOk = 0;
-				}
-
-				// Check if $uploadOk is set to 0 by an error
-				elseif ($uploadOk == 0) {
-					displayErrorMessage("Your file was not uploaded.", $page);
-				// if everything is ok, try to upload file
-				} else {
-
-					if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-
-					 $update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region', user_type='$user_type', image='$file' WHERE user_Id='$user_Id' ");
-              	     displayUpdateMessage($update, "Record has been updated.", $page);
+			$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		    if (mysqli_num_rows($check_email2) > 0) {
+		        displayErrorMessage("Email already exists!", $page);
+		    } else {
+				$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+			    if (mysqli_num_rows($check_email3) > 0) {
+			        displayErrorMessage("Email already exists!", $page);
+			    } else {
+					if(empty($file)) {
+						$update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region', user_type='$user_type' WHERE user_Id='$user_Id' ");
+						displayUpdateMessage($update, "Record has been updated.", $page);
 					} else {
-	    	            displayErrorMessage("There was an error uploading your profile picture.", $page);
+						// Check if image file is a actual image or fake image
+						$target_dir = "../images-users/";
+						$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+						$uploadOk = 1;
+						$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+						$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+						if($check == false) {
+						    displayErrorMessage("File is not an image.", $page);
+							$uploadOk = 0;
+						} 
+
+						// Check file size // 500KB max size
+						elseif ($_FILES["fileToUpload"]["size"] > 500000) {
+						    displayErrorMessage("File must be up to 500KB in size.", $page);
+							$uploadOk = 0;
+						}
+
+						// Allow certain file formats
+						elseif($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+						    displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
+						    $uploadOk = 0;
+						}
+
+						// Check if $uploadOk is set to 0 by an error
+						elseif ($uploadOk == 0) {
+							displayErrorMessage("Your file was not uploaded.", $page);
+						// if everything is ok, try to upload file
+						} else {
+
+							if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+
+							 $update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region', user_type='$user_type', image='$file' WHERE user_Id='$user_Id' ");
+		              	     displayUpdateMessage($update, "Record has been updated.", $page);
+							} else {
+			    	            displayErrorMessage("There was an error uploading your profile picture.", $page);
+							}
+						}
 					}
 				}
 			}
@@ -221,9 +241,18 @@
 		   $_SESSION['message'] = "";
 	       displayErrorMessage("Email already exists!", $page);
 		} else {
-		  $update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region' WHERE user_Id='$user_Id' ");
-
-      	  displayUpdateMessage($update, "Record has been updated", $page);
+			$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		    if (mysqli_num_rows($check_email2) > 0) {
+		        displayErrorMessage("Email already exists!", $page);
+		    } else {
+		  		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+			    if (mysqli_num_rows($check_email3) > 0) {
+			        displayErrorMessage("Email already exists!", $page);
+			    } else {
+			  		$update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region' WHERE user_Id='$user_Id' ");
+	      	  		displayUpdateMessage($update, "Record has been updated", $page);
+				}
+			}
 		}
 	}
 
@@ -289,8 +318,13 @@
 		    if (mysqli_num_rows($check_email2) > 0) {
 		        displayErrorMessage("Email already exists!", $page);
 		    } else {
-		    	$save = mysqli_query($conn, "INSERT INTO clients (firstname, middlename, lastname, suffix, email, address, password, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$password', '$date_registered')");
-	            	displaySaveMessage($save, $page);
+		    	$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+			    if (mysqli_num_rows($check_email3) > 0) {
+			        displayErrorMessage("Email already exists!", $page);
+			    } else {
+			    	$save = mysqli_query($conn, "INSERT INTO clients (firstname, middlename, lastname, suffix, email, address, password, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$password', '$date_registered')");
+		            	displaySaveMessage($save, $page);
+				}
 			}
 	    }
 	}
@@ -307,10 +341,94 @@
 		$email		= mysqli_real_escape_string($conn, $_POST['email']);
 		$address    = mysqli_real_escape_string($conn, $_POST['address']);
 
-		$update = mysqli_query($conn, "UPDATE clients SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address' WHERE Id='$Id'");
-        displayUpdateMessage($update, "Client information has been updated!", $page);
+		$check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0) {
+	        displayErrorMessage("Email already exists!", $page);
+	    } else {
+	        $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email' AND Id!='$Id'");
+		    if (mysqli_num_rows($check_email2) > 0) {
+		        displayErrorMessage("Email already exists!", $page);
+		    } else {
+				$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+			    if (mysqli_num_rows($check_email3) > 0) {
+			        displayErrorMessage("Email already exists!", $page);
+			    } else {
+			    	$update = mysqli_query($conn, "UPDATE clients SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address' WHERE Id='$Id'");
+	        		displayUpdateMessage($update, "Client information has been updated!", $page);
+				}
+			}
+	    }
 	}
-	
+
+
+
+	// REQUEST CHANGE PASSWORD - USER/REQUESTCHANGEPASS.PHP
+	function requestChangePass($conn, $Id, $page) {
+
+		$fetch = mysqli_query($conn, "SELECT * FROM clients WHERE Id='$Id'");
+		$row = mysqli_fetch_array($fetch);
+
+		$name = $row['firstname'].' '.$row['lastname'];
+	    $email = $row['email'];
+	    $subject = "Request Change Password";
+        $message = '<p>Good day sir/maam '.$name.', to change your password, just click <a href="http://localhost/35.%20Web%20based%20Inventory%20Management%20System/User/changepassword.php?Id='.$Id.'" class="btn btn-primary">Yes</a>.</p> 
+        <p><b>NOTE:</b> This is a system generated email. Please do not reply.</p> ';
+
+	    $mail = new PHPMailer(true);
+	    try {
+	        // Server settings
+	        $mail->isSMTP();
+	        $mail->Host = 'smtp.gmail.com';
+	        $mail->SMTPAuth = true;
+	        $mail->Username = 'tatakmedellin@gmail.com';
+	        $mail->Password = 'nzctaagwhqlcgbqq';
+	        $mail->SMTPOptions = array(
+	            'ssl' => array(
+	                'verify_peer' => false,
+	                'verify_peer_name' => false,
+	                'allow_self_signed' => true
+	            )
+	        );
+	        $mail->SMTPSecure = 'ssl';
+	        $mail->Port = 465;
+
+	        // Send Email
+	        $mail->setFrom('tatakmedellin@gmail.com');
+
+	        // Recipients
+	        $mail->addAddress($email);
+	        $mail->addReplyTo('tatakmedellin@gmail.com');
+
+	        // Content
+	        $mail->isHTML(true);
+	        $mail->Subject = $subject;
+	        $mail->Body = $message;
+
+	        $mail->send();
+
+	        if ($mail) {
+				$_SESSION['message'] = "A message has been sent to your email.";
+				$_SESSION['text'] = "Sent successfully!";
+				$_SESSION['status'] = "success";
+				header("Location: $page");
+				exit();
+			}
+
+	    } catch (Exception $e) {
+	        $_SESSION['success'] = "Message could not be sent. Mailer Error: " . $mail->ErrorInfo;
+	        header("Location: $page");
+	    }
+	}
+
+
+	// UPDATE CLIENT PASSWORD - CHANGEPASSWORD.PHP
+	function update_client_password($conn, $Id, $password, $page) {
+		$Id         = $_POST['Id'];
+		$password   = md5($_POST['password']);
+
+		$update = mysqli_query($conn, "UPDATE clients SET password='$password' WHERE Id='$Id'");
+        displayUpdateMessage($update, "Password has been updated!", $page);
+	}
 
 // ************************************* END FUNCTION CLIENT ************************************* \\
 
@@ -359,9 +477,23 @@
 		$suffix     = mysqli_real_escape_string($conn, $_POST['suffix']);
 		$email		= mysqli_real_escape_string($conn, $_POST['email']);
 		$address    = mysqli_real_escape_string($conn, $_POST['address']);
-
-		$update = mysqli_query($conn, "UPDATE mechanic SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address' WHERE Id='$Id'");
-        displayUpdateMessage($update, "Mechanic information has been updated!", $page);
+		$check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0) {
+	        displayErrorMessage("Email already exists!", $page);
+	    } else {
+	        $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		    if (mysqli_num_rows($check_email2) > 0) {
+		        displayErrorMessage("Email already exists!", $page);
+		    } else {
+		    	$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email' AND Id!='$Id'");
+			    if (mysqli_num_rows($check_email3) > 0) {
+			        displayErrorMessage("Email already exists!", $page);
+			    } else {
+			    	$update = mysqli_query($conn, "UPDATE mechanic SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address' WHERE Id='$Id'");
+        			displayUpdateMessage($update, "Mechanic information has been updated!", $page);
+				}
+			}
+	    }
 	}
 	
 
@@ -474,6 +606,27 @@
 		    }
 		}
 	}
+
+	// ARCHIVE PRODUCT - PRODUCT_DELETE.PHP
+	function archiveProduct($conn, $p_Id, $page) {
+	    $update = mysqli_query($conn, "UPDATE product SET is_archived=1 WHERE p_Id = '$p_Id'");
+		if($update) {
+			displayUpdateMessage($update, "Product record has been moved to archived folder.", $page);
+		} else {
+			displayErrorMessage("Something went wrong while updating the information.", $page);
+		}
+	}
+
+	// UNARCHIVE PRODUCT - PRODUCT_DELETE.PHP
+	function unarchiveProduct($conn, $p_Id, $page) {
+	    $update = mysqli_query($conn, "UPDATE product SET is_archived=0 WHERE p_Id = '$p_Id'");
+		if($update) {
+			displayUpdateMessage($update, "Product record has been moved back to records.", $page);
+		} else {
+			displayErrorMessage("Something went wrong while updating the information.", $page);
+		}
+	}
+	
 
 // ************************************* FUNCTION PRODUCTS ************************************* \\
 
