@@ -63,46 +63,39 @@
 		$region           = mysqli_real_escape_string($conn, $_POST['region']);
 		$password         = md5($_POST['password']);
 		$file             = basename($_FILES["fileToUpload"]["name"]);
+		$assigned_branch  = mysqli_real_escape_string($conn, $_POST['assigned_branch']);
 		$date_registered  = date('Y-m-d');
 
-	    $check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-	    if (mysqli_num_rows($check_email) > 0) {
+	    $check_email  = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+	    $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
 	        displayErrorMessage("Email already exists!", $page);
 	    } else {
-	    	$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
-		    if (mysqli_num_rows($check_email2) > 0) {
-		        displayErrorMessage("Email already exists!", $page);
-		    } else {
-		    	$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
-			    if (mysqli_num_rows($check_email3) > 0) {
-			        displayErrorMessage("Email already exists!", $page);
-			    } else {
-			    	$target_dir = $path;
-			        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-			        $uploadOk = 1;
-			        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-			        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-			        if ($check == false) {
-			            displayErrorMessage("File is not an image.", $page);
-			            $uploadOk = 0;
-			        } elseif ($_FILES["fileToUpload"]["size"] > 500000) {
-			            displayErrorMessage("File must be up to 500KB in size.", $page);
-			            $uploadOk = 0;
-			        } elseif ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-			            displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
-			            $uploadOk = 0;
-			        } elseif ($uploadOk == 0) {
-			            displayErrorMessage("Your file was not uploaded.", $page);
-			        } else {
-			            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-			            	$save = mysqli_query($conn, "INSERT INTO users (firstname, middlename, lastname, suffix, dob, age, email, contact, birthplace, gender, civilstatus, occupation, religion, house_no, street_name, purok, zone, barangay, municipality, province, region, image, password, user_type, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$dob', '$age', '$email', '$contact', '$birthplace', '$gender', '$civilstatus', '$occupation', '$religion', '$house_no', '$street_name', '$purok', '$zone', '$barangay', '$municipality', '$province', '$region', '$file', '$password', '$user_type', '$date_registered')");
-			            	displaySaveMessage($save, $page);
-			            } else {
-			            	displayErrorMessage("There was an error uploading your profile picture.", $page); 
-			            }
-			        }
-				}
-			}
+	    	$target_dir = $path;
+	        $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+	        $uploadOk = 1;
+	        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+	        $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+	        if ($check == false) {
+	            displayErrorMessage("File is not an image.", $page);
+	            $uploadOk = 0;
+	        } elseif ($_FILES["fileToUpload"]["size"] > 500000) {
+	            displayErrorMessage("File must be up to 500KB in size.", $page);
+	            $uploadOk = 0;
+	        } elseif ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+	            displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
+	            $uploadOk = 0;
+	        } elseif ($uploadOk == 0) {
+	            displayErrorMessage("Your file was not uploaded.", $page);
+	        } else {
+	            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+	            	$save = mysqli_query($conn, "INSERT INTO users (firstname, middlename, lastname, suffix, dob, age, email, contact, birthplace, gender, civilstatus, occupation, religion, house_no, street_name, purok, zone, barangay, municipality, province, region, image, password, user_type, assigned_branch, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$dob', '$age', '$email', '$contact', '$birthplace', '$gender', '$civilstatus', '$occupation', '$religion', '$house_no', '$street_name', '$purok', '$zone', '$barangay', '$municipality', '$province', '$region', '$file', '$password', '$user_type', '$assigned_branch', '$date_registered')");
+	            	displaySaveMessage($save, $page);
+	            } else {
+	            	displayErrorMessage("There was an error uploading your profile picture.", $page); 
+	            }
+	        }
 	    }
 	}
 
@@ -132,61 +125,54 @@
 		$province         = mysqli_real_escape_string($conn, $_POST['province']);
 		$region           = mysqli_real_escape_string($conn, $_POST['region']);
 		$file             = basename($_FILES["fileToUpload"]["name"]);
+		$assigned_branch  = mysqli_real_escape_string($conn, $_POST['assigned_branch']);
 
 		$check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND user_Id !='$user_Id'");
-		if(mysqli_num_rows($check_email) > 0) {
+		$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+		if(mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
 	       displayErrorMessage("Email already exists.", $page);
 		} else {
-			$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
-		    if (mysqli_num_rows($check_email2) > 0) {
-		        displayErrorMessage("Email already exists!", $page);
-		    } else {
-				$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
-			    if (mysqli_num_rows($check_email3) > 0) {
-			        displayErrorMessage("Email already exists!", $page);
-			    } else {
-					if(empty($file)) {
-						$update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region', user_type='$user_type' WHERE user_Id='$user_Id' ");
-						displayUpdateMessage($update, "Record has been updated.", $page);
+			if(empty($file)) {
+				$update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region', user_type='$user_type', assigned_branch='$assigned_branch' WHERE user_Id='$user_Id' ");
+				displayUpdateMessage($update, "Record has been updated.", $page);
+			} else {
+				// Check if image file is a actual image or fake image
+				$target_dir = "../images-users/";
+				$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+				$uploadOk = 1;
+				$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+				$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+				if($check == false) {
+				    displayErrorMessage("File is not an image.", $page);
+					$uploadOk = 0;
+				} 
+
+				// Check file size // 500KB max size
+				elseif ($_FILES["fileToUpload"]["size"] > 500000) {
+				    displayErrorMessage("File must be up to 500KB in size.", $page);
+					$uploadOk = 0;
+				}
+
+				// Allow certain file formats
+				elseif($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
+				    displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
+				    $uploadOk = 0;
+				}
+
+				// Check if $uploadOk is set to 0 by an error
+				elseif ($uploadOk == 0) {
+					displayErrorMessage("Your file was not uploaded.", $page);
+				// if everything is ok, try to upload file
+				} else {
+
+					if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+
+					 $update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region', user_type='$user_type', image='$file', assigned_branch='$assigned_branch' WHERE user_Id='$user_Id' ");
+              	     displayUpdateMessage($update, "Record has been updated.", $page);
 					} else {
-						// Check if image file is a actual image or fake image
-						$target_dir = "../images-users/";
-						$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-						$uploadOk = 1;
-						$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
-						$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-						if($check == false) {
-						    displayErrorMessage("File is not an image.", $page);
-							$uploadOk = 0;
-						} 
-
-						// Check file size // 500KB max size
-						elseif ($_FILES["fileToUpload"]["size"] > 500000) {
-						    displayErrorMessage("File must be up to 500KB in size.", $page);
-							$uploadOk = 0;
-						}
-
-						// Allow certain file formats
-						elseif($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif" ) {
-						    displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
-						    $uploadOk = 0;
-						}
-
-						// Check if $uploadOk is set to 0 by an error
-						elseif ($uploadOk == 0) {
-							displayErrorMessage("Your file was not uploaded.", $page);
-						// if everything is ok, try to upload file
-						} else {
-
-							if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-
-							 $update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region', user_type='$user_type', image='$file' WHERE user_Id='$user_Id' ");
-		              	     displayUpdateMessage($update, "Record has been updated.", $page);
-							} else {
-			    	            displayErrorMessage("There was an error uploading your profile picture.", $page);
-							}
-						}
+	    	            displayErrorMessage("There was an error uploading your profile picture.", $page);
 					}
 				}
 			}
@@ -237,22 +223,14 @@
 		$region           = mysqli_real_escape_string($conn, $_POST['region']);
 
 	    $check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND user_Id !='$user_Id' ");
-		if(mysqli_num_rows($check_email) > 0 ) {
+	    $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+		if(mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
 		   $_SESSION['message'] = "";
 	       displayErrorMessage("Email already exists!", $page);
 		} else {
-			$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
-		    if (mysqli_num_rows($check_email2) > 0) {
-		        displayErrorMessage("Email already exists!", $page);
-		    } else {
-		  		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
-			    if (mysqli_num_rows($check_email3) > 0) {
-			        displayErrorMessage("Email already exists!", $page);
-			    } else {
-			  		$update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region' WHERE user_Id='$user_Id' ");
-	      	  		displayUpdateMessage($update, "Record has been updated", $page);
-				}
-			}
+			$update = mysqli_query($conn, "UPDATE users SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', dob='$dob', age='$age', email='$email', contact='$contact', birthplace='$birthplace', gender='$gender', civilstatus='$civilstatus', occupation='$occupation', religion='$religion', house_no='$house_no', street_name='$street_name', purok='$purok', zone='$zone', barangay='$barangay', municipality='$municipality', province='$province', region='$region' WHERE user_Id='$user_Id' ");
+  	  		displayUpdateMessage($update, "Record has been updated", $page);
 		}
 	}
 
@@ -299,33 +277,133 @@
 
 // ************************************* FUNCTION CLIENT ************************************* \\
 	
+	// REGISTER CLIENT - REGISTER.PHP
+	function registerClient($conn) {
+		$firstname   = mysqli_real_escape_string($conn, $_POST['firstname']);
+		$middlename  = mysqli_real_escape_string($conn, $_POST['middlename']);
+		$lastname    = mysqli_real_escape_string($conn, $_POST['lastname']);
+		$suffix      = mysqli_real_escape_string($conn, $_POST['suffix']);
+		$email		 = mysqli_real_escape_string($conn, $_POST['email']);
+		$address     = mysqli_real_escape_string($conn, $_POST['address']);
+		$vehicleType = mysqli_real_escape_string($conn, $_POST['vehicleType']);
+		$yearModel   = mysqli_real_escape_string($conn, $_POST['yearModel']);
+		$password    = md5($_POST['password']);
+
+		$key         = substr(number_format(time() * rand(), 0, '', ''), 0, 6);
+
+	    $check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
+	    $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
+	        displayErrorMessage("Email already exists!", '../register.php');
+	    } else {
+	        $save = mysqli_query($conn, "INSERT INTO clients (firstname, middlename, lastname, suffix, email, address, vehicleType, yearModel, password, verification_code, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$vehicleType', '$yearModel', '$password', '$key', NOW())");
+	        if($save) {
+	        	$fetch = mysqli_query($conn, "SELECT * FROM clients WHERE firstname='$firstname' AND middlename='$middlename' AND lastname='$lastname' AND suffix='$suffix' AND email='$email' AND address='$address' AND vehicleType='$vehicleType' AND yearModel='$yearModel' AND password='$password' AND date_registered=NOW()");
+	        	if(mysqli_num_rows($fetch) > 0) {
+	        		$row = mysqli_fetch_array($fetch);
+	        		$client_Id = $row['Id'];
+	        		$hashed_client_Id = sha1($client_Id);
+	        		
+					$subject = 'Verification code';
+			        $message = '<p>Good day sir/maam '.$email.', your verification code is <b>'.$key.'</b>. Please do not share this code to other people. Thank you!</p>
+						      <p>You can change your password by just clicking it <a href="http://localhost/35.%20Web%20based%20Inventory%20Management%20System/register_verification.php?client_Id='.$hashed_client_Id.'">here!</a></p> 
+						      <p><b>NOTE:</b> This is a system generated email. Please do not reply.</p> ';
+				    $mail = new PHPMailer(true);
+				    try {
+				        // Server settings
+				        $mail->isSMTP();
+				        $mail->Host = 'smtp.gmail.com';
+				        $mail->SMTPAuth = true;
+				        $mail->Username = 'rbfmotorshop@gmail.com';
+				        $mail->Password = 'tmjtqhsrlxjvagsw';
+				        $mail->SMTPOptions = array(
+				            'ssl' => array(
+				                'verify_peer' => false,
+				                'verify_peer_name' => false,
+				                'allow_self_signed' => true
+				            )
+				        );
+				        $mail->SMTPSecure = 'ssl';
+				        $mail->Port = 465;
+
+				        // Send Email
+				        $mail->setFrom('rbfmotorshop@gmail.com', 'RBF MotorShop');
+
+				        // Recipients
+				        $mail->addAddress($email);
+				        $mail->addReplyTo('rbfmotorshop@gmail.com');
+
+				        // Content
+				        $mail->isHTML(true);
+				        $mail->Subject = $subject;
+				        $mail->Body = $message;
+
+				        $mail->send();
+
+				        displaySaveMessage($save, '../register_verification.php?client_Id='.$hashed_client_Id);
+
+				    } catch (Exception $e) {
+				        $_SESSION['success'] = "Message could not be sent. Mailer Error: " . $mail->ErrorInfo;
+				        header("Location: ../register.php");
+				    }
+					    	  
+	        	} else {
+	        		$_SESSION['message'] = "Error";
+					$_SESSION['text'] = "Please try again.";
+					$_SESSION['status'] = "error";
+					header("Location: ../register.php");
+					exit();
+	        	}
+	        } else {
+	        	$_SESSION['message'] = "Error";
+				$_SESSION['text'] = "Please try again.";
+				$_SESSION['status'] = "error";
+				header("Location: ../register.php");
+				exit();
+	        }
+	    }
+	}
+
+
+	// CLIENT ACCOUNT VERIFICATION - REGISTER_VERIFICATION.PHP
+	function registerClientVerification($conn, $page) {
+		$Id   = $_POST['Id'];
+		$code = mysqli_real_escape_string($conn, $_POST['code']);
+		$fetch = mysqli_query($conn, "SELECT * FROM clients WHERE Id='$Id' AND verification_code='$code'");
+		if(mysqli_num_rows($fetch) > 0) {
+			$update = mysqli_query($conn, "UPDATE clients SET is_verified=1 WHERE Id='$Id' AND verification_code='$code'");
+			displayUpdateMessage($update, "Verification successful", $page);
+		} else {
+			$_SESSION['message'] = "Error";
+			$_SESSION['text'] = "Please try again.";
+			$_SESSION['status'] = "error";
+			header("Location: register.php");
+			exit();
+		}
+	}
+
 	// SAVE CLIENT - ADMIN/CLIENT_MGMT.PHP
 	function saveClient($conn, $page) {
+		$branch      = mysqli_real_escape_string($conn, $_POST['branch']);
 		$firstname        = mysqli_real_escape_string($conn, $_POST['firstname']);
 		$middlename       = mysqli_real_escape_string($conn, $_POST['middlename']);
 		$lastname         = mysqli_real_escape_string($conn, $_POST['lastname']);
 		$suffix           = mysqli_real_escape_string($conn, $_POST['suffix']);
 		$email		      = mysqli_real_escape_string($conn, $_POST['email']);
 		$address		  = mysqli_real_escape_string($conn, $_POST['address']);
+		$vehicleType      = mysqli_real_escape_string($conn, $_POST['vehicleType']);
+		$yearModel        = mysqli_real_escape_string($conn, $_POST['yearModel']);
 		$password         = md5($_POST['password']);
-		$date_registered  = date('Y-m-d');
 
 	    $check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-	    if (mysqli_num_rows($check_email) > 0) {
+	    $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
 	        displayErrorMessage("Email already exists!", $page);
 	    } else {
-	        $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
-		    if (mysqli_num_rows($check_email2) > 0) {
-		        displayErrorMessage("Email already exists!", $page);
-		    } else {
-		    	$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
-			    if (mysqli_num_rows($check_email3) > 0) {
-			        displayErrorMessage("Email already exists!", $page);
-			    } else {
-			    	$save = mysqli_query($conn, "INSERT INTO clients (firstname, middlename, lastname, suffix, email, address, password, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$password', '$date_registered')");
-		            	displaySaveMessage($save, $page);
-				}
-			}
+	        $save = mysqli_query($conn, "INSERT INTO clients (firstname, middlename, lastname, suffix, email, address, vehicleType, yearModel, password, client_branch, is_verified, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$vehicleType', '$yearModel', '$password', '$branch', 1, NOW())");
+        	displaySaveMessage($save, $page);
 	    }
 	}
 
@@ -333,30 +411,24 @@
 
 	// UPDATE CLIENT - CLIENT_MGMT.PHP
 	function updateClient($conn, $Id, $page) {
-		$Id         = $_POST['Id'];
-		$firstname  = mysqli_real_escape_string($conn, $_POST['firstname']);
-		$middlename = mysqli_real_escape_string($conn, $_POST['middlename']);
-		$lastname   = mysqli_real_escape_string($conn, $_POST['lastname']);
-		$suffix     = mysqli_real_escape_string($conn, $_POST['suffix']);
-		$email		= mysqli_real_escape_string($conn, $_POST['email']);
-		$address    = mysqli_real_escape_string($conn, $_POST['address']);
+		$Id          = $_POST['Id'];
+		$firstname   = mysqli_real_escape_string($conn, $_POST['firstname']);
+		$middlename  = mysqli_real_escape_string($conn, $_POST['middlename']);
+		$lastname    = mysqli_real_escape_string($conn, $_POST['lastname']);
+		$suffix      = mysqli_real_escape_string($conn, $_POST['suffix']);
+		$email		 = mysqli_real_escape_string($conn, $_POST['email']);
+		$address     = mysqli_real_escape_string($conn, $_POST['address']);
+		$vehicleType = mysqli_real_escape_string($conn, $_POST['vehicleType']);
+		$yearModel   = mysqli_real_escape_string($conn, $_POST['yearModel']);
 
 		$check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-	    if (mysqli_num_rows($check_email) > 0) {
+		$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email' AND Id!='$Id'");
+		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
 	        displayErrorMessage("Email already exists!", $page);
 	    } else {
-	        $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email' AND Id!='$Id'");
-		    if (mysqli_num_rows($check_email2) > 0) {
-		        displayErrorMessage("Email already exists!", $page);
-		    } else {
-				$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
-			    if (mysqli_num_rows($check_email3) > 0) {
-			        displayErrorMessage("Email already exists!", $page);
-			    } else {
-			    	$update = mysqli_query($conn, "UPDATE clients SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address' WHERE Id='$Id'");
-	        		displayUpdateMessage($update, "Client information has been updated!", $page);
-				}
-			}
+	        $update = mysqli_query($conn, "UPDATE clients SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address', vehicleType='$vehicleType', yearModel='$yearModel' WHERE Id='$Id'");
+    		displayUpdateMessage($update, "Client information has been updated!", $page);
 	    }
 	}
 
@@ -371,7 +443,7 @@
 		$name = $row['firstname'].' '.$row['lastname'];
 	    $email = $row['email'];
 	    $subject = "Request Change Password";
-        $message = '<p>Good day sir/maam '.$name.', to change your password, just click <a href="http://localhost/35.%20Web%20based%20Inventory%20Management%20System/User/changepassword.php?Id='.$Id.'" class="btn btn-primary">Yes</a>.</p> 
+        $message = '<p>Good day sir/maam '.ucwords($name).', to change your password, just click <a href="http://localhost/35.%20Web%20based%20Inventory%20Management%20System/User/changepassword.php?Id='.$Id.'&&type=Client" class="btn btn-primary">Yes</a>.</p> 
         <p><b>NOTE:</b> This is a system generated email. Please do not reply.</p> ';
 
 	    $mail = new PHPMailer(true);
@@ -380,8 +452,8 @@
 	        $mail->isSMTP();
 	        $mail->Host = 'smtp.gmail.com';
 	        $mail->SMTPAuth = true;
-	        $mail->Username = 'tatakmedellin@gmail.com';
-	        $mail->Password = 'nzctaagwhqlcgbqq';
+	        $mail->Username = 'rbfmotorshop@gmail.com';
+	        $mail->Password = 'tmjtqhsrlxjvagsw';
 	        $mail->SMTPOptions = array(
 	            'ssl' => array(
 	                'verify_peer' => false,
@@ -393,11 +465,11 @@
 	        $mail->Port = 465;
 
 	        // Send Email
-	        $mail->setFrom('tatakmedellin@gmail.com');
+	        $mail->setFrom('rbfmotorshop@gmail.com', 'RBF MotorShop');
 
 	        // Recipients
 	        $mail->addAddress($email);
-	        $mail->addReplyTo('tatakmedellin@gmail.com');
+	        $mail->addReplyTo('rbfmotorshop@gmail.com');
 
 	        // Content
 	        $mail->isHTML(true);
@@ -439,30 +511,24 @@
 	
 	// SAVE MECHANIC - ADMIN/MECHANIC_MGMT.PHP
 	function saveMechanic($conn, $page) {
+		$mechanic_branch  = mysqli_real_escape_string($conn, $_POST['mechanic_branch']);
 		$firstname        = mysqli_real_escape_string($conn, $_POST['firstname']);
 		$middlename       = mysqli_real_escape_string($conn, $_POST['middlename']);
 		$lastname         = mysqli_real_escape_string($conn, $_POST['lastname']);
 		$suffix           = mysqli_real_escape_string($conn, $_POST['suffix']);
 		$email		      = mysqli_real_escape_string($conn, $_POST['email']);
+		$contact          = mysqli_real_escape_string($conn, $_POST['contact']);
 		$address		  = mysqli_real_escape_string($conn, $_POST['address']);
-		$date_registered  = date('Y-m-d');
+		$password         = md5($_POST['password']);
 
 	    $check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-	    if (mysqli_num_rows($check_email) > 0) {
+	    $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
+	    if (mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
 	        displayErrorMessage("Email already exists!", $page);
 	    } else {
-	        $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
-		    if (mysqli_num_rows($check_email2) > 0) {
-		        displayErrorMessage("Email already exists!", $page);
-		    } else {
-		    	$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email'");
-			    if (mysqli_num_rows($check_email3) > 0) {
-			        displayErrorMessage("Email already exists!", $page);
-			    } else {
-			    	$save = mysqli_query($conn, "INSERT INTO mechanic (firstname, middlename, lastname, suffix, email, address, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$date_registered')");
-		            	displaySaveMessage($save, $page);
-				}
-			}
+		    $save = mysqli_query($conn, "INSERT INTO mechanic (firstname, middlename, lastname, suffix, email, contact, address, password, mechanic_branch, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$contact', '$address', '$password', '$mechanic_branch', NOW())");
+    		displaySaveMessage($save, $page);
 	    }
 	}
 
@@ -476,26 +542,98 @@
 		$lastname   = mysqli_real_escape_string($conn, $_POST['lastname']);
 		$suffix     = mysqli_real_escape_string($conn, $_POST['suffix']);
 		$email		= mysqli_real_escape_string($conn, $_POST['email']);
+		$contact    = mysqli_real_escape_string($conn, $_POST['contact']);
 		$address    = mysqli_real_escape_string($conn, $_POST['address']);
+
 		$check_email = mysqli_query($conn, "SELECT * FROM users WHERE email='$email'");
-	    if (mysqli_num_rows($check_email) > 0) {
+		$check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
+		$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email' AND Id!='$Id'");
+
+	    if (mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
 	        displayErrorMessage("Email already exists!", $page);
 	    } else {
-	        $check_email2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email'");
-		    if (mysqli_num_rows($check_email2) > 0) {
-		        displayErrorMessage("Email already exists!", $page);
-		    } else {
-		    	$check_email3 = mysqli_query($conn, "SELECT * FROM mechanic WHERE email='$email' AND Id!='$Id'");
-			    if (mysqli_num_rows($check_email3) > 0) {
-			        displayErrorMessage("Email already exists!", $page);
-			    } else {
-			    	$update = mysqli_query($conn, "UPDATE mechanic SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', address='$address' WHERE Id='$Id'");
-        			displayUpdateMessage($update, "Mechanic information has been updated!", $page);
-				}
-			}
+	        $update = mysqli_query($conn, "UPDATE mechanic SET firstname='$firstname', middlename='$middlename', lastname='$lastname', suffix='$suffix', email='$email', contact='$contact', address='$address' WHERE Id='$Id'");
+			displayUpdateMessage($update, "Mechanic information has been updated!", $page);
 	    }
 	}
 	
+
+	// UPDATE MECHANIC STATUS
+	function updateMechanicStatus($conn, $Id, $page) {
+		$Id     = $_POST['Id'];
+		$status = mysqli_real_escape_string($conn, $_POST['status']);
+		$update = mysqli_query($conn, "UPDATE mechanic SET status='$status' WHERE Id='$Id'");
+		displayUpdateMessage($update, "Mechanic status has been updated!", $page);
+	}
+
+
+	// REQUEST CHANGE PASSWORD - USER/REQUESTCHANGEPASS.PHP
+	function requestMechanicChangePass($conn, $Id, $page) {
+
+		$fetch = mysqli_query($conn, "SELECT * FROM mechanic WHERE Id='$Id'");
+		$row = mysqli_fetch_array($fetch);
+
+		$name = $row['firstname'].' '.$row['lastname'];
+	    $email = $row['email'];
+	    $subject = "Request Change Password";
+        $message = '<p>Good day sir/maam '.ucwords($name).', to change your password, just click <a href="http://localhost/35.%20Web%20based%20Inventory%20Management%20System/User/changepassword.php?Id='.$Id.'&&type=Mechanic" class="btn btn-primary">Yes</a>.</p> 
+        <p><b>NOTE:</b> This is a system generated email. Please do not reply.</p> ';
+
+	    $mail = new PHPMailer(true);
+	    try {
+	        // Server settings
+	        $mail->isSMTP();
+	        $mail->Host = 'smtp.gmail.com';
+	        $mail->SMTPAuth = true;
+	        $mail->Username = 'rbfmotorshop@gmail.com';
+	        $mail->Password = 'tmjtqhsrlxjvagsw';
+	        $mail->SMTPOptions = array(
+	            'ssl' => array(
+	                'verify_peer' => false,
+	                'verify_peer_name' => false,
+	                'allow_self_signed' => true
+	            )
+	        );
+	        $mail->SMTPSecure = 'ssl';
+	        $mail->Port = 465;
+
+	        // Send Email
+	        $mail->setFrom('rbfmotorshop@gmail.com', 'RBF MotorShop');
+
+	        // Recipients
+	        $mail->addAddress($email);
+	        $mail->addReplyTo('rbfmotorshop@gmail.com');
+
+	        // Content
+	        $mail->isHTML(true);
+	        $mail->Subject = $subject;
+	        $mail->Body = $message;
+
+	        $mail->send();
+
+	        if ($mail) {
+				$_SESSION['message'] = "A message has been sent to your email.";
+				$_SESSION['text'] = "Sent successfully!";
+				$_SESSION['status'] = "success";
+				header("Location: $page");
+				exit();
+			}
+
+	    } catch (Exception $e) {
+	        $_SESSION['success'] = "Message could not be sent. Mailer Error: " . $mail->ErrorInfo;
+	        header("Location: $page");
+	    }
+	}
+
+
+	// UPDATE MECHANIC PASSWORD - CHANGEPASSWORD.PHP
+	function update_mechanic_password($conn, $Id, $password, $page) {
+		$Id         = $_POST['Id'];
+		$password   = md5($_POST['password']);
+
+		$update = mysqli_query($conn, "UPDATE mechanic SET password='$password' WHERE Id='$Id'");
+        displayUpdateMessage($update, "Password has been updated!", $page);
+	}
 
 // ************************************* END FUNCTION MECHANIC ************************************* \\
 
@@ -507,29 +645,39 @@
 
 	// SAVE PRODUCT - PRODUCT_MGMT.PHP
 	function saveProduct($conn, $page, $qr_image_path) {
+		$branch       = $_POST['branch'];
 		$cat_Id       = $_POST['cat_Id'];
 		$prod_Id      = $_POST['prod_Id'];
 		$prod_name    = mysqli_real_escape_string($conn, ucwords($_POST['prod_name']));
 		$prod_stock   = mysqli_real_escape_string($conn, ucwords($_POST['prod_stock']));
-		$prod_item_no = mysqli_real_escape_string($conn, ucwords($_POST['prod_item_no']));
 		$file         = basename($_FILES["fileToUpload"]["name"]);
 		$date_today   = date('Y-m-d');
 
 		// SAVING QR CODES**********************************************************************
-		$prod_qr = uniqid('', true);
+		// $prod_qr = uniqid('', true);
+		// // Generate the QR code image filename (with path)
+		// $path = $qr_image_path;
+		// $qr_image_filename = $prod_qr . ".png";
+		// $qr_image = $path . $qr_image_filename;
+		// // Save the QR code image
+		// QRcode::png($prod_qr, $qr_image, 'L', 10, 10);
+
+		// Use the product name as the content for the QR code
+		$prod_qr_content = $prod_name.'-'.$prod_stock;
+
 		// Generate the QR code image filename (with path)
 		$path = $qr_image_path;
-		$qr_image_filename = $prod_qr . ".png";
+		$qr_image_filename = $prod_qr_content . ".png";
 		$qr_image = $path . $qr_image_filename;
-		// Save the QR code image
-		QRcode::png($prod_qr, $qr_image, 'L', 10, 10);
-	    // *************************************************************************************
 
-	    $check1 = mysqli_query($conn, "SELECT * FROM product WHERE prod_qr='$prod_qr'");
-	    if (mysqli_num_rows($check1) > 0) {
-	        displayErrorMessage("QR ID already exists.", $page);
+		// Save the QR code image
+		QRcode::png($prod_qr_content, $qr_image, 'L', 10, 10);
+	    // *************************************************************************************
+	   
+    	$check = mysqli_query($conn, "SELECT * FROM product WHERE prod_name='$prod_name'");
+	    if (mysqli_num_rows($check) > 0) {
+	        displayErrorMessage("Product name already exists.", $page);
 	    } else {
-	    	
 		    $target_dir = "../images-product/";
 		    $target_file = $target_dir . $file;
 		    $uploadOk = 1;
@@ -553,12 +701,12 @@
 		    }
 
 		    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-		        $save = mysqli_query($conn, "INSERT INTO product (cat_Id, prod_Id, prod_name, prod_stock, prod_item_no, prod_image, prod_qr, date_added) VALUES ('$cat_Id', '$prod_Id', '$prod_name', '$prod_stock', '$prod_item_no', '$file', '$qr_image_filename', '$date_today')");
+		        $save = mysqli_query($conn, "INSERT INTO product (cat_Id, prod_Id, prod_name, prod_stock, prod_image, prod_qr, branch, date_added) VALUES ('$cat_Id', '$prod_Id', '$prod_name', '$prod_stock', '$file', '$qr_image_filename', '$branch', '$date_today')");
             	displaySaveMessage($save, $page);
 		    } else {
 		        displayErrorMessage("There was an error uploading your file.", $page);
 		    }
-	    }
+		}
 	}
 
 
@@ -569,41 +717,51 @@
 		$prod_Id      = $_POST['prod_Id'];
 		$prod_name    = mysqli_real_escape_string($conn, ucwords($_POST['prod_name']));
 		$prod_stock   = mysqli_real_escape_string($conn, ucwords($_POST['prod_stock']));
-		$prod_item_no = mysqli_real_escape_string($conn, ucwords($_POST['prod_item_no']));
 		$file         = basename($_FILES["fileToUpload"]["name"]);
 
 		if(empty($file)) {
-			$update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_item_no='$prod_item_no' WHERE p_Id='$p_Id'");
-            displayUpdateMessage($update, "Product information has been updated!", $page);
-		} else {
-			$target_dir = "../images-product/";
-		    $target_file = $target_dir . $file;
-		    $uploadOk = 1;
-		    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-		    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-		    if ($check === false) {
-		        displayErrorMessage("Selected file is not an image.", $page);
-		    }
-
-		    if ($_FILES["fileToUpload"]["size"] > 500000) {
-		        displayErrorMessage("File must be up to 500KB in size.", $page);
-		    }
-
-		    if (!in_array($imageFileType, ["jpg", "png", "jpeg", "gif"])) {
-		        displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
-		    }
-
-		    if ($_FILES["fileToUpload"]["error"] != 0) {
-		        displayErrorMessage("Your file was not uploaded.", $page);
-		    }
-
-		    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-		        $update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_item_no='$prod_item_no', prod_image='$file' WHERE p_Id='$p_Id'");
-            	displayUpdateMessage($update, "Product information has been updated!", $page);
+			$check2 = mysqli_query($conn, "SELECT * FROM product WHERE prod_name='$prod_name' AND p_Id!='$p_Id'");
+		    if (mysqli_num_rows($check2) > 0) {
+		        displayErrorMessage("Product name already exists.", $page);
 		    } else {
-		        displayErrorMessage("There was an error uploading your file.", $page);
-		    }
+			$update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock' WHERE p_Id='$p_Id'");
+            displayUpdateMessage($update, "Product information has been updated!", $page);
+        	}
+		} else {
+			$check2 = mysqli_query($conn, "SELECT * FROM product WHERE prod_name='$prod_name' AND p_Id!='$p_Id'");
+		    if (mysqli_num_rows($check2) > 0) {
+		        displayErrorMessage("Product name already exists.", $page);
+		    } else {
+
+				$target_dir = "../images-product/";
+			    $target_file = $target_dir . $file;
+			    $uploadOk = 1;
+			    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+			    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+			    if ($check === false) {
+			        displayErrorMessage("Selected file is not an image.", $page);
+			    }
+
+			    if ($_FILES["fileToUpload"]["size"] > 500000) {
+			        displayErrorMessage("File must be up to 500KB in size.", $page);
+			    }
+
+			    if (!in_array($imageFileType, ["jpg", "png", "jpeg", "gif"])) {
+			        displayErrorMessage("Only JPG, JPEG, PNG & GIF files are allowed.", $page);
+			    }
+
+			    if ($_FILES["fileToUpload"]["error"] != 0) {
+			        displayErrorMessage("Your file was not uploaded.", $page);
+			    }
+
+			    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+			        $update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_image='$file' WHERE p_Id='$p_Id'");
+	            	displayUpdateMessage($update, "Product information has been updated!", $page);
+			    } else {
+			        displayErrorMessage("There was an error uploading your file.", $page);
+			    }
+			}
 		}
 	}
 
@@ -683,38 +841,31 @@
 		$selectedTime  = $_POST['selectedTime'];
 		$services      = $_POST['services'];
 		$otherServices = $_POST['otherServices'];
-		$mechanic_Id   = $_POST['mechanic_Id'];
-		$save = mysqli_query($conn, "INSERT INTO schedule (client_Id, selectedDate, selectedTime, services, otherServices, mechanic_Id, date_added) VALUES ('$client_Id', '$selectedDate', '$selectedTime', '$services', '$otherServices', '$mechanic_Id', NOW())");
+		$save = mysqli_query($conn, "INSERT INTO schedule (client_Id, selectedDate, selectedTime, services, otherServices, date_added) VALUES ('$client_Id', '$selectedDate', '$selectedTime', '$services', '$otherServices', NOW())");
     	displaySaveMessage($save, $page);
 	}
 	
 
 	// UPDATE SCHEDULE STATAUS - SCHEDULE_VIEW_DELETE.PHP
-	function updateScheduleStatus($conn, $sched_Id, $status, $page) {
+	function updateScheduleStatus($conn, $sched_Id, $status, $reason, $page) {
+		$stat_text = "";
+	    if($status == 0) {
+	    	$stat_text = "Pending";
+	    } elseif($status == 1) {
+	    	$stat_text = "Approved";
+	    } else {
+	    	$stat_text = "Denied";
+	    }
 		if($status == 1) {
 			$update = mysqli_query($conn, "UPDATE schedule SET status='$status', date_approved=NOW() WHERE sched_Id = '$sched_Id'");
 			if($update) {
-				$fetch = mysqli_query($conn, "SELECT *, clients.email AS client_email, 
-	                    CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
-	                    FROM schedule 
-	                    JOIN clients ON schedule.client_Id = clients.Id 
-	                    JOIN mechanic ON schedule.mechanic_Id = mechanic.Id 
-	                    WHERE sched_Id = '$sched_Id'");
+				$fetch = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.sched_Id = '$sched_Id'");
 
 				if(mysqli_num_rows($fetch) > 0) {
 				    $row = mysqli_fetch_array($fetch);
 
-				    $stat_text = "";
-				    if($status == 0) {
-				    	$stat_text = "Pending";
-				    } elseif($status == 1) {
-				    	$stat_text = "Approved";
-				    } else {
-				    	$stat_text = "Denied";
-				    }
-
-				    $name = $row['full_name'];
-				    $email = $row['client_email'];
+				    $name = ucwords($row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']);
+				    $email = $row['email'];
 				    $subject = "Schedule status: ".$stat_text;
 			        $message = '<p>Good day sir/maam '.$name.', This is to inform you that the schedule you have set was moved to status: <b>'.$stat_text.'</b></p> 
 			        <p><b>NOTE:</b> This is a system generated email. Please do not reply.</p> ';
@@ -725,8 +876,8 @@
 				        $mail->isSMTP();
 				        $mail->Host = 'smtp.gmail.com';
 				        $mail->SMTPAuth = true;
-				        $mail->Username = 'tatakmedellin@gmail.com';
-				        $mail->Password = 'nzctaagwhqlcgbqq';
+				        $mail->Username = 'rbfmotorshop@gmail.com';
+				        $mail->Password = 'tmjtqhsrlxjvagsw';
 				        $mail->SMTPOptions = array(
 				            'ssl' => array(
 				                'verify_peer' => false,
@@ -738,11 +889,11 @@
 				        $mail->Port = 465;
 
 				        // Send Email
-				        $mail->setFrom('tatakmedellin@gmail.com');
+				        $mail->setFrom('rbfmotorshop@gmail.com', 'RBF MotorShop');
 
 				        // Recipients
 				        $mail->addAddress($email);
-				        $mail->addReplyTo('tatakmedellin@gmail.com');
+				        $mail->addReplyTo('rbfmotorshop@gmail.com');
 
 				        // Content
 				        $mail->isHTML(true);
@@ -768,29 +919,16 @@
 		} else {
 			$update = mysqli_query($conn, "UPDATE schedule SET status='$status' WHERE sched_Id = '$sched_Id'");
 			if($update) {
-				$fetch = mysqli_query($conn, "SELECT *, clients.email AS client_email, 
-	                    CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
-	                    FROM schedule 
-	                    JOIN clients ON schedule.client_Id = clients.Id 
-	                    JOIN mechanic ON schedule.mechanic_Id = mechanic.Id 
-	                    WHERE sched_Id = '$sched_Id'");
+				$fetch = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.sched_Id = '$sched_Id'");
 
 				if(mysqli_num_rows($fetch) > 0) {
 				    $row = mysqli_fetch_array($fetch);
 
-				    $stat_text = "";
-				    if($status == 0) {
-				    	$stat_text = "Pending";
-				    } elseif($status == 1) {
-				    	$stat_text = "Approved";
-				    } else {
-				    	$stat_text = "Denied";
-				    }
-
-				    $name = $row['full_name'];
-				    $email = $row['client_email'];
+				    $name = ucwords($row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']);
+				    $email = $row['email'];
 				    $subject = "Schedule status: ".$stat_text;
-			        $message = '<p>Good day sir/maam '.$name.', This is to inform you that the schedule you have set was moved to status: <b>'.$stat_text.'</b></p> 
+			        $message = '<p>Good day sir/maam '.$name.', This is to inform you that the schedule status has been changed into: <b>'.$stat_text.'</b></p>
+			        <p>In connection with this, the approving staff has sent this message to you: '.ucwords($reason).'.</p> 
 			        <p><b>NOTE:</b> This is a system generated email. Please do not reply.</p> ';
 
 				    $mail = new PHPMailer(true);
@@ -799,8 +937,8 @@
 				        $mail->isSMTP();
 				        $mail->Host = 'smtp.gmail.com';
 				        $mail->SMTPAuth = true;
-				        $mail->Username = 'tatakmedellin@gmail.com';
-				        $mail->Password = 'nzctaagwhqlcgbqq';
+				        $mail->Username = 'rbfmotorshop@gmail.com';
+				        $mail->Password = 'tmjtqhsrlxjvagsw';
 				        $mail->SMTPOptions = array(
 				            'ssl' => array(
 				                'verify_peer' => false,
@@ -812,11 +950,11 @@
 				        $mail->Port = 465;
 
 				        // Send Email
-				        $mail->setFrom('tatakmedellin@gmail.com');
+				        $mail->setFrom('rbfmotorshop@gmail.com', 'RBF MotorShop');
 
 				        // Recipients
 				        $mail->addAddress($email);
-				        $mail->addReplyTo('tatakmedellin@gmail.com');
+				        $mail->addReplyTo('rbfmotorshop@gmail.com');
 
 				        // Content
 				        $mail->isHTML(true);
@@ -849,14 +987,78 @@
 		$selectedTime  = $_POST['selectedTime'];
 		$services      = $_POST['services'];
 		$otherServices = $_POST['otherServices'];
-		$mechanic_Id   = $_POST['mechanic_Id'];
-		$update = mysqli_query($conn, "UPDATE schedule SET selectedDate='$selectedDate', selectedTime='$selectedTime', services='$services', otherServices='$otherServices', mechanic_Id='$mechanic_Id' WHERE sched_Id = '$sched_Id'");
+		$update = mysqli_query($conn, "UPDATE schedule SET selectedDate='$selectedDate', selectedTime='$selectedTime', services='$services', otherServices='$otherServices' WHERE sched_Id = '$sched_Id'");
 		if($update) {
 			displayUpdateMessage($update, "Schedule has been updated.", $page);
 		} else {
 			displayErrorMessage("Something went wrong while updating the information.", $page);
 		}
 	}
+
+
+
+	// ASSIGN MECHANIC TO THE SCHEDULE - USER/SCHEDULE_UPDATE_DELETE.PHP
+	function assignMechanic($conn, $sched_Id, $page) {
+		$mechanic_Id  = $_POST['mechanic_Id'];
+
+		$fetch = mysqli_query($conn, "SELECT * FROM schedule WHERE sched_Id='$sched_Id'");
+		$row = mysqli_fetch_array($fetch);
+		$date = $row['selectedDate'];
+		$time = $row['selectedTime'];
+
+		$fetch2 = mysqli_query($conn, "SELECT * FROM schedule WHERE selectedDate='$date' AND selectedTime='$time' AND sched_Id!='$sched_Id' AND mechanic_Id='$mechanic_Id' ");
+		if(mysqli_num_rows($fetch2) > 0) {
+			displayErrorMessage("You cannot assign this mechanic twice or more on the same date and time.", $page);
+		} else {
+			$update = mysqli_query($conn, "UPDATE schedule SET mechanic_Id='$mechanic_Id' WHERE sched_Id = '$sched_Id'");
+			displayUpdateMessage($update, "Assigning Mechanic successful.", $page);
+		}
+	}
+
+
+// $client_Id   = mysqli_real_escape_string($conn, $_POST['client_Id']);
+// 		$mechanic_Id = mysqli_real_escape_string($conn, $_POST['mechanic_Id']);
+
+	// UPDATE PRODUCT USED IN SCHEDULES BY MECHANIC - SCHEDULE_VIEW.PHP
+	function EditStockUsed($conn, $sched_Id, $page) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $client_Id = $_POST['client_Id'];
+        $mechanic_Id = $_POST['mechanic_Id'];
+        $product_ids = $_POST['product_ids'];
+        $stock_used = $_POST['stock_used'];
+
+        $updated = false;
+
+        foreach ($product_ids as $p_Id) {
+            if (isset($stock_used[$p_Id])) {
+                $stock_used_value = (int)$stock_used[$p_Id];
+
+                // Deduct stock in product table
+                $updateQuery = mysqli_query($conn, "UPDATE product SET prod_stock = prod_stock - '$stock_used_value' WHERE p_Id = $p_Id");
+
+                // Log the transaction in the transaction_log table if stock_used is greater than 0
+                if ($updateQuery && $stock_used_value > 0) {
+                    $logQuery = mysqli_query($conn, "INSERT INTO transaction_log (sched_Id, client_Id, mechanic_Id, product_Id, quantity_used) VALUES ('$sched_Id', '$client_Id', '$mechanic_Id', '$p_Id', '$stock_used_value')");
+                    $updated = $updated || $logQuery;
+                }
+            }
+        }
+
+        if ($updated) {
+            displayUpdateMessage(true, "Product used updated successfully", $page);
+        } else {
+            displayUpdateMessage(false, "No updates were made", $page);
+        }
+    }
+}
+
+
+
+
+
+
+
+
 
 // ************************************* FUNCTION SCHEDULE ************************************* \\
 
@@ -872,8 +1074,8 @@
 	        $mail->isSMTP();
 	        $mail->Host = 'smtp.gmail.com';
 	        $mail->SMTPAuth = true;
-	        $mail->Username = 'tatakmedellin@gmail.com';
-	        $mail->Password = 'nzctaagwhqlcgbqq';
+	        $mail->Username = 'rbfmotorshop@gmail.com';
+	        $mail->Password = 'tmjtqhsrlxjvagsw';
 	        $mail->SMTPOptions = array(
 	            'ssl' => array(
 	                'verify_peer' => false,
@@ -885,11 +1087,11 @@
 	        $mail->Port = 465;
 
 	        // Send Email
-	        $mail->setFrom('tatakmedellin@gmail.com');
+	        $mail->setFrom('rbfmotorshop@gmail.com', 'RBF MotorShop');
 
 	        // Recipients
 	        $mail->addAddress($recipientEmail);
-	        $mail->addReplyTo('tatakmedellin@gmail.com');
+	        $mail->addReplyTo('rbfmotorshop@gmail.com');
 
 	        // Content
 	        $mail->isHTML(true);

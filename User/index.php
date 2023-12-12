@@ -1,24 +1,55 @@
 <title>IMS | Home</title>
 <?php include 'navbar.php'; ?>
+<style>
+	.banner {
+    	position: relative;
+	}
 
-	<div class="banner">
+	.overlay {
+	    position: absolute;
+	    top: 0;
+	    right: 0;
+	    bottom: 0;
+	    left: 0;
+	    background-color: rgba(0, 0, 0, 0.6);
+	    z-index: 1;
+	}
+
+	.homepageContainer {
+	    position: relative;
+	    z-index: 2;
+	    text-decoration: none;
+      margin-bottom: none;
+	}
+	.bannerTagline {
+		text-shadow: 2px 2px 1px rgba(0, 0, 1, 0.5); z-index: 2;
+	}
+	 .homepageContainer a.active {
+        background-color: white;
+        color: #f685a2;
+        border-radius: 5px;
+    }
+</style>
+	<div class="banner" style="background-image: url('../images/schedule.jpg');">
+		<div class="overlay"></div>
 		<div class="homepageContainer">
 			<div class="bannerHeader">
 				<h1>IMS</h1>
 				<p>Inventory Management System</p>
 			</div>
 			<p class="bannerTagline">
-				Track your goods throughout your entire supply chain, from
-				purchasing to production to end sales
+				Track your goods throughout your entire supply chain, from purchasing to production to end sales
 			</p>
 			<div class="bannerIcons">
 				<a href=""><i class="fa fa-apple"></i></a>
 				<a href=""><i class="fa fa-android"></i></a>
 				<a href=""><i class="fa fa-windows"></i></a>
-				
 			</div>
 		</div>
 	</div>
+
+
+
 	<div class="homepageContainer">
 		<div class="homepageFeatures">
 			<div class="homepageFeature">

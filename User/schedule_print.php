@@ -1,4 +1,4 @@
-<title>IMS | Schedule records</title>s
+<title>IMS | Schedule records</title>
 <?php 
 		include 'navbar.php'; 
 ?>
@@ -8,12 +8,25 @@
 			<?php 
 				if(isset($_GET['sched_Id'])) {
 				$sched_Id = $_GET['sched_Id'];
-				$sql = mysqli_query($conn, "SELECT *, clients.email AS client_email, clients.address AS client_address,
-					CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
-					FROM schedule
-					JOIN clients ON schedule.client_Id = clients.Id
-					JOIN mechanic ON schedule.mechanic_Id = mechanic.Id WHERE schedule.client_Id='$Id' AND schedule.sched_Id='$sched_Id' ORDER BY selectedDate DESC");
+				$sql = mysqli_query($conn, "SELECT * FROM schedule
+					JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.client_Id='$Id' AND schedule.sched_Id='$sched_Id' ORDER BY selectedDate DESC");
 				$row = mysqli_fetch_array($sql);
+				$mech_Id = '';
+				$mech_name = '';
+
+				if($row['mechanic_Id'] == 0) {
+					$mech_name = 'No Mechanic Assigned';
+				} else {
+					$mech_Id = $row['mechanic_Id'];
+					$get_mech = mysqli_query($conn, "SELECT * FROM mechanic WHERE Id='$mech_Id'");
+					if(mysqli_num_rows($get_mech) > 0){
+						$row2 = mysqli_fetch_array($get_mech);
+						$mech_name = ucwords($row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].' '.$row2['suffix']);
+					} else {
+						$mech_name = 'No Mechanic Available';
+					}
+					
+				}
 			?>
 			<h3 class="text-center text-secondary">Approved Schedule</h3>
 			<hr>
@@ -38,7 +51,7 @@
 								<table class="table">
 									<tr>
 										<th style="width:50%">Client name:</th>
-										<td><?= ucwords($row['full_name']) ?></td>
+										<td><?= ucwords($row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']) ?></td>
 									</tr>
 									<tr>
 										<th>Selected Date:</th>
@@ -50,7 +63,7 @@
 									</tr>
 									<tr>
 										<th>Mechanic name:</th>
-										<td><?php echo $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']; ?></td>
+										<td><?php echo $mech_name; ?></td>
 									</tr>
 								</table>
 							</div>

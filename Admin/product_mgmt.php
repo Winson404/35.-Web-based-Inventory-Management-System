@@ -44,6 +44,8 @@
         <div class="row d-flex justify-content-center align-items-center">
           <div class="col-md-7">
             <form action="../includes/processes.php" method="POST" enctype="multipart/form-data">
+              <input type="hidden" class="form-control" name="branch" value="<?= $assigned_branch ?>" readonly>
+               
               <div class="card">
                 <div class="card-header">
                   <a class="h5 text-primary">Fill in the required fields</a>
@@ -74,23 +76,17 @@
                               </select>
                             </div>
                         </div>
-                        <div class="col-lg-12 col col-md-12 col-sm-12 col-12">
+                        <div class="col-lg-8 col col-md-8 col-sm-8 col-12">
                           <div class="form-group">
                               <span class="text-dark"><b>Product name</b></span>
                               <input type="text" class="form-control"  placeholder="Product name" name="prod_name" required>
                           </div>
                         </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-12">
                             <div class="form-group">
                               <span class="text-dark"><b>Stock</b></span>
                               <input type="number" class="form-control"  placeholder="Stock" name="prod_stock" required>
                             </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-                          <div class="form-group">
-                            <span class="text-dark"><b>Item No</b></span>
-                            <input type="number" class="form-control"  placeholder="Item No" name="prod_item_no" required>
-                          </div>
                         </div>
                         <div class="col-lg-8 col-md-8 col-sm-6 col-12">
                             <div class="form-group">
@@ -196,23 +192,17 @@
                             </select>
                           </div>
                       </div>
-                      <div class="col-lg-12 col col-md-12 col-sm-12 col-12">
+                      <div class="col-lg-8 col col-md-8 col-sm-8 col-12">
                         <div class="form-group">
                             <span class="text-dark"><b>Product name</b></span>
                             <input type="text" class="form-control"  placeholder="Product name" name="prod_name" required value="<?php echo $row['prod_name']; ?>">
                         </div>
                       </div>
-                      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="col-lg-4 col-md-4 col-sm-4 col-12">
                           <div class="form-group">
                             <span class="text-dark"><b>Stock</b></span>
                             <input type="number" class="form-control"  placeholder="Stock" name="prod_stock" required value="<?php echo $row['prod_stock']; ?>">
                           </div>
-                      </div>
-                      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-                        <div class="form-group">
-                          <span class="text-dark"><b>Item No</b></span>
-                          <input type="number" class="form-control"  placeholder="Item No" name="prod_item_no" required value="<?php echo $row['prod_item_no']; ?>">
-                        </div>
                       </div>
                       <div class="col-lg-8 col-md-8 col-sm-6 col-12">
                           <div class="form-group">

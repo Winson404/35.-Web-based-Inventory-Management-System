@@ -8,7 +8,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>Administrator records</h3>
+            <h3>Administrator</h3>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header p-2">
-                <a href="admin_mgmt.php?page=create" class="btn btn-sm bg-primary ml-2"><i class="fa-sharp fa-solid fa-square-plus"></i> New Administrator</a>
+                <a href="admin_mgmt.php?page=create" class="btn btn-sm bg-primary ml-2" <?php if($u_type == 'Staff') { echo 'style="pointer-events:none; opacity: .5;"'; } ?> ><i class="fa-sharp fa-solid fa-square-plus"></i> New Administrator</a>
 
                 <div class="card-tools mr-1 mt-3">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -52,7 +52,13 @@
                   </thead>
                   <tbody id="users_data">
                       <?php 
-                        $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type != 'User' ");
+                        
+                        $sql = '';
+                        if($assigned_branch == 0) {
+                          $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type != 'User' ");
+                        } else {
+                          $sql = mysqli_query($conn, "SELECT * FROM users WHERE (user_type != 'User' AND user_type != 'Superadmin') AND assigned_branch=$assigned_branch ");
+                        }
                         while ($row = mysqli_fetch_array($sql)) {
                       ?>
                     <tr>
@@ -61,29 +67,30 @@
                               <img src="../images-users/<?php echo $row['image']; ?>" alt="" width="25" height="25" class="img-circle d-block m-auto">
                             </a href="">
                         </td>
-                        <td><?php echo ' '.$row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'].' '; ?></td>
+                        <td><?php echo ucwords($row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']); ?></td>
                         <td><?= $row['gender'] ?></td>
                         <td><?php echo $row['email']; ?> <br> <span class="text-info"><?php if($row['contact'] !== '') { echo '+63 '.$row['contact']; } ?></span></td>
                         <td>
-                          <?php if($row['user_type'] == 'Admin'): ?>
+                          <?php if($row['user_type'] == 'Superadmin'): ?>
                                 <span class="badge badge-primary p-1"><?php echo $row['user_type']; ?></span>
+                          <?php elseif($row['user_type'] == 'Admin'): ?>
+                                <span class="badge badge-warning p-1"><?php echo $row['user_type']; ?></span>
                           <?php else: ?>
                                 <span class="badge badge-success p-1"><?php echo $row['user_type']; ?></span>
-
                           <?php endif; ?>
                         </td>
                         <td class="text-primary"><?php echo $row['date_registered']; ?></td>
                         <td>
                           <a class="btn btn-primary btn-sm" href="admin_view.php?user_Id=<?php echo $row['user_Id']; ?>"><i class="fas fa-folder"></i> View</a>
 
-                          <?php if($row['user_type'] == 'Admin'): ?>
+                          <?php if($row['user_type'] == 'Admin' || $row['user_type'] == 'Superadmin'): ?>
                           <a class="btn btn-info btn-sm" href="admin_mgmt.php?page=<?php echo $row['user_Id']; ?>" style="pointer-events: none;opacity: .7;"><i class="fas fa-pencil-alt"></i> Edit</a>
                           <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['user_Id']; ?>" disabled><i class="fas fa-trash"></i> Delete</button>
                           <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#password<?php echo $row['user_Id']; ?>" disabled><i class="fa-solid fa-lock"></i> Security</button>
                           <?php else: ?>
                             <a class="btn btn-info btn-sm" href="admin_mgmt.php?page=<?php echo $row['user_Id']; ?>"><i class="fas fa-pencil-alt"></i> Edit</a>
-                            <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['user_Id']; ?>"><i class="fas fa-trash"></i> Delete</button>
-                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#password<?php echo $row['user_Id']; ?>"><i class="fa-solid fa-lock"></i> Security</button>
+                            <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['user_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fas fa-trash" ></i> Delete</button>
+                            <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#password<?php echo $row['user_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fa-solid fa-lock"></i> Security</button>
                           <?php endif; ?>
 
                           

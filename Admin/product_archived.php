@@ -1,6 +1,10 @@
 <title>IMS | Archived product records</title>
 <?php include 'navbar.php'; ?>
-
+<style>
+  .img-circle:hover {
+    opacity: 0.5;
+  }
+</style>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -36,37 +40,46 @@
               </div>
               <div class="card-body p-3">
                  <div class="row mb-2">
-                   <a href="../includes/processes.php?pdfExport=Archived" class="btn btn-xs bg-danger ml-2"><i class="fas fa-file-pdf"></i> PDF</a>
-                   <a href="../includes/processes.php?ExcelExport=Archived" class="btn btn-xs bg-success float-right ml-1"><i class="fa-solid fa-file-excel"></i> Excel</a>
+                   <a href="../includes/processes.php?pdfExport=Archived&&assigned_branch=<?= $assigned_branch ?>" class="btn btn-xs bg-danger ml-2"><i class="fas fa-file-pdf"></i> PDF</a>
+                   <a href="../includes/processes.php?ExcelExport=Archived&&assigned_branch=<?= $assigned_branch ?>" class="btn btn-xs bg-success float-right ml-1"><i class="fa-solid fa-file-excel"></i> Excel</a>
                    <a href="product_archived_print.php" class="btn btn-xs bg-secondary float-right ml-1"><i class="fas fa-print"></i> Print</a>
                  </div>
                  <table id="example11" class="table table-bordered table-hover text-sm">
                   <thead>
                   <tr> 
+                    <th>QR CODE</th>
                     <th>PRODUCT ID</th>
                     <th>CATEGORY</th>
                     <th>PRODUCT NAME</th>
                     <th>STOCK</th>
-                    <th>ITEM NO</th>
                     <th>DATE ADDED</th>
                     <th>TOOLS</th>
                   </tr>
                   </thead>
                   <tbody id="users_data">
                       <?php 
-                        $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1");
+                        $sql = '';
+                        if($assigned_branch == 0) {
+                          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1");
+                        } else {
+                          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch");
+                        }
                         while ($row = mysqli_fetch_array($sql)) {
                       ?>
                     <tr>
+                        <td>
+                          <a data-toggle="modal" data-target="#qr_image<?php echo $row['p_Id']; ?>">
+                            <img src="../images-QR Code/<?php echo $row['prod_qr']; ?>" alt="" width="25" height="25" class="img-circle d-block m-auto">
+                          </a>
+                        </td>
                         <td><?php echo $row['prod_Id']; ?></td>
                         <td><?php echo $row['cat_name']; ?></td>
                         <td><?php echo $row['prod_name']; ?></td>
                         <td><?php echo $row['prod_stock']; ?></td>
-                        <td><?php echo $row['prod_item_no']; ?></td>
                         <td class="text-primary"><?php echo date("F d, Y", strtotime($row['date_added'])); ?></td>
                         <td>
                           <a class="btn btn-primary btn-sm" href="product_view.php?p_Id=<?php echo $row['p_Id']; ?>"><i class="fas fa-folder"></i> View</a>
-                          <button type="button" class="btn bg-warning btn-sm" data-toggle="modal" data-target="#unarchive<?php echo $row['p_Id']; ?>"><i class="fas fa-archive"></i> Unarchive</button>
+                          <button type="button" class="btn bg-warning btn-sm" data-toggle="modal" data-target="#unarchive<?php echo $row['p_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fas fa-archive"></i> Unarchive</button>
                         </td> 
                     </tr>
 

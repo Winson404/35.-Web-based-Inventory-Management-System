@@ -8,7 +8,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>Category records</h3>
+            <h3>Category</h3>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -53,8 +53,8 @@
                         <td><?php echo $row['cat_name']; ?></td>
                         <td><?php echo $row['cat_description']; ?></td>
                         <td> 
-                            <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#update<?php echo $row['cat_Id']; ?>"><i class="fas fa-pencil-alt"></i> Edit</button>
-                            <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['cat_Id']; ?>"><i class="fas fa-trash"></i> Delete</button>
+                            <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#update<?php echo $row['cat_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fas fa-pencil-alt"></i> Edit</button>
+                            <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['cat_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fas fa-trash"></i> Delete</button>
                         </td> 
                     </tr>
                     <?php include 'category_update_delete.php'; } ?>

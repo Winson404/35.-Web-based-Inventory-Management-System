@@ -1,12 +1,22 @@
 <title>IMS Homepage - Inventory Management System</title>
-<?php include 'navbar.php'; ?>
+<?php 
+	include 'navbar.php'; 
+	$current_page = basename($_SERVER['PHP_SELF']);
+?>
+<style>
+	.homepageContainer a.active {
+        background-color: white;
+        color: #f685a2;
+        border-radius: 5px;
+    }
+</style>
 <body>
 	<div class="header">
 		<div class="homepageContainer">
-			<a class="m-2" href="index.php">Home</a>
-			<a class="m-2" href="about-us.php">About Us</a>
-			<a class="m-2" href="contact-us.php">Contact Us</a>
-			<a class="m-2" href="login.php">Login</a>
+			<a class="m-2 <?php echo $current_page === 'index.php' ? 'active' : ''; ?>" href="index.php">Home</a>
+			<a class="m-2 <?php echo $current_page === 'about-us.php' ? 'active' : ''; ?>" href="about-us.php">About Us</a>
+			<a class="m-2 <?php echo $current_page === 'contact.php' ? 'active' : ''; ?>" href="contact.php">Contact Us</a>
+			<a class="m-2 <?php echo $current_page === 'login.php' ? 'active' : ''; ?>" href="login.php">Login</a>
 		</div>
 	</div>
 	<div class="banner">

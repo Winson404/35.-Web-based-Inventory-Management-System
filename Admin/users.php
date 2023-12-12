@@ -8,7 +8,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>Supplier records</h3>
+            <h3>Supplier</h3>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -38,8 +38,8 @@
               </div>
               <div class="card-body p-3">
                  <div class="row mb-2">
-                   <a href="../includes/processes.php?pdfExport=Supplier" class="btn btn-xs bg-danger ml-2"><i class="fas fa-file-pdf"></i> PDF</a>
-                   <a href="../includes/processes.php?ExcelExport=Supplier" class="btn btn-xs bg-success float-right ml-1"><i class="fa-solid fa-file-excel"></i> Excel</a>
+                   <a href="../includes/processes.php?pdfExport=Supplier&&assigned_branch=<?= $assigned_branch ?>" class="btn btn-xs bg-danger ml-2"><i class="fas fa-file-pdf"></i> PDF</a>
+                   <a href="../includes/processes.php?ExcelExport=Supplier&&assigned_branch=<?= $assigned_branch ?>" class="btn btn-xs bg-success float-right ml-1"><i class="fa-solid fa-file-excel"></i> Excel</a>
                    <a href="users_print.php" class="btn btn-xs bg-secondary float-right ml-1"><i class="fas fa-print"></i> Print</a>
                  </div>
                  <table id="example11" class="table table-bordered table-hover text-sm">
@@ -55,7 +55,13 @@
                   </thead>
                   <tbody id="users_data">
                       <?php 
-                        $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' ");
+                        $sql = '';
+                        if($assigned_branch == 0) {
+                          $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' ");
+                        } else {
+                          $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' ");
+                        }
+                        
                         while ($row = mysqli_fetch_array($sql)) {
                       ?>
                     <tr>
@@ -64,23 +70,23 @@
                               <img src="../images-users/<?php echo $row['image']; ?>" alt="" width="25" height="25" class="img-circle d-block m-auto">
                             </a href="">
                         </td>
-                        <td><?php echo $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']; ?></td>
+                        <td><?php echo ucwords($row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']); ?></td>
                         <td><?php echo $row['gender']; ?></td>
                         <td><?php echo $row['email']; ?> <br> <span class="text-info"><?php if($row['contact'] !== '') { echo '+63 '.$row['contact']; } ?></span></td>
                        
                         <td class="text-primary"><?php echo $row['date_registered']; ?></td>
                         <td>
                           <a class="btn btn-primary btn-sm" href="users_view.php?user_Id=<?php echo $row['user_Id']; ?>"><i class="fas fa-folder"></i> View</a>
-                          <a class="btn btn-info btn-sm" href="users_mgmt.php?page=<?php echo $row['user_Id']; ?>"><i class="fas fa-pencil-alt"></i> Edit</a>
-                          <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['user_Id']; ?>"><i class="fas fa-trash"></i> Delete</button>
-                          <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#password<?php echo $row['user_Id']; ?>"><i class="fa-solid fa-lock"></i> Security</button>
+                          <a class="btn btn-info btn-sm" href="users_mgmt.php?page=<?php echo $row['user_Id']; ?>" <?php if($u_type == 'Staff') { echo 'style="pointer-events: none; opacity: .5"'; } ?>><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['user_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fas fa-trash"></i> Delete</button>
+                          <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#password<?php echo $row['user_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fa-solid fa-lock"></i> Security</button>
                         </td> 
                     </tr>
 
                     <?php include 'users_delete.php'; } ?>
                      
 
-                  </tbody>
+                  </tbody >
                 </table>
 
               </div>

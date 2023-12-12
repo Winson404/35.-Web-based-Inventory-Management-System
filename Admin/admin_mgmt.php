@@ -55,7 +55,18 @@
                               </div>
                             </div>
                         </div>
-                        <div class="col-lg-8 col col-md-6 col-sm-6 col-12"></div>
+                        <div class="col-lg-8 col col-md-6 col-sm-6 col-12">
+                          <div class="form-group">
+                              <div class="form-group">
+                                <span class="text-dark"><b>Branch names</b></span>
+                                <select class="form-control" name="assigned_branch" <?php if($assigned_branch != 0) { echo 'disabled'; } ?> required>
+                                  <option selected disabled value="">Select branch</option>
+                                  <option value="1" <?php if($assigned_branch == 1) { echo 'selected'; } ?> >M.H.del Pilar St, Calamba, Laguna</option>
+                                  <option value="2" <?php if($assigned_branch == 2) { echo 'selected disabled'; } ?> >Mabuhay City Road Cabuyao, Laguna</option>
+                                </select>
+                              </div>
+                            </div>
+                        </div>
                         <div class="col-lg-4 col col-md-6 col-sm-6 col-12">
                             <div class="form-group">
                               <span class="text-dark"><b>First name</b></span>
@@ -358,6 +369,18 @@
                             <?php endforeach; ?>
                           </select>
                         </div>
+                      </div>
+                      <div class="col-lg-8 col col-md-6 col-sm-6 col-12">
+                        <div class="form-group">
+                            <div class="form-group">
+                              <span class="text-dark"><b>Branch names</b></span>
+                              <select class="form-control" name="assigned_branch" required>
+                                <option selected disabled value="">Select branch</option>
+                                <option value="1" <?php if ($row['assigned_branch'] == 1) { echo 'selected'; } ?>>M.H.del Pilar St, Calamba, Laguna</option>
+                                <option value="2" <?php if ($row['assigned_branch'] == 2) { echo 'selected'; } ?>>Mabuhay City Road Cabuyao, Laguna</option>
+                              </select>
+                            </div>
+                          </div>
                       </div>
                       <div class="col-lg-8 col col-md-6 col-sm-6 col-12"></div>
                       <div class="col-lg-4 col col-md-6 col-sm-6 col-12">

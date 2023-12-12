@@ -1,9 +1,20 @@
 <?php
     include '../config.php';
-    if(isset($_SESSION['Id'])) {
+    if(isset($_SESSION['Id']) && isset($_SESSION['type'])) {
+    $type = $_SESSION['type'];
     $Id = $_SESSION['Id'];
-    $client = mysqli_query($conn, "SELECT * FROM clients WHERE Id='$Id'");
-    $row = mysqli_fetch_array($client);
+
+    $row = '';
+    if($type === 'Client') {
+      $client = mysqli_query($conn, "SELECT * FROM clients WHERE Id='$Id'");
+      $row = mysqli_fetch_array($client);
+    } else {
+      $mech = mysqli_query($conn, "SELECT * FROM mechanic WHERE Id='$Id'");
+      $row = mysqli_fetch_array($mech);
+    }
+    
+    
+    
 ?>
 
 <!DOCTYPE html>
@@ -20,6 +31,8 @@
   <link rel="stylesheet" href="../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <script src="https://use.fontawesome.com/0c7a3095b5.js"></script>
+  <!-- fullCalendar -->
+  <link rel="stylesheet" href="../plugins/fullcalendar/main.css">
 
   <!-- Google Font: Source Sans Pro -->
   <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
@@ -34,6 +47,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> -->
   <style>
+
     .form-control:not([type="email"]):not([type="password"]) {
       text-transform: capitalize;
     }
@@ -78,28 +92,36 @@
     .dropdown:hover .dropdown-content {
       display: block;
     }
+
+    .homepageContainer a.active {
+        background-color: white;
+        color: #f685a2;
+        border-radius: 5px;
+    }
+
   </style>
 </head>
 <body>
+  <?php
+    // Get the current page file name
+    $current_page = basename($_SERVER['PHP_SELF']);
+  ?>
   <div class="header">
     <div class="homepageContainer">
-  <a class="m-2" href="index.php">Home</a>
-  <a class="m-2" href="schedule.php">Schedule</a>
-  <a class="m-2" href="#">About Us</a>
-  <a class="m-2" href="#">Contact Us</a>
-  <div class="dropdown">
-    <a class="m-2 profile-dropdown-toggle" href="#">Profile</a>
-    <div class="dropdown-content">
-      <a href="profile.php" class="left-link text-dark">Account</a>
-      <a href="requestChangePass.php" class="left-link text-dark">Change Password</a>
+        <a class="m-2 <?php echo $current_page === 'index.php' ? 'active' : ''; ?>" href="index.php">Home</a>
+        <a class="m-2 <?php echo $current_page === 'schedule.php' ? 'active' : ''; ?>" href="schedule.php">Schedule</a>
+        <a class="m-2 <?php echo $current_page === 'about-us.php' ? 'active' : ''; ?>" href="about-us.php">About Us</a>
+        <a class="m-2 <?php echo $current_page === 'contact.php' ? 'active' : ''; ?>" href="contact.php">Contact Us</a>
+        <div class="dropdown">
+            <a class="m-2 profile-dropdown-toggle <?php echo $current_page === 'profile.php' || $current_page === 'requestChangePass.php' ? 'active' : ''; ?>" href="#">Profile</a>
+            <div class="dropdown-content">
+                <a href="profile.php" class="left-link text-dark">Account</a>
+                <a href="requestChangePass.php" class="left-link text-dark">Change Password</a>
+            </div>
+        </div>
+        <a class="m-5 <?php echo $current_page === 'logout.php' ? 'active' : ''; ?>" href="../logout.php">Logout</a>
     </div>
-  </div>
-  <a class="m-5" href="../logout.php">Logout</a>
 </div>
-
-
-
-  </div>
 
 <?php
 // ------------------------------CLOSING THE SESSION OF THE LOGGED IN USER WITH else statement----------//

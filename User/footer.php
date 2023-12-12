@@ -1,5 +1,4 @@
-<script src="../sweetalert2.min.js"></script>
-<?php include '../sweetalert_messages.php'; ?>
+
 
 <div class="homepageNotified">
     <div class="homepageContainer">
@@ -57,7 +56,12 @@
 <script src="../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 <script src="../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
 <script src="../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<!-- fullCalendar 2.2.5 -->
+<script src="../plugins/moment/moment.min.js"></script>
+<script src="../plugins/fullcalendar/main.js"></script>
 <!-- Bootstrap Switch -->
+
+<?php include 'sweetalert_messages.php'; ?>
 
 <script>
 
@@ -81,6 +85,20 @@
       "responsive": true, "lengthChange": true, "autoWidth": false,
       // "buttons": ["excel", "pdf", "print"]
     }).buttons().container().appendTo('#example11_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+
+    $("#example111").DataTable({
+      "responsive": true, "lengthChange": true, "autoWidth": false,
+      // "buttons": ["excel", "pdf", "print"]
+    }).buttons().container().appendTo('#example111_wrapper .col-md-6:eq(0)');
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,

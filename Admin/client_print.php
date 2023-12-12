@@ -57,7 +57,7 @@
                  <section id="printElement">
                   <div class="header">
                       <p  class="header-texts"><b>Inventory Management System</b></p>
-                      <small class="header-texts">Business Address, City, State, Zip Code</small> <br>
+                      <small class="header-texts"><?= $branch_name ?></small> <br>
                       <small  class="header-texts">Contact: (123) 456-7890 | Email: info@example.com</small>
                   </div>
                   <p class="title-text"><b>Client Records</b></p>
@@ -67,12 +67,19 @@
                         <th>Client name</th>
                         <th>Email</th>
                         <th>Address</th>
+                        <th>Vehicle Type</th>
+                        <th>Year Model</th>
                         <th>Date added</th>
                       </tr>
                     </thead>
                     <tbody id="users_data">
                         <?php 
-                          $sql = mysqli_query($conn, "SELECT * FROM clients");
+                          $sql = '';
+                          if($assigned_branch == 0) {
+                            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1");
+                          } else {
+                            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch");
+                          }
                           if(mysqli_num_rows($sql) > 0) {
                           while ($row = mysqli_fetch_array($sql)) {
                             $name = $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'];
@@ -81,6 +88,8 @@
                           <td><?php echo ucwords($name); ?></td>
                           <td><?php echo ucwords($row['email']); ?></td>
                           <td><?php echo ucwords($row['address']); ?></td>
+                          <td><?php echo ucwords($row['vehicleType']); ?></td>
+                          <td><?php echo $row['yearModel']; ?></td>
                           <td><?php echo date("F d, Y",strtotime($row['date_registered'])); ?></td>
                       </tr>
                       <?php } } else { ?>

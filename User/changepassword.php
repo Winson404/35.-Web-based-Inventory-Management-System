@@ -97,8 +97,9 @@
   <div class="row d-flex justify-content-center" style="margin-top: 20px;">
     <div class="col-lg-7 col-md-7 col-sm-12 col-12">
       <?php
-      if(isset($_GET['Id'])) {
+      if(isset($_GET['Id']) && isset($_GET['type'])) {
         $Id = $_GET['Id'];
+        $type = $_GET['type'];
       ?>
       <form action="../includes/processes.php" method="POST" class="bg-light" style="border:2px solid #fff;border-radius: 8px;">
         <input type="hidden" class="form-control" name="Id" required value="<?php echo $Id; ?>">
@@ -123,7 +124,7 @@
           </div>
           
           <div class="col-12 text-light">
-            <button type="submit" class="btn float-right" name="update_client_password" id="submit_button" style="background-color: #f685a2;"><i class="fa-solid fa-floppy-disk"></i> Edit</button>
+            <button type="submit" class="btn float-right" name="<?php if($type === 'Client') { echo 'update_client_password'; } else { echo 'update_mechanic_password'; } ?>" id="submit_button" style="background-color: #f685a2;"><i class="fa-solid fa-floppy-disk"></i> Edit</button>
           </div>
         </div>
       </form>

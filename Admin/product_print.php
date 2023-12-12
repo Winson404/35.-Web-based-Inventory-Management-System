@@ -57,7 +57,7 @@
                  <section id="printElement">
                   <div class="header">
                       <p  class="header-texts"><b>Inventory Management System</b></p>
-                      <small class="header-texts">Business Address, City, State, Zip Code</small> <br>
+                      <small class="header-texts"><?= $branch_name ?></small> <br>
                       <small  class="header-texts">Contact: (123) 456-7890 | Email: info@example.com</small>
                   </div>
                   <p class="title-text"><b>Product Records</b></p>
@@ -68,13 +68,17 @@
                         <th>Category</th>
                         <th>Name</th>
                         <th>Stock</th>
-                        <th>Item No</th>
                         <th>Date Added</th>
                       </tr>
                     </thead>
                     <tbody id="users_data">
                         <?php 
-                          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0");
+                          $sql = '';
+                          if($assigned_branch == 0) {
+                            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0");
+                          } else {
+                            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch");
+                          }
                           if(mysqli_num_rows($sql) > 0) {
                           while ($row = mysqli_fetch_array($sql)) {
                         ?>
@@ -83,7 +87,6 @@
                           <td><?php echo ucwords($row['cat_name']) ?></td>
                           <td><?php echo ucwords($row['prod_name']) ?></td>
                           <td><?php echo $row['prod_stock'] ?></td>
-                          <td><?php echo $row['prod_item_no'] ?></td>
                           <td><?php echo date("F d, Y", strtotime($row['date_added'])) ?></td>
                       </tr>
                       <?php } } else { ?>

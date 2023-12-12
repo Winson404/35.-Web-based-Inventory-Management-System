@@ -6,6 +6,17 @@
       $id = $_SESSION['admin_Id'];
       $users = mysqli_query($conn, "SELECT * FROM users WHERE user_Id='$id'");
       $row = mysqli_fetch_array($users);
+      $u_type = $row['user_type'];
+      $assigned_branch = $row['assigned_branch'];
+
+      $branch_name = '';
+      if($assigned_branch == 0) {
+        $branch_name = 'All records in 2 Branches';
+      } elseif($assigned_branch == 1) {
+        $branch_name = 'M.H.del Pilar St, Calamba, Laguna';
+      } else {
+        $branch_name = 'Mabuhay City Road Cabuyao, Laguna';
+      }
       
       $login_time = $_SESSION['login_time'];
       $logout_time = date('Y-m-d h:i A');
@@ -25,7 +36,16 @@
       <img src="../images/ims-logo.png" alt="IMS Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text text-bold" style="color: #f685a1;">IMS</span>
       <br>
-      <span class="text-sm ml-5 font-weight-light mt-2">&nbsp;&nbsp;Sample Address</span>
+      <span class="text-sm ml-5 font-weight-light mt-2">&nbsp;&nbsp;
+        <?php 
+          if($assigned_branch == 1) {
+            echo 'M.H.del Pilar St, Calamba, <br> <span class="ml-5">&nbsp;&nbsp;&nbsp;Laguna</span>';
+          } 
+          if($assigned_branch == 2) {
+            echo 'Mabuhay City Road Cabuyao, <br> <span class="ml-5">&nbsp;&nbsp;&nbsp;Laguna</span>';
+          }
+        ?>
+        </span>
     </a>
 
 
@@ -109,12 +129,14 @@
               ?>
             > 
               <!-- <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >ADMINISTRATORS</li> -->
+            <?php if($u_type !== 'Staff'): ?>
               <li class="nav-item">
                 <a href="admin.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'admin.php' || basename($_SERVER['PHP_SELF']) == 'admin_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'admin_view.php') ? 'active' : ''; ?>">
                   <i class="fas fa-user-shield"></i>
                   <p>&nbsp;Admin records</p>
                 </a>
               </li>
+            <?php endif; ?>
 
               <!-- <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >SUPPLIERS</li> -->
               <li class="nav-item">
@@ -126,7 +148,7 @@
 
               <!-- <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >CLIENT</li> -->
               <li class="nav-item">
-                <a href="client.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'client.php' || basename($_SERVER['PHP_SELF']) == 'client_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'client_view.php' || basename($_SERVER['PHP_SELF']) == 'client_print.php') ? 'active' : ''; ?>">
+                <a href="client.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'client.php' || basename($_SERVER['PHP_SELF']) == 'client_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'client_print.php') ? 'active' : ''; ?>">
                   <i class="fas fa-users"></i>
                   <p>&nbsp;&nbsp;Client records</p>
                 </a>
@@ -136,7 +158,7 @@
 
           <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >MECHANIC</li>
           <li class="nav-item">
-            <a href="mechanic.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'mechanic.php' || basename($_SERVER['PHP_SELF']) == 'mechanic_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'mechanic_view.php') ? 'active' : ''; ?>">
+            <a href="mechanic.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'mechanic.php') ? 'active' : ''; ?>">
               <i class="fas fa-tools"></i>
               <p>&nbsp;&nbsp;Mechanic records</p>
             </a>
@@ -160,7 +182,9 @@
                 basename($_SERVER['PHP_SELF']) == 'product_view.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_print.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_archived.php' ||
-                basename($_SERVER['PHP_SELF']) == 'product_archived_print.php'
+                basename($_SERVER['PHP_SELF']) == 'product_archived_print.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_low_stock.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_low_stock_print.php'
                 ) ? 'active' : ''; 
               ?>
             "><i class="fas fa-shopping-cart"></i><p>&nbsp;&nbsp;Manage products<i class="right fas fa-angle-left"></i></p></a>
@@ -172,7 +196,9 @@
                 basename($_SERVER['PHP_SELF']) == 'product_view.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_print.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_archived.php' ||
-                basename($_SERVER['PHP_SELF']) == 'product_archived_print.php'
+                basename($_SERVER['PHP_SELF']) == 'product_archived_print.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_low_stock.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_low_stock_print.php'
                 ) ? 'style="display: block;"' : ''; 
               ?>
             > 

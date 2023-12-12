@@ -35,6 +35,7 @@
         <div class="row">
           <div class="col-md-12">
             <form action="../includes/processes.php" method="POST" enctype="multipart/form-data">
+              <input type="hidden" class="form-control" name="assigned_branch" value="<?= $assigned_branch ?>" readonly>
               <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -216,7 +217,6 @@
                         </div>
 
 
-
                         <div class="col-lg-12 mt-3 mb-2 col-md-12 col-sm-12 col-12">
                           <a class="h5 text-primary"><b>Account password</b></a>
                           <div class="dropdown-divider"></div>
@@ -231,10 +231,11 @@
                         <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
                               <span class="text-dark"><b>Confirm password</b></span>
-                              <input type="password" class="form-control" name="cpassword" placeholder="Retype password" id="cpassword" onkeyup="validate_password_confirm_password()" required minlength="8">
+                              <input type="password" class="form-control" name="cpassword" placeholder="Retype password" id="cpassword" onkeyup="validate_password()" required minlength="8">
                               <small id="wrong_pass_alert" class="text-bold" style="font-style: italic;font-size: 12px;"></small>
                             </div>
                         </div>
+
 
 
                         <div class="col-lg-12 mt-3 mb-2">

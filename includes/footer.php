@@ -117,8 +117,12 @@
 <script src="../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <!-- Bootstrap Switch -->
 <script src="../plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
-
+<!-- jQuery UI -->
+<script src="../plugins/jquery-ui/jquery-ui.min.js"></script>
+<script src="../plugins/moment/moment.min.js"></script>
+<script src="../plugins/fullcalendar/main.js"></script>
 <!-- Page specific script -->
+
 
 <script>
 
@@ -248,31 +252,36 @@
 
   // AUTO CALCULATE AGE
   function calculateAge() {
-      var birthdate = new Date(document.getElementById("birthdate").value);
-      var now = new Date();
+    var birthdate = new Date(document.getElementById("birthdate").value);
+    var now = new Date();
 
-      var ageInMilliseconds = now.getTime() - birthdate.getTime();
-      var ageInSeconds = ageInMilliseconds / 1000;
-      var ageInMinutes = ageInSeconds / 60;
-      var ageInHours = ageInMinutes / 60;
-      var ageInDays = ageInHours / 24;
-      var ageInWeeks = ageInDays / 7;
-      var ageInMonths = ageInDays / 30.44;
-      var ageInYears = ageInDays / 365;
+    var ageInMilliseconds = now.getTime() - birthdate.getTime();
+    var ageInSeconds = ageInMilliseconds / 1000;
+    var ageInMinutes = ageInSeconds / 60;
+    var ageInHours = ageInMinutes / 60;
+    var ageInDays = ageInHours / 24;
+    var ageInWeeks = ageInDays / 7;
+    var ageInMonths = ageInDays / 30.44;
+    var ageInYears = ageInDays / 365;
 
-      var age = Math.floor(ageInYears);
+    var age = Math.floor(ageInYears);
 
-      if (ageInDays >= 365) {
+    if (age < 20) {
+        alert("Age must be 20 years or older.");
+        return; // Stop further processing
+    }
+
+    if (ageInDays >= 365) {
         var ageDescription = age + " year" + (age > 1 ? "s" : "") + " old";
-      } else if (ageInDays >= 30) {
+    } else if (ageInDays >= 30) {
         var ageDescription = Math.floor(ageInMonths) + " month" + (Math.floor(ageInMonths) > 1 ? "s" : "") + " old";
-      } else if (ageInDays >= 7) {
+    } else if (ageInDays >= 7) {
         var ageDescription = Math.floor(ageInWeeks) + " week" + (Math.floor(ageInWeeks) > 1 ? "s" : "") + " old";
-      } else {
+    } else {
         var ageDescription = Math.floor(ageInDays) + " day" + (Math.floor(ageInDays) > 1 ? "s" : "") + " old";
-      }
-      document.getElementById("txtage").value = ageDescription;
-  }
+    }
+    document.getElementById("txtage").value = ageDescription;
+}
 
 
 

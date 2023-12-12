@@ -36,7 +36,9 @@
   <link rel="stylesheet" href="../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
   <!-- Theme style -->
-
+  <!-- fullCalendar -->
+  <link rel="stylesheet" href="../plugins/fullcalendar/main.css">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
@@ -75,9 +77,9 @@
 <div class="wrapper">
 
   <!-- Preloader -->
-  <div class="preloader flex-column justify-content-center align-items-center">
+  <!-- <div class="preloader flex-column justify-content-center align-items-center">
     <img class="animation__shake" src="../images/ims-logo.png" alt="BMSLogo" height="105" width="105">
-  </div> 
+  </div>  -->
 
   <!-- Navbar -->
   <!-- LIGHT MODE -->
@@ -150,29 +152,48 @@
       </li> -->
 
       <!-- Messages Dropdown Menu -->
-      <!-- <li class="nav-item dropdown">
+      <?php 
+        $all_prod = '';
+        if($assigned_branch == 0) {
+          $all_prod = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <=15 LIMIT 5");
+        } else {
+          $all_prod = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <=15 AND product.branch=$assigned_branch LIMIT 5");
+        }
+        
+        $count_all = mysqli_num_rows($all_prod);
+      ?>
+      
+      <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
           <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">3</span>
+          <span class="badge badge-danger navbar-badge"><?php if($count_all > 0) { echo $count_all; } else { echo 0; } ?></span>
         </a>
+        <?php 
+          if($count_all > 0) {
+        ?>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <a href="#" class="dropdown-item">
+            <?php while($row_all_prod = mysqli_fetch_array($all_prod)) { ?>
             <div class="media">
-              <img src="../dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
+              <img src="../images-product/<?php echo $row_all_prod['prod_image']; ?>" alt="User Avatar" class="img-circle mr-2" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; height: 45px; width: 45px; border-radius: 50%;">
+              <div class="media-body mb-2">
+                <h3 class="dropdown-item-title"><?= $row_all_prod['prod_name'] ?></h3>
+                <p class="text-sm">Stock: <?= $row_all_prod['prod_stock'] ?></p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> <?= $row_all_prod['date_added'] ?></p>
               </div>
             </div>
+            <?php } ?>
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
+          <a href="product_low_stock.php" class="dropdown-item dropdown-footer">See All Critical Products</a>
         </div>
-      </li> -->
+        <?php } else { ?>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">No Products in Critical Level</a>
+        </div>
+        <?php } ?>
+      </li>
 
       <!-- Notifications Dropdown Menu -->
      

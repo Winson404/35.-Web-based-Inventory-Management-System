@@ -73,13 +73,13 @@
     var form = document.getElementById("form");
 
     if(email.match(pattern)) {
-        document.getElementById('text').style.color = 'green';
+        // document.getElementById('text').style.color = 'green';
         document.getElementById('text').innerHTML = '';
         document.getElementById('submit_button').disabled = false;
         document.getElementById('submit_button').style.opacity = (1);
     } 
     else {
-        document.getElementById('text').style.color = 'orange';
+        // document.getElementById('text').style.color = 'orange';
         document.getElementById('text').innerHTML = 'Domain must be @gmail.com';
         document.getElementById('submit_button').disabled = true;
         document.getElementById('submit_button').style.opacity = (0.4);
@@ -154,12 +154,10 @@
     var pass = document.getElementById('password').value;
     var confirm_pass = document.getElementById('cpassword').value;
     if (pass != confirm_pass) {
-      document.getElementById('wrong_pass_alert').style.color = '#e60000';
       document.getElementById('wrong_pass_alert').innerHTML = 'X Password did not matched!';
       document.getElementById('submit_button').disabled = true;
       document.getElementById('submit_button').style.opacity = (0.4);
     } else {
-      document.getElementById('wrong_pass_alert').style.color = 'green';
       document.getElementById('wrong_pass_alert').innerHTML = '✓ Password matched!';
       document.getElementById('submit_button').disabled = false;
       document.getElementById('submit_button').style.opacity = (1);

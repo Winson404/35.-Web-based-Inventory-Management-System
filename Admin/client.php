@@ -8,7 +8,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-sm-6">
-            <h3>Client records</h3>
+            <h3>Client</h3>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -24,13 +24,167 @@
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <!-- /.col -->
-          <div class="col-md-12">
+          <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+            <?php 
+              if(isset($_GET['Id'])) {
+                $Id = $_GET['Id'];
+                $fetch = mysqli_query($conn, "SELECT * FROM clients WHERE Id='$Id'");
+                $row = mysqli_fetch_array($fetch);
+            ?>
+              <form action="../includes/processes.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" class="form-control" name="Id" required value="<?php echo $row['Id']; ?>">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <a class="h5 text-primary"><b>Basic information</b></a>
+                      <div class="dropdown-divider"></div>
+                    </div>
+                    <div class="form-group">
+                      <span><b>First name</b></span>
+                      <input type="text" class="form-control"  placeholder="First name" name="firstname" required onkeyup="lettersOnly(this)" value="<?= $row['firstname']; ?>">
+                    </div>
+                    <div class="form-group">
+                        <span><b>Middle name</b></span>
+                        <input type="text" class="form-control"  placeholder="Middle name" name="middlename" onkeyup="lettersOnly(this)" value="<?= $row['middlename']; ?>">
+                    </div>
+                      <div class="form-group">
+                        <span><b>Last name</b></span>
+                        <input type="text" class="form-control"  placeholder="Last name" name="lastname" required onkeyup="lettersOnly(this)" value="<?= $row['lastname']; ?>">
+                      </div>
+                    <div class="form-group">
+                      <span><b>Ext/Suffix</b></span>
+                      <input type="text" class="form-control"  placeholder="Ext/Suffix" name="suffix" value="<?= $row['suffix']; ?>">
+                    </div>
+                    <div class="form-group">
+                      <span><b>Email</b></span>
+                      <input type="email" class="form-control" placeholder="email@gmail.com" name="email" id="email"  onkeydown="validation()" onkeyup="validation()" required value="<?= $row['email']; ?>">
+                      <small id="text" style="font-style: italic;"></small>
+                    </div>
+                    <div class="form-group">
+                      <span><b>Complete address</b></span>
+                      <br>
+                      <textarea name="address" id="" class="form-control" rows="2" placeholder="Complete address" required><?= $row['address']; ?></textarea>
+                    </div>
+                  
+                    <div class="form-group">
+                        <a class="h5 text-primary"><b>Vehicle info</b></a>
+                        <div class="dropdown-divider"></div>
+                    </div>
+
+                  <!-- Type of Vehicle Dropdown -->
+                  <div class="form-group">
+                    <span for="vehicleType"><b>Type of Vehicle</b></span>
+                    <select class="form-control" name="vehicleType" id="vehicleType" required>
+                      <option value="" selected disabled>Select type</option>
+                      <option value="sedan" <?php if($row['vehicleType'] == 'sedan') { echo 'selected'; } ?>>Sedan</option>
+                      <option value="suv" <?php if($row['vehicleType'] == 'suv') { echo 'selected'; } ?>>SUV</option>
+                      <option value="truck" <?php if($row['vehicleType'] == 'truck') { echo 'selected'; } ?>>Truck</option>
+                      <option value="van" <?php if($row['vehicleType'] == 'van') { echo 'selected'; } ?>>Van</option>
+                      <option value="motorcycle" <?php if($row['vehicleType'] == 'motorcycle') { echo 'selected'; } ?>>Motorcycle</option>
+                      <option value="convertible" <?php if($row['vehicleType'] == 'convertible') { echo 'selected'; } ?>>Convertible</option>
+                      <option value="hatchback" <?php if($row['vehicleType'] == 'hatchback') { echo 'selected'; } ?>>Hatchback</option>
+                      <option value="coupe" <?php if($row['vehicleType'] == 'coupe') { echo 'selected'; } ?>>Coupe</option>
+                      <!-- Add more options as needed -->
+                    </select>
+                  </div>
+                  <!-- Year Model Input -->
+                  <div class="form-group">
+                      <span for="yearModel"><b>Year Model</b></span>
+                      <input type="number" class="form-control" name="yearModel" id="yearModel" required placeholder="2000" value="<?= $row['yearModel']; ?>">
+                  </div>
+                  </div>
+                  <div class="card-footer">
+                      <button type="submit" class="btn bg-primary float-right" name="update_client" id="submit_button"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
+                      <a href="client.php" class="btn bg-dark float-right mr-2"><i class="fas fa-arrow-left"></i> Back</a>
+                  </div>
+                </div>
+              </form>
+            <?php } else { ?>
+              <form action="../includes/processes.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" class="form-control" name="branch" value="<?= $assigned_branch ?>" readonly>
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-group">
+                      <a class="h5 text-primary"><b>Basic information</b></a>
+                      <div class="dropdown-divider"></div>
+                    </div>
+                    <div class="form-group">
+                      <span><b>First name</b></span>
+                      <input type="text" class="form-control"  placeholder="First name" name="firstname" required onkeyup="lettersOnly(this)">
+                    </div>
+                    <div class="form-group">
+                      <span><b>Middle name</b></span>
+                      <input type="text" class="form-control"  placeholder="Middle name" name="middlename" onkeyup="lettersOnly(this)">
+                    </div>
+                    <div class="form-group">
+                      <span><b>Last name</b></span>
+                      <input type="text" class="form-control"  placeholder="Last name" name="lastname" required onkeyup="lettersOnly(this)">
+                    </div>
+                    <div class="form-group">
+                      <span><b>Ext/Suffix</b></span>
+                      <input type="text" class="form-control"  placeholder="Ext/Suffix" name="suffix">
+                    </div>
+                    <div class="form-group">
+                      <span><b>Email</b></span>
+                      <input type="email" class="form-control" placeholder="email@gmail.com" name="email" id="email"  onkeydown="validation()" onkeyup="validation()" required>
+                      <small id="text" style="font-style: italic;"></small>
+                    </div>
+                    <div class="form-group">
+                      <span><b>Complete address</b></span>
+                      <br>
+                      <textarea name="address" id="" class="form-control" rows="2" placeholder="Complete address" required></textarea>
+                    </div>
+                    <div class="form-group">
+                      <a class="h5 text-primary"><b>Vehicle info</b></a>
+                      <div class="dropdown-divider"></div>
+                    </div>
+                    <!-- Type of Vehicle Dropdown -->
+                    <div class="form-group">
+                      <span for="vehicleType"><b>Type of Vehicle</b></span>
+                      <select class="form-control" name="vehicleType" id="vehicleType" required>
+                        <option value="" selected disabled>Select type</option>
+                        <option value="sedan">Sedan</option>
+                        <option value="suv">SUV</option>
+                        <option value="truck">Truck</option>
+                        <option value="van">Van</option>
+                        <option value="motorcycle">Motorcycle</option>
+                        <option value="convertible">Convertible</option>
+                        <option value="hatchback">Hatchback</option>
+                        <option value="coupe">Coupe</option>
+                        <!-- Add more options as needed -->
+                      </select>
+                    </div>
+                    <!-- Year Model Input -->
+                    <div class="form-group">
+                      <span for="yearModel"><b>Year Model</b></span>
+                      <input type="number" class="form-control" name="yearModel" id="yearModel" required placeholder="2000">
+                    </div>
+                    <div class="form-group">
+                      <a class="h5 text-primary"><b>Account password</b></a>
+                      <div class="dropdown-divider"></div>
+                    </div>
+                    <div class="form-group">
+                      <span><b>Password</b></span>
+                      <input type="password" id="password" class="form-control" name="password" placeholder="Password" minlength="8" required>
+                      <span id="password-message" class="text-bold" style="font-style: italic;font-size: 12px;color: #e60000;"></span>
+                    </div>
+                    <div class="form-group">
+                      <span><b>Confirm password</b></span>
+                      <input type="password" class="form-control" name="cpassword" placeholder="Retype password" id="cpassword" onkeyup="validate_password()" required minlength="8">
+                      <small id="wrong_pass_alert" class="text-bold" style="font-style: italic;font-size: 12px;"></small>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <button type="submit" class="btn bg-primary float-right" name="save_client" id="submit_button"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
+                  </div>
+                </div>
+              </form>
+            <?php } ?>
+          </div>
+          <div class="col-lg-8 col-md-8 col-sm-12 col-12">
             <div class="card">
               <div class="card-header p-2">
-                <a href="client_mgmt.php?page=create" class="btn btn-sm bg-primary ml-2"><i class="fa-sharp fa-solid fa-square-plus"></i> New Client</a>
-
-                <div class="card-tools mr-1 mt-3">
+                <div class="card-tools mr-1 mt-3 mb-3">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                     <i class="fas fa-minus"></i>
                   </button>
@@ -38,8 +192,8 @@
               </div>
               <div class="card-body p-3">
                  <div class="row mb-2">
-                   <a href="../includes/processes.php?pdfExport=Client" class="btn btn-xs bg-danger ml-2"><i class="fas fa-file-pdf"></i> PDF</a>
-                   <a href="../includes/processes.php?ExcelExport=Client" class="btn btn-xs bg-success float-right ml-1"><i class="fa-solid fa-file-excel"></i> Excel</a>
+                   <a href="../includes/processes.php?pdfExport=Client&&assigned_branch=<?= $assigned_branch ?>" class="btn btn-xs bg-danger ml-2"><i class="fas fa-file-pdf"></i> PDF</a>
+                   <a href="../includes/processes.php?ExcelExport=Client&&assigned_branch=<?= $assigned_branch ?>" class="btn btn-xs bg-success float-right ml-1"><i class="fa-solid fa-file-excel"></i> Excel</a>
                    <a href="client_print.php" class="btn btn-xs bg-secondary float-right ml-1"><i class="fas fa-print"></i> Print</a>
                  </div>
                  <table id="example11" class="table table-bordered table-hover text-sm">
@@ -54,17 +208,23 @@
                   </thead>
                   <tbody id="users_data">
                       <?php 
-                        $sql = mysqli_query($conn, "SELECT * FROM clients ");
+                        $sql = '';
+                        if($assigned_branch == 0) {
+                          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1");
+                        } else {
+                          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch");
+                        }
+                        
                         while ($row = mysqli_fetch_array($sql)) {
                       ?>
                     <tr>
-                        <td><?php echo ' '.$row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'].' '; ?></td>
+                        <td><?php echo ucwords($row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']); ?></td>
                         <td><?php echo $row['email']; ?></td>
                         <td><?php echo $row['address']; ?></td>
                         <td class="text-primary"><?php echo date("F d, Y",strtotime($row['date_registered'])); ?></td>
                         <td>
-                          <a class="btn btn-info btn-sm" href="client_mgmt.php?page=<?php echo $row['Id']; ?>"><i class="fas fa-pencil-alt"></i> Edit</a>
-                          <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['Id']; ?>"><i class="fas fa-trash"></i> Delete</button>
+                          <a class="btn btn-info btn-sm" href="client.php?Id=<?php echo $row['Id']; ?>" <?php if($u_type == 'Staff') { echo 'style="pointer-events: none; opacity: .5"'; } ?>><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <button type="button" class="btn bg-danger btn-sm" data-toggle="modal" data-target="#delete<?php echo $row['Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fas fa-trash"></i> Delete</button>
                         </td> 
                     </tr>
 

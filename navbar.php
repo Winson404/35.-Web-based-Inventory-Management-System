@@ -18,7 +18,7 @@
   <link rel="shortcut icon" type="image/png" href="images/ims-logo.png">
   <link rel="stylesheet" type="text/css" href="dist/css/login.css">
   <script src="https://use.fontawesome.com/0c7a3095b5.js"></script>
-
+  <script src="plugins/fontawesome-free/js/font-awesome-ni-erwin.js" crossorigin="anonymous"></script>
   <!-- Google Font: Source Sans Pro -->
   <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
   <!-- Font Awesome Icons -->

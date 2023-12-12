@@ -44,9 +44,6 @@
               <h4>Stock : <?php echo $row['prod_stock']; ?></h4>
               <hr>
 
-              <h4>Item No : <?php echo $row['prod_item_no']; ?></h4>
-              <hr>
-
               <p class="font-italic">Date added: <?php echo date("F d, Y", strtotime($row['date_added'])); ?></p>
               <div class="py-2 px-3 mt-4">
                 <img src="../images-QR Code/<?php echo $row['prod_qr']; ?>" class="img-fluid" alt="Product Image" width="180" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">

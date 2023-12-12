@@ -344,6 +344,14 @@
                         <label for="Contact number" class="col-sm-2 col-form-label">Province</label>
                         <div class="col-sm-10">
                           <div class="input-group">
+                            <input type="text" class="form-control"  placeholder="Province" name="province" required value="<?php echo $row['province']; ?>">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="Contact number" class="col-sm-2 col-form-label">Region</label>
+                        <div class="col-sm-10">
+                          <div class="input-group">
                             <input type="text" class="form-control"  placeholder="Region" name="region" required value="<?php echo $row['region']; ?>">
                           </div>
                         </div>

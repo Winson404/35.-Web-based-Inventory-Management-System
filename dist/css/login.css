@@ -97,7 +97,6 @@ div.header a{
 	padding: 5px 10px;
 	text-decoration: none;
 	border: 2px solid transparent;
-	border-bottom: 2px solid #fff;
 }
 div.header a:hover{
 	border-radius: 5px;
@@ -115,6 +114,7 @@ div.banner{
 div.homepageContainer{
 	width: 100%;
 	max-width: 1000px;
+	text-decoration: none;
 	margin: 0 auto;
 }
 

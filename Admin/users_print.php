@@ -57,7 +57,7 @@
                  <section id="printElement">
                   <div class="header">
                       <p class="header-texts"><b>Inventory Management System</b></p>
-                      <small class="header-texts">Business Address, City, State, Zip Code</small> <br>
+                      <small class="header-texts"><?= $branch_name ?></small> <br>
                       <small class="header-texts">Contact: (123) 456-7890 | Email: info@example.com</small>
                   </div>
                   <p class="title-text"><b>Supplier Records</b></p>
@@ -79,7 +79,12 @@
                     </thead>
                     <tbody id="users_data">
                         <?php 
-                          $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User'");
+                          $sql = '';
+                          if($assigned_branch == 0) {
+                            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' ");
+                          } else {
+                            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' ");
+                          }
                           if(mysqli_num_rows($sql) > 0) {
                           while ($row = mysqli_fetch_array($sql)) {
                             $name = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix'];

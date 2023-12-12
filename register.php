@@ -66,6 +66,35 @@
             </div>
 
             <div class="col-lg-12 mt-2 mb-2 col-md-12 col-sm-12 col-12">
+                <a class="h5"><b>Vehicle info</b></a>
+                <div class="dropdown-divider"></div>
+            </div>
+
+            <!-- Type of Vehicle Dropdown -->
+            <div class="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
+                <span for="vehicleType"><b>Type of Vehicle</b></span>
+                <select class="form-control" name="vehicleType" id="vehicleType" required>
+                    <option value="" selected disabled>Select type</option>
+                    <option value="sedan">Sedan</option>
+                    <option value="suv">SUV</option>
+                    <option value="truck">Truck</option>
+                    <option value="van">Van</option>
+                    <option value="motorcycle">Motorcycle</option>
+                    <option value="convertible">Convertible</option>
+                    <option value="hatchback">Hatchback</option>
+                    <option value="coupe">Coupe</option>
+                    <!-- Add more options as needed -->
+                </select>
+            </div>
+
+            <!-- Year Model Input -->
+            <div class="col-lg-6 col-md-6 col-sm-6 col-12 form-group">
+                <span for="yearModel"><b>Year Model</b></span>
+                <input type="number" class="form-control" name="yearModel" id="yearModel" required placeholder="2000">
+            </div>
+
+
+            <div class="col-lg-12 mt-2 mb-2 col-md-12 col-sm-12 col-12">
               <a class="h5"><b>Account password</b></a>
               <div class="dropdown-divider"></div>
             </div>
@@ -73,19 +102,19 @@
                 <div class="form-group">
                   <span><b>Password</b></span>
                   <input type="password" id="password" class="form-control" name="password" placeholder="Password" minlength="8">
-                  <span id="password-message" class="text-bold" style="font-style: italic;font-size: 12px;color: #e60000;"></span>
+                  <span id="password-message" class="text-bold" style="font-style: italic;font-size: 12px;color: #f685a2;"></span>
                 </div>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                   <span><b>Confirm password</b></span>
                   <input type="password" class="form-control" name="cpassword" placeholder="Retype password" id="cpassword" onkeyup="validate_password()" required minlength="8">
-                  <small id="wrong_pass_alert" class="text-bold" style="font-style: italic;font-size: 12px;"></small>
+                  <small id="wrong_pass_alert" class="text-bold" style="font-style: italic;font-size: 12px;color: #f685a2;"></small>
                 </div>
             </div>
            
             <div class="col-12 text-light">
-              <p>Already have an account? <a href="login.php" style="color: #f685a2;;">Click here!</a></p>
+              <p>Already have an account? <a href="login.php" style="color: #f685a2;">Click here!</a></p>
            
               <button type="submit" class="btn float-right" name="register_client" id="submit_button" style="background-color: #f685a2;"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
             </div>

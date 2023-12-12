@@ -3,12 +3,23 @@
     include 'navbar.php';
     if(isset($_GET['sched_Id'])) {
     $sched_Id = $_GET['sched_Id'];
-    $fetch = mysqli_query($conn, "SELECT *, clients.email AS client_email, clients.address AS client_address, 
-          CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
-          FROM schedule 
-          JOIN clients ON schedule.client_Id = clients.Id 
-          JOIN mechanic ON schedule.mechanic_Id = mechanic.Id WHERE sched_Id='$sched_Id'");
+    $fetch = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.sched_Id='$sched_Id'");
     $row = mysqli_fetch_array($fetch);
+
+    $mech_Id = $row['mechanic_Id'];
+    $mech_name = '';
+    $mech_email = '';
+    $mech_address = '';
+
+    $get_mech = mysqli_query($conn, "SELECT * FROM mechanic WHERE Id='$mech_Id'");
+    if(mysqli_num_rows($get_mech) > 0){
+      $row2 = mysqli_fetch_array($get_mech);
+      $mech_name = ucwords($row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].' '.$row2['suffix']);
+      $mech_email = $row2['email'];
+      $mech_address = $row2['address'];
+    } else {
+      $mech_name = 'No Mechanic Available';
+    }
   ?>
   <div class="content-wrapper">
     <section class="content-header">
@@ -36,7 +47,9 @@
               <div class="card-header p-2">
                 <ul class="nav nav-pills">
                   <li class="nav-item"><a class="nav-link active" href="#clientprofile" data-toggle="tab">Client profile</a></li>
+                  <?php if(mysqli_num_rows($get_mech) > 0 ): ?>
                   <li class="nav-item"><a class="nav-link" href="#mechanicProfile" data-toggle="tab">Mechanic profile</a></li>
+                  <?php endif; ?>
                   <li class="nav-item"><a class="nav-link" href="#scheduleDetails" data-toggle="tab">Schedule details</a></li>
                 </ul>
               </div><!-- /.card-header -->
@@ -48,28 +61,7 @@
                       <div class="form-group row">
                         <label class="col-sm-2 col-form-label">Full name</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control"  name="firstname" value="<?= $row['full_name']; ?>" readonly>
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Email</label>
-                        <div class="col-sm-10">
-                          <input type="text" class="form-control" value="<?php echo $row['client_email']; ?>" readonly>
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Address</label>
-                        <div class="col-sm-10">
-                          <input type="text" class="form-control" value="<?php echo $row['client_address']; ?>" readonly>
-                        </div>
-                      </div>
-                  </div>
-
-                  <div class="tab-pane" id="mechanicProfile">
-                      <div class="form-group row">
-                        <label class="col-sm-2 col-form-label">Full name</label>
-                        <div class="col-sm-10">
-                          <input type="text" class="form-control" value="<?= $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']; ?>" readonly>
+                          <input type="text" class="form-control"  name="firstname" value="<?= $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix']; ?>" readonly>
                         </div>
                       </div>
                       <div class="form-group row">
@@ -82,6 +74,27 @@
                         <label class="col-sm-2 col-form-label">Address</label>
                         <div class="col-sm-10">
                           <input type="text" class="form-control" value="<?php echo $row['address']; ?>" readonly>
+                        </div>
+                      </div>
+                  </div>
+
+                  <div class="tab-pane" id="mechanicProfile">
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Full name</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" value="<?= $mech_name; ?>" readonly>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" value="<?php echo $mech_email; ?>" readonly>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Address</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" value="<?php echo $mech_address; ?>" readonly>
                         </div>
                       </div>
                   </div>

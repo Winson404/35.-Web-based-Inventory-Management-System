@@ -57,7 +57,7 @@
                  <section id="printElement">
                   <div class="header">
                       <p  class="header-texts"><b>Inventory Management System</b></p>
-                      <small class="header-texts">Business Address, City, State, Zip Code</small> <br>
+                      <small class="header-texts"><?= $branch_name ?></small> <br>
                       <small  class="header-texts">Contact: (123) 456-7890 | Email: info@example.com</small>
                   </div>
                   <p class="title-text"><b>Schedule Records</b></p>
@@ -75,13 +75,30 @@
                     </thead>
                     <tbody id="users_data">
                         <?php 
-                          $sql = mysqli_query($conn, "SELECT *, clients.email AS client_email, clients.address AS client_address, 
-                                CONCAT(clients.firstname, ' ', clients.middlename, ' ', clients.lastname, ' ', clients.suffix) AS full_name
-                                FROM schedule 
-                                JOIN clients ON schedule.client_Id = clients.Id 
-                                JOIN mechanic ON schedule.mechanic_Id = mechanic.Id ORDER BY selectedDate DESC");
+                          $sql = '';
+                          if($assigned_branch == 0) {
+                            $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() ORDER BY schedule.selectedDate");
+                          } else {
+                            $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch ORDER BY schedule.selectedDate");
+                          }
                           if(mysqli_num_rows($sql) > 0) {
                           while ($row = mysqli_fetch_array($sql)) {
+
+                             $mech_Id = $row['mechanic_Id'];
+                              $mech_name = '';
+                              $mech_email = '';
+                              $mech_address = '';
+
+                              $get_mech = mysqli_query($conn, "SELECT * FROM mechanic WHERE Id='$mech_Id'");
+                              if(mysqli_num_rows($get_mech) > 0){
+                                $row2 = mysqli_fetch_array($get_mech);
+                                $mech_name = ucwords($row2['firstname'].' '.$row2['middlename'].' '.$row2['lastname'].' '.$row2['suffix']);
+                                $mech_email = $row2['email'];
+                                $mech_address = $row2['address'];
+                              } else {
+                                $mech_name = 'No Mechanic Available';
+                              }
+
                             $name = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix'];
                             $services = '';
                             if($row['services'] == 'Others') {
@@ -100,10 +117,10 @@
                             }
                         ?>
                       <tr>
-                          <td><?php echo ucwords($row['full_name']) ?></td>
+                          <td><?php echo ucwords($name) ?></td>
                           <td><?php echo ucwords($services) ?></td>
                           <td><?php echo date("F d, Y",strtotime($row['selectedDate'])).' - '.date("h:i A", strtotime($row['selectedTime'])) ?></td>
-                          <td><?php echo ucwords($name) ?></td>
+                          <td><?php echo ucwords($mech_name) ?></td>
                           <td><?php echo $status ?></td>
                           <td><?php echo ($row['date_approved'] != '' ? date("F d, Y", strtotime($row['date_approved'])) : 'N/A') ?></td>
                           <td><?php echo date("F d, Y", strtotime($row['date_added'])) ?></td>
