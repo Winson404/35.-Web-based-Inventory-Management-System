@@ -279,6 +279,7 @@
 	
 	// REGISTER CLIENT - REGISTER.PHP
 	function registerClient($conn) {
+		$client_branch = mysqli_real_escape_string($conn, $_POST['client_branch']);
 		$firstname   = mysqli_real_escape_string($conn, $_POST['firstname']);
 		$middlename  = mysqli_real_escape_string($conn, $_POST['middlename']);
 		$lastname    = mysqli_real_escape_string($conn, $_POST['lastname']);
@@ -297,7 +298,7 @@
 	    if (mysqli_num_rows($check_email) > 0 || mysqli_num_rows($check_email2) > 0 || mysqli_num_rows($check_email3) > 0) {
 	        displayErrorMessage("Email already exists!", '../register.php');
 	    } else {
-	        $save = mysqli_query($conn, "INSERT INTO clients (firstname, middlename, lastname, suffix, email, address, vehicleType, yearModel, password, verification_code, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$vehicleType', '$yearModel', '$password', '$key', NOW())");
+	        $save = mysqli_query($conn, "INSERT INTO clients (firstname, middlename, lastname, suffix, email, address, vehicleType, yearModel, password, client_branch,  verification_code, date_registered) VALUES ('$firstname', '$middlename', '$lastname', '$suffix', '$email', '$address', '$vehicleType', '$yearModel', '$password', '$client_branch', '$key', NOW())");
 	        if($save) {
 	        	$fetch = mysqli_query($conn, "SELECT * FROM clients WHERE firstname='$firstname' AND middlename='$middlename' AND lastname='$lastname' AND suffix='$suffix' AND email='$email' AND address='$address' AND vehicleType='$vehicleType' AND yearModel='$yearModel' AND password='$password' AND date_registered=NOW()");
 	        	if(mysqli_num_rows($fetch) > 0) {

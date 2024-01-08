@@ -605,7 +605,7 @@
 	        </p>
 	        <p><b>Note:</b> This is a system generated email please do not reply.</p>';
 
-	    sendEmail($subject, $message, $recipientEmail="sonerwin12@gmail.com", "../User/contact.php");
+	    sendEmail($subject, $message, $recipientEmail="rbfmotorshop@gmail.com", "../User/contact.php");
 
 	}
 
@@ -628,7 +628,7 @@
 	        </p>
 	        <p><b>Note:</b> This is a system generated email please do not reply.</p>';
 
-	    sendEmail($subject, $message, $recipientEmail="sonerwin12@gmail.com", "../contact.php");
+	    sendEmail($subject, $message, $recipientEmail="rbfmotorshop@gmail.com", "../contact.php");
 
 	}
 

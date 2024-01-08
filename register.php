@@ -26,6 +26,21 @@
               <a class="h5" style="color:#f685a2;"><b>Basic information</b></a>
               <div class="dropdown-divider"></div>
             </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+              <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+                    <div class="form-group">
+                      <span><b>Branch</b></span>
+                      <select name="client_branch" class="form-control" id="" required>
+                        <option value="" selected disabled>Select branch</option>
+                        <option value="1">M.H.del Pilar St, Calamba, Laguna</option>
+                        <option value="2">Mabuhay City Road Cabuyao, Laguna</option>
+                      </select>
+                    </div>
+                </div>
+              </div>
+                
+            </div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-12">
                 <div class="form-group">
                   <span><b>First name</b></span>
