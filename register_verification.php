@@ -49,6 +49,10 @@
           </div>
         </form>
         <?php } else { ?>
+          <div class="loginInputsContainer text-light text-center">
+            <h4><b>404 PAGE NOT FOUND</b></h4>
+            <h4 class="text-sm">Back to <a href="login.php"style="color: #f685a2;">login</a></h4>
+          </div>
         <?php } ?>
       </div>
     </div>

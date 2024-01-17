@@ -54,6 +54,9 @@
                     <th>CATEGORY</th>
                     <th>PRODUCT NAME</th>
                     <th>STOCK</th>
+                    <?php if($assigned_branch == 0): ?>
+                    <th>BRANCH</th>
+                    <?php endif; ?>
                     <th>DATE ADDED</th>
                     <th>TOOLS</th>
                   </tr>
@@ -84,10 +87,23 @@
                                 <i class="fas fa-exclamation-triangle text-danger"></i>
                             <?php endif; ?>
                         </td>
+                        <?php if($assigned_branch == 0): ?>
+                        <td>
+                          <?php
+                            if ($row['branch'] == 1) {
+                              echo 'M.H.del Pilar St, Calamba, Laguna';
+                            } elseif ($row['branch'] == 2) {
+                              echo 'Mabuhay City Road Cabuyao, Laguna';
+                            } else {
+                              echo 'Admin by Superadmin';
+                            }
+                          ?>
+                        </td>
+                        <?php endif; ?>
                         <td class="text-primary"><?php echo date("F d, Y", strtotime($row['date_added'])); ?></td>
                         <td>
                           <a class="btn btn-primary btn-xs" href="product_view.php?p_Id=<?php echo $row['p_Id']; ?>"><i class="fas fa-folder"></i> View</a>
-                          <a class="btn btn-info btn-xs" href="product_mgmt.php?page=<?php echo $row['p_Id']; ?>" <?php if($u_type == 'Staff') { echo 'style="pointer-events: none; opacity: .5"'; } ?>><i class="fas fa-pencil-alt"></i> Edit</a>
+                          <!-- <a class="btn btn-info btn-xs" href="product_mgmt.php?page=<?php //echo $row['p_Id']; ?>" <?php// if($u_type == 'Staff') { echo 'style="pointer-events: none; opacity: .5"'; } ?>><i class="fas fa-pencil-alt"></i> Edit</a> -->
                           <button type="button" class="btn bg-warning btn-xs" data-toggle="modal" data-target="#archive<?php echo $row['p_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fas fa-archive"></i> Archive</button>
                           <button type="button" class="btn bg-danger btn-xs" data-toggle="modal" data-target="#delete<?php echo $row['p_Id']; ?>" <?php if($u_type == 'Staff') { echo 'disabled'; } ?>><i class="fas fa-trash"></i> Delete</button>
                         </td> 

@@ -58,6 +58,24 @@
                               <input type="text" class="form-control" placeholder="Product ID" name="prod_Id" value="<?php echo $newProductId; ?>" readonly>
                             </div>
                         </div>
+                        <?php if($assigned_branch == 0): ?>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                          <div class="form-group">
+                              <span class="text-dark"><b>Assign product</b></span>
+                              <select class="form-control" name="branch" required>
+                                <option selected disabled value="">Select branch</option>
+                                <option value="1">M.H.del Pilar St, Calamba, Laguna</option>
+                                <option value="2">Mabuhay City Road Cabuyao, Laguna</option>
+                              </select>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                          <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                            <div class="form-group mt-4">
+                              <input type="hidden" class="form-control"  placeholder="Product name" name="branch" value="<?= $assigned_branch ?>" required>
+                            </div>
+                          </div>
+                        <?php endif; ?>
                         <div class="col-lg-12 col col-md-12 col-sm-12 col-12">
                           <div class="form-group">
                               <span class="text-dark"><b>Category</b></span>

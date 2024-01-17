@@ -10,8 +10,8 @@
 					<div class="col-5 text-center d-flex align-items-center justify-content-center">
 						<div class="">
 							<h2>SCHEDULING<strong> SYSTEM</strong></h2>
-							<p class="lead mb-5">sample<br>
-								Phone: +1 234 56789012
+							<p class="lead mb-5">rbfmotorshop@gmail.com<br>
+								Phone: +63 992 268 7202
 							</p>
 						</div>
 					</div>

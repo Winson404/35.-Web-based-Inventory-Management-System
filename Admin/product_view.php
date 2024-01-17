@@ -37,7 +37,21 @@
               <h3 class="my-3">Product ID: <?php echo $row['prod_Id']; ?></h3>
               <p>Product name: <?php echo $row['prod_name']; ?></p>
               <hr>
-
+              <?php if($assigned_branch == 0): ?>
+              <p>Product branch: 
+                <?php 
+                  if ($row['branch'] == 1) {
+                    echo 'M.H.del Pilar St, Calamba, Laguna';
+                  } elseif ($row['branch'] == 2) {
+                    echo 'Mabuhay City Road Cabuyao, Laguna';
+                  } else {
+                    echo 'Admin by Superadmin';
+                  }
+                ?>
+                  
+                </p>
+              <hr>
+              <?php endif; ?>
               <h4>Category : <?php echo $row['cat_name']; ?></h4>
               <hr>
 

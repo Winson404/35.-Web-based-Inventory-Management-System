@@ -4,9 +4,9 @@
 	// require '../vendor/PHPMailer/src/Exception.php';
 	// require '../vendor/PHPMailer/src/PHPMailer.php';
 	// require '../vendor/PHPMailer/src/SMTP.php';
-	if (!class_exists('PHPMailer\PHPMailer\Exception')) { require __DIR__ . '/../vendor/PHPMailer/src/Exception.php'; }
-	if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) { require __DIR__ . '/../vendor/PHPMailer/src/PHPMailer.php'; }
-	if (!class_exists('PHPMailer\PHPMailer\SMTP')) { require __DIR__ . '/../vendor/PHPMailer/src/SMTP.php'; }
+	if (!class_exists('PHPMailer\PHPMailer\Exception')) { require __DIR__ . '/../vendor/phpmailer/src/Exception.php'; }
+	if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) { require __DIR__ . '/../vendor/phpmailer/src/PHPMailer.php'; }
+	if (!class_exists('PHPMailer\PHPMailer\SMTP')) { require __DIR__ . '/../vendor/phpmailer/src/SMTP.php'; }
 
 
 // ************************************* DELETE FUNCTION RECORDS ************************************* \\
@@ -342,7 +342,7 @@
 
 				        $mail->send();
 
-				        displaySaveMessage($save, '../register_verification.php?client_Id='.$hashed_client_Id);
+				        displaySaveMessage($save, '../register.php?client_Id='.$hashed_client_Id);
 
 				    } catch (Exception $e) {
 				        $_SESSION['success'] = "Message could not be sent. Mailer Error: " . $mail->ErrorInfo;
@@ -370,17 +370,17 @@
 	// CLIENT ACCOUNT VERIFICATION - REGISTER_VERIFICATION.PHP
 	function registerClientVerification($conn, $page) {
 		$Id   = $_POST['Id'];
+		$hashed_client_Id = sha1($Id);
 		$code = mysqli_real_escape_string($conn, $_POST['code']);
 		$fetch = mysqli_query($conn, "SELECT * FROM clients WHERE Id='$Id' AND verification_code='$code'");
 		if(mysqli_num_rows($fetch) > 0) {
-			$update = mysqli_query($conn, "UPDATE clients SET is_verified=1 WHERE Id='$Id' AND verification_code='$code'");
+			$update = mysqli_query($conn, "UPDATE clients SET is_verified=1, verification_code=0 WHERE Id='$Id' AND verification_code='$code'");
 			displayUpdateMessage($update, "Verification successful", $page);
 		} else {
-			$_SESSION['message'] = "Error";
-			$_SESSION['text'] = "Please try again.";
-			$_SESSION['status'] = "error";
-			header("Location: register.php");
-			exit();
+			$_SESSION['error'] = "Invalid code";
+			// $_SESSION['text'] = "Please try again.";
+			// $_SESSION['status'] = "error";
+			header("Location: ../register.php?client_Id=".$hashed_client_Id);
 		}
 	}
 
@@ -664,7 +664,7 @@
 		// QRcode::png($prod_qr, $qr_image, 'L', 10, 10);
 
 		// Use the product name as the content for the QR code
-		$prod_qr_content = $prod_name.'-'.$prod_stock;
+		$prod_qr_content = $prod_Id.'-'.$prod_name;
 
 		// Generate the QR code image filename (with path)
 		$path = $qr_image_path;

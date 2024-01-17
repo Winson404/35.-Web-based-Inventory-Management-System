@@ -30,92 +30,85 @@
         border-radius: 5px;
     }
 </style>
-	<div class="banner" style="background-image: url('../images/schedule.jpg');">
-		<div class="overlay"></div>
-		<div class="homepageContainer">
-			<div class="bannerHeader">
-				<h1>IMS</h1>
-				<p>Inventory Management System</p>
-			</div>
-			<p class="bannerTagline">
-				Track your goods throughout your entire supply chain, from purchasing to production to end sales
-			</p>
-			<div class="bannerIcons">
-				<a href=""><i class="fa fa-apple"></i></a>
-				<a href=""><i class="fa fa-android"></i></a>
-				<a href=""><i class="fa fa-windows"></i></a>
-			</div>
-		</div>
-	</div>
+<div class="banner" style="background-image: url('../images/schedule.jpg');">
+    <div class="overlay"></div>
+    <div class="homepageContainer">
+        <div class="row">
+            <!-- Left Section -->
+            <div class="col-lg-8 col-md-12 col-sm-12 col-12">
+                <div class="bannerHeader">
+                    <h1>RBF</h1>
+                    <p>Online Scheduling</p>
+                </div>
+                <p class="bannerTagline">
+                    Track your goods throughout your entire supply chain, from purchasing to production to end sales
+                </p>
+                <!-- <button id="scanButton" class="btn" style="background-color: #f685a2;"><i class="fa-solid fa-camera"></i> Scan QR</button> -->
+            </div>
+
+            <!-- Right Section -->
+           <!--  <div class="col-lg-4 col-md-12 col-sm-12 col-12 bg-light pb-2"  id="containerScanner"  style="margin-top: -30px; display: none;">
+                <div class="card-header text-center justify-content-center d-flex p-0">
+                    <div class="col-12 p-2">
+                        
+                        <a class="h3"><b>INPUT QR CODE</b></a>
+                        <p>Please place the QR Code located at the back of your ID in front of the camera.</p>
+                    </div>
+                </div>
+                <form action="../includes/processes.php" method="POST" class="form-horizontal">
+                    <input type="hidden" name="productQR" id="productQR" class="form-control" autofocus>
+                </form>
+                <div class="card-body p-2">
+                    <div class="position-relative">
+                        <div class="d-block m-auto bg-dark">
+                            <video id="preview" width="100%" class="shadow-sm" style="border: 4px solid gray;"></video>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button type="button" class="btn d-block m-auto" id="clickMe" onclick="refreshPage()" style="background-color: #f685a2;"><i class="fa-solid fa-camera"></i> RESET CAMERA</button>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
 
 
 
-	<div class="homepageContainer">
-		<div class="homepageFeatures">
-			<div class="homepageFeature">
-				<span class="featureIcon"><i class="fa fa-gear"></i></span>
-				<h3 class="featureTitle">Editable Theme</h3>
-				<p class="featureDescription">qwertyuiopasdfghjkaasd
-				fghjwertyuiqwertyu</p>
-			</div>
-			<div class="homepageFeature">
-				<span class="featureIcon"><i class="fa fa-star"></i></span>
-				<h3 class="featureTitle">Flat Design</h3>
-				<p class="featureDescription">qwertyuiopasdfghjkaasd
-				fghjwertyuiqwertyu</p>
-			</div>
-			<div class="homepageFeature">
-				<span class="featureIcon"><i class="fa fa-globe"></i></span>
-				<h3 class="featureTitle">Reach Your Audience</h3>
-				<p class="featureDescription">qwertyuiopasdfghjkaasdf
-				ghjwertyuiqwertyu</p>
-			</div>
-		</div>
-	</div>
-	<div class="homepageNotified">
-		<div class="homepageContainer">
-			<div class="homepageNotifiedContainer">
-				<div class="emailForm">
-					<h3>Get Notified Of An Any Updates!</h3>
-					<p>qwertyuiopqwertyuiopwertyu
-						qwertyuioqwertyuiowertyuiowertyuio
-					qwertyuiopwertyuiopwertyuiopertyuioperty</p>
-					<form action="">
-						<div class="formContainer">
-							<input type="text" placeholder="Email Address" />
-							<button>Notify</button>
-						</div>
-					</form>
-				</div>
-				<div class="video">
-					<iframe src="https://www.youtube.com/embed/48VkVOHYGWw" frameborder="0"></iframe>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="socials">
-		<div class="homepageContainer">
-			<h3 class="socialHeader">Say Hi & Get In Touch</h3>
-			<p class="socialText">qwertyuiopwertyuiuid   dfwfdfguwgfghf dffyfyfyuqsfysff</p>
-			<div class="socialIconsContainer">
-				<a href=""><i class="fa fa-twitter"></i></a>
-				<a href=""><i class="fa fa-facebook"></i></a>
-				<a href=""><i class="fa fa-pinterest"></i></a>
-				<a href=""><i class="fa fa-google-plus"></i></a>
-				<a href=""><i class="fa fa-linkedin"></i></a>
-				<a href=""><i class="fa fa-youtube"></i></a>
-			</div>
-			
-		</div>
-	</div>
-	<div class="footer">
-		<div class="homepageContainer">
-			<a href="">Contact</a>
-			<a href="">Download</a>
-			<a href="">Press</a>
-			<a href="">Email</a>
-			<a href="">Support</a>
-			<a href="">Privacy Policy</a>
-		</div>
-	</div>
+
+
+
 	<?php require_once 'footer.php'; ?>
+<!-- <script type="text/javascript" src="../plugins/instascan.min.js"></script>
+<script>
+    document.getElementById("scanButton").addEventListener("click", function () {
+        document.getElementById("containerScanner").style.display = "block";
+        load_upmodal();
+    });
+
+    function load_upmodal() {
+        document.getElementById("containerScanner").classList.remove("bg-dark");
+        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+        Instascan.Camera.getCameras().then(function (cameras) {
+            if (cameras.length > 0) {
+                scanner.start(cameras[0]);
+            } else {
+                alert('No cameras found');
+                document.getElementById("containerScanner").classList.add("bg-dark");
+            }
+        }).catch(function (e) {
+            console.error(e);
+        });
+
+        scanner.addListener('scan', function (c) {
+            document.getElementById('productQR').value = c;
+            document.forms[0].submit();
+        });
+    }
+
+    // REFRESH PAGE ON BUTTON CLICK
+    function refreshPage() {
+        location.reload();
+        load_upmodal();
+    }
+</script> -->

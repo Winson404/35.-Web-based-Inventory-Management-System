@@ -33,16 +33,19 @@
     <div class="row">
       <div class="col-lg-4 col-md-6 col-sm-6 col-12 bg-white">
         <label>Mission</label>
-        <p class="text-sm text-justify text-muted">Lorem ipsum, dolor sit, amet consectetur adipisicing elit. Veniam doloremque hic nam corrupti. Soluta ea, vero! Tenetur voluptatem rem, dolor quasi itaque inventore id nisi adipisci sunt, asperiores aut, provident?</p>
+        <p class="text-sm text-justify text-muted">We provide top-quality motorcycles, genuine replacement parts, exceptional after-sales service, competitive credit financing, innovative lifestyle services, and assistance in the development of a safe motorcycle riding culture to our clients.
+We provide our employees with possibilities for personal and professional growth and improvement in order to improve their quality of life.
+We commit to providing local employment, economic advantages, environmental preservation, and fulfillment of corporate social responsibility in the communities where we operate.</p>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-6 col-12 bg-white">
         <label>Vision</label>
-        <p class="text-sm text-justify text-muted">Lorem ipsum, dolor sit, amet consectetur adipisicing elit. Veniam doloremque hic nam corrupti. Soluta ea, vero! Tenetur voluptatem rem, dolor quasi itaque inventore id nisi adipisci sunt, asperiores aut, provident?</p>
+        <p class="text-sm text-justify text-muted">RBF Group aspires to be the most competitive motorcycle dealer in the Philippines, providing entire services to motorcycle clients in the most efficient and effective manner, and to be the benchmark motorcycle company in total customer care and satisfaction.
+To encourage and develop a safe motorcycle riding culture, we offer excellent motorcycle sales, parts, accessories, service, credit, and lifestyle services.</p>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-6 col-12 bg-white">
         <label>Contact Us</label>
-        <p class="text-sm text-justify text-muted"><i class="fa-solid fa-phone"></i> +63 9123456789</p>
-        <p class="text-sm text-justify text-muted"><i class="fa-solid fa-envelope"></i> admin@gmail.com</p>
+        <p class="text-sm text-justify text-muted"><i class="fa-solid fa-phone"></i> +63 992 268 7202</p>
+        <p class="text-sm text-justify text-muted"><i class="fa-solid fa-envelope"></i> superadmin@gmail.com</p>
       </div>
 
     </div>

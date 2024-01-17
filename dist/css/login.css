@@ -19,14 +19,14 @@ div.loginHeader{
 	margin-bottom: 150px;
 }
 div.loginHeader h1{
-	font-size: 100px;
+	font-size: 80px;
 	color:#f685a2;
 	padding:0px;
 	margin:0px;
 }
 div.loginHeader p{
 	color:#ffdae3;
-	font-size: 50px;
+	font-size: 30px;
 	margin:0px;
 	text-transform: uppercase;
 	display: inline-block;
@@ -176,7 +176,7 @@ div.homepageFeatures{
 div.homepageFeature{
 	padding: 10px 20px;
 	text-align: center;
-	width: 33.33%%;
+	width: 33.33%;
 }
 div.homepageFeature:hover{
 	border-top: 2px solid #f8a4b9;

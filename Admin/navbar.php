@@ -7,7 +7,10 @@
       $users = mysqli_query($conn, "SELECT * FROM users WHERE user_Id='$id'");
       $row = mysqli_fetch_array($users);
       $u_type = $row['user_type'];
+      $logged_in_user = $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'];
       $assigned_branch = $row['assigned_branch'];
+      $_SESSION['assigned_branch'] = $assigned_branch;
+      $_SESSION['logged_in_user'] = $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'];
 
       $branch_name = '';
       if($assigned_branch == 0) {

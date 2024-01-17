@@ -54,12 +54,13 @@
           <div class="col-lg-3 col-6">
             <div class="small-box bg-success">
               <div class="inner">
+                 
                 <?php
                   $prod = '';
                   if($assigned_branch == 0) {
-                    $prod = mysqli_query($conn, "SELECT p_Id FROM product WHERE is_archived=0");
+                    $prod = mysqli_query($conn, "SELECT p_Id FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0");
                   } else {
-                    $prod = mysqli_query($conn, "SELECT p_Id FROM product WHERE is_archived=0 AND branch=$assigned_branch");
+                    $prod = mysqli_query($conn, "SELECT p_Id FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch");
                   }            
                   $row_prod = mysqli_num_rows($prod);
                 ?>

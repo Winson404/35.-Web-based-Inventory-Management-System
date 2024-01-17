@@ -52,6 +52,9 @@
                     <th>CATEGORY</th>
                     <th>PRODUCT NAME</th>
                     <th>STOCK</th>
+                    <?php if($assigned_branch == 0): ?>
+                    <th>BRANCH</th>
+                    <?php endif; ?>
                     <th>DATE ADDED</th>
                     <th>TOOLS</th>
                   </tr>
@@ -76,6 +79,19 @@
                         <td><?php echo $row['cat_name']; ?></td>
                         <td><?php echo $row['prod_name']; ?></td>
                         <td><?php echo $row['prod_stock']; ?></td>
+                        <?php if($assigned_branch == 0): ?>
+                        <td>
+                          <?php
+                            if ($row['branch'] == 1) {
+                              echo 'M.H.del Pilar St, Calamba, Laguna';
+                            } elseif ($row['branch'] == 2) {
+                              echo 'Mabuhay City Road Cabuyao, Laguna';
+                            } else {
+                              echo 'Admin by Superadmin';
+                            }
+                          ?>
+                        </td>
+                        <?php endif; ?>
                         <td class="text-primary"><?php echo date("F d, Y", strtotime($row['date_added'])); ?></td>
                         <td>
                           <a class="btn btn-primary btn-xs" href="product_view.php?p_Id=<?php echo $row['p_Id']; ?>"><i class="fas fa-folder"></i> View</a>

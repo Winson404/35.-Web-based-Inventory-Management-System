@@ -73,17 +73,16 @@
 
                   <!-- Type of Vehicle Dropdown -->
                   <div class="form-group">
-                    <span for="vehicleType"><b>Type of Vehicle</b></span>
+                    <span for="vehicleType"><b>Type of Motorcycle</b></span>
                     <select class="form-control" name="vehicleType" id="vehicleType" required>
                       <option value="" selected disabled>Select type</option>
-                      <option value="sedan" <?php if($row['vehicleType'] == 'sedan') { echo 'selected'; } ?>>Sedan</option>
-                      <option value="suv" <?php if($row['vehicleType'] == 'suv') { echo 'selected'; } ?>>SUV</option>
-                      <option value="truck" <?php if($row['vehicleType'] == 'truck') { echo 'selected'; } ?>>Truck</option>
-                      <option value="van" <?php if($row['vehicleType'] == 'van') { echo 'selected'; } ?>>Van</option>
-                      <option value="motorcycle" <?php if($row['vehicleType'] == 'motorcycle') { echo 'selected'; } ?>>Motorcycle</option>
-                      <option value="convertible" <?php if($row['vehicleType'] == 'convertible') { echo 'selected'; } ?>>Convertible</option>
-                      <option value="hatchback" <?php if($row['vehicleType'] == 'hatchback') { echo 'selected'; } ?>>Hatchback</option>
-                      <option value="coupe" <?php if($row['vehicleType'] == 'coupe') { echo 'selected'; } ?>>Coupe</option>
+                      <option value="Rusi" <?php if($row['vehicleType'] == 'Rusi') { echo 'selected'; } ?>>Rusi</option>
+                      <option value="Yamaha" <?php if($row['vehicleType'] == 'Yamaha') { echo 'selected'; } ?>>Yamaha</option>
+                      <option value="Suzuki" <?php if($row['vehicleType'] == 'Suzuki') { echo 'selected'; } ?>>Suzuki</option>
+                      <option value="Skygo" <?php if($row['vehicleType'] == 'Skygo') { echo 'selected'; } ?>>Skygo</option>
+                      <option value="Kymco" <?php if($row['vehicleType'] == 'Kymco') { echo 'selected'; } ?>>Kymco</option>
+                      <option value="Honda" <?php if($row['vehicleType'] == 'Honda') { echo 'selected'; } ?>>Honda</option>
+                      <option value="Kawasaki" <?php if($row['vehicleType'] == 'Kawasaki') { echo 'selected'; } ?>>Kawasaki</option>
                       <!-- Add more options as needed -->
                     </select>
                   </div>
@@ -140,17 +139,16 @@
                     </div>
                     <!-- Type of Vehicle Dropdown -->
                     <div class="form-group">
-                      <span for="vehicleType"><b>Type of Vehicle</b></span>
+                      <span for="vehicleType"><b>Type of Motorcycle</b></span>
                       <select class="form-control" name="vehicleType" id="vehicleType" required>
                         <option value="" selected disabled>Select type</option>
-                        <option value="sedan">Sedan</option>
-                        <option value="suv">SUV</option>
-                        <option value="truck">Truck</option>
-                        <option value="van">Van</option>
-                        <option value="motorcycle">Motorcycle</option>
-                        <option value="convertible">Convertible</option>
-                        <option value="hatchback">Hatchback</option>
-                        <option value="coupe">Coupe</option>
+                        <option value="Rusi">Rusi</option>
+                        <option value="Yamaha">Yamaha</option>
+                        <option value="Suzuki">Suzuki</option>
+                        <option value="Skygo">Skygo</option>
+                        <option value="Kymco">Kymco</option>
+                        <option value="Honda">Honda</option>
+                        <option value="Kawasaki">Kawasaki</option>
                         <!-- Add more options as needed -->
                       </select>
                     </div>

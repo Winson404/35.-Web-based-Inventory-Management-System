@@ -5,6 +5,13 @@
 	include('../dompdf/autoload.inc.php');
 	use Dompdf\Dompdf;
 	include 'functions.php';
+
+	// $assigned_branch = $_SESSION['assigned_branch'];
+	// $logged_in_user = $_SESSION['logged_in_user'];
+	// Check if the session variables are set before using them
+    $assigned_branch = isset($_SESSION['assigned_branch']) ? $_SESSION['assigned_branch'] : null;
+    $logged_in_user = isset($_SESSION['logged_in_user']) ? $_SESSION['logged_in_user'] : null;
+
 	// use PHPMailer\PHPMailer\PHPMailer;
     // use PHPMailer\PHPMailer\Exception;
     // require 'vendor/PHPMailer/src/Exception.php';
@@ -13,8 +20,9 @@
 
 	// USERS LOGIN - LOGIN.PHP
 	if(isset($_POST['login'])) {
-		$email    = $_POST['email'];
-		$password = md5($_POST['password']);
+		$branch_type = $_POST['branch_type'];
+		$email       = $_POST['email'];
+		$password    = md5($_POST['password']);
 
 		// Check if the user has attempted to log in before
 		if (!isset($_SESSION['login_attempts'])) {
@@ -33,32 +41,61 @@
 		    }
 		}
 
-		$check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
-		if(mysqli_num_rows($check)===1) {
-			$row = mysqli_fetch_array($check);
-			// $position = $row['user_type'];
-
-			$log_ID = $row['user_Id'];
-			$login_time = date("Y-m-d h:i A");
-			$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
-
-			// if($position == 'Admin') {
-				$_SESSION['login_attempts'] = 0;
-	    		$_SESSION['last_login_attempt'] = time();
-				$_SESSION['admin_Id'] = $row['user_Id'];
-				$_SESSION['login_time'] = $login_time;
-				header("Location: ../Admin/dashboard.php");
-				exit();
-			// } else {
-				// $_SESSION['login_attempts'] = 0;
-	    		// $_SESSION['last_login_attempt'] = time();
-				// $_SESSION['user_Id'] = $row['user_Id'];
-				// $_SESSION['login_time'] = $login_time;
-				// header("Location: ../User/profile.php");
-				// exit();
-			// }
+		if($branch_type == 'branch-1') {
+			$check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
+			if(mysqli_num_rows($check)===1) {
+				$row = mysqli_fetch_array($check);
+				$assigned_branch = $row['assigned_branch'];
+				if($assigned_branch == 0 || $assigned_branch == 1) {
+					$log_ID = $row['user_Id'];
+					$login_time = date("Y-m-d h:i A");
+					$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
+					$_SESSION['login_attempts'] = 0;
+		    		$_SESSION['last_login_attempt'] = time();
+					$_SESSION['admin_Id'] = $row['user_Id'];
+					$_SESSION['login_time'] = $login_time;
+					header("Location: ../Admin/dashboard.php");
+					exit();
+				} else {
+					$_SESSION['login_attempts']++;
+				    $_SESSION['last_login_attempt'] = time();
+					displayErrorMessage("You cannot login in this branch.", "../login.php?page=branch-1");
+				}
+				
+			} else {
+				$_SESSION['login_attempts']++;
+			    $_SESSION['last_login_attempt'] = time();
+				displayErrorMessage("Incorrect password.", "../login.php?page=branch-1");
+			}
+		} if($branch_type == 'branch-2') {
+			$check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
+			if(mysqli_num_rows($check)===1) {
+				$row = mysqli_fetch_array($check);
+				$assigned_branch = $row['assigned_branch'];
+				if($assigned_branch == 0 || $assigned_branch == 2) {
+					$log_ID = $row['user_Id'];
+					$login_time = date("Y-m-d h:i A");
+					$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
+					$_SESSION['login_attempts'] = 0;
+		    		$_SESSION['last_login_attempt'] = time();
+					$_SESSION['admin_Id'] = $row['user_Id'];
+					$_SESSION['login_time'] = $login_time;
+					header("Location: ../Admin/dashboard.php");
+					exit();
+				} else {
+					$_SESSION['login_attempts']++;
+				    $_SESSION['last_login_attempt'] = time();
+					displayErrorMessage("You cannot login in this branch.", "../login.php?page=branch-2");
+				}
+				
+			} else {
+				$_SESSION['login_attempts']++;
+			    $_SESSION['last_login_attempt'] = time();
+				displayErrorMessage("Incorrect password.", "../login.php?page=branch-2");
+			}
+			
 		} else {
-		    $check2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email' AND password='$password'");
+			$check2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email' AND password='$password'");
 			if(mysqli_num_rows($check2)===1) {
 				$row = mysqli_fetch_array($check2);
 				if($row['is_verified'] == 0) {
@@ -80,9 +117,30 @@
 					header("Location: ../User/index.php");
 					exit();
 				} else {
-				    $_SESSION['login_attempts']++;
-				    $_SESSION['last_login_attempt'] = time();
-					displayErrorMessage("Incorrect password.", "../login.php");
+				    $check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
+					if(mysqli_num_rows($check)===1) {
+						$row = mysqli_fetch_array($check);
+						$assigned_branch = $row['assigned_branch'];
+						if($assigned_branch == 0) {
+							$log_ID = $row['user_Id'];
+							$login_time = date("Y-m-d h:i A");
+							$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
+							$_SESSION['login_attempts'] = 0;
+				    		$_SESSION['last_login_attempt'] = time();
+							$_SESSION['admin_Id'] = $row['user_Id'];
+							$_SESSION['login_time'] = $login_time;
+							header("Location: ../Admin/dashboard.php");
+							exit();
+						} else {
+							$_SESSION['login_attempts']++;
+						    $_SESSION['last_login_attempt'] = time();
+							displayErrorMessage("Only clients can login here.", "../login.php");
+						}
+					} else {
+						$_SESSION['login_attempts']++;
+					    $_SESSION['last_login_attempt'] = time();
+						displayErrorMessage("Incorrect password.", "../login.php");
+					}
 				}
 			}
 		}
@@ -224,11 +282,11 @@
 		$cpassword = md5($_POST['cpassword']);
 		$insert_code = '';
 	      if($type == 'Client') {
-	        $update = mysqli_query($conn, "UPDATE clients SET password='$cpassword' WHERE Id='$user_Id' ");
+	        $update = mysqli_query($conn, "UPDATE clients SET password='$cpassword', verification_code=0 WHERE Id='$user_Id' ");
 	      } elseif($type == 'Admin') { 
-	        $update = mysqli_query($conn, "UPDATE users SET password='$cpassword' WHERE user_Id='$user_Id' ");
+	        $update = mysqli_query($conn, "UPDATE users SET password='$cpassword', verification_code=0 WHERE user_Id='$user_Id' ");
 	      } else {
-	        $update = mysqli_query($conn, "UPDATE mechanic SET password='$cpassword' WHERE Id='$user_Id' ");
+	        $update = mysqli_query($conn, "UPDATE mechanic SET password='$cpassword', verification_code=0 WHERE Id='$user_Id' ");
 	      }
 		
 		displayUpdateMessage($update, "Password has been changed.", "../login.php");
@@ -677,12 +735,16 @@
 		$pdfExport       = $_GET['pdfExport'];
 		$assigned_branch = $_GET['assigned_branch'];
 		$branch_name = '';
+		$export_contact = '';
 		if($assigned_branch == 0) {
           $branch_name = 'All records in 2 Branches';
+          $export_contact = 'Contact: +63 992 268 7202';
         } elseif($assigned_branch == 1) {
           $branch_name = 'M.H.del Pilar St, Calamba, Laguna';
+          $export_contact = 'Contact: +63 992 268 7202 | Email: rbfmotorshop@gmail.com;';
         } else {
           $branch_name = 'Mabuhay City Road Cabuyao, Laguna';
+          $export_contact = 'Contact: +63 992 268 7202 | Email: rbfmotorshop2@gmail.com;';
         }
 
 		// CLIENT PDF EXPORT
@@ -702,7 +764,7 @@
 		            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
 					    <h2 style="margin: 0px;">Inventory Management System</h2>
 					    <p style="margin: 0px;">'.$branch_name.'</p>
-					    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+					    <p style="margin: 0px;">'.$export_contact.'</p>
 					</div>
 
 		        ';
@@ -715,7 +777,6 @@
 			                <tr>
 			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
 			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Email</th>
-			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Address</th>
 			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Vehicle type</th>
 			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Year Model</th>
 			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Registered</th>
@@ -731,7 +792,6 @@
 						<tr>
 							<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($name) . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['email']) . '</td>
-	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['address']) . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['vehicleType']) . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['yearModel'] . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_registered'])) . '</td>
@@ -739,7 +799,11 @@
 					';
 				}
 			
-				$html .= '</table>';
+				$html .= '</table>
+						  <div class="col-md-12 d-flex mt-3" style="display: flex; position: relative">
+					        <p class="text-sm ml-auto" style="position: absolute; right: 0;">Printed by: <br> <span class="text-muted">' . ucwords($logged_in_user) . '</span></p>
+					        <p class="text-sm ml-auto" style="position: absolute; left: 0;">From branch: <br> <span class="text-muted">' . ucwords($branch_name) . '</span></p>
+					      </div>';
 				$dompdf = new DOMPDF();
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("A4", "portrait");
@@ -770,7 +834,7 @@
 		            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
 					    <h2 style="margin: 0px;">Inventory Management System</h2>
 					    <p style="margin: 0px;">'.$branch_name.'</p>
-					    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+					    <p style="margin: 0px;">'.$export_contact.'</p>
 					</div>
 
 		        ';
@@ -816,7 +880,11 @@
 					';
 				}
 			
-				$html .= '</table>';
+				$html .= '</table>
+						  <div class="col-md-12 d-flex mt-3" style="display: flex; position: relative">
+					        <p class="text-sm ml-auto" style="position: absolute; right: 0;">Printed by: <br> <span class="text-muted">' . ucwords($logged_in_user) . '</span></p>
+					        <p class="text-sm ml-auto" style="position: absolute; left: 0;">From branch: <br> <span class="text-muted">' . ucwords($branch_name) . '</span></p>
+					      </div>';
 				$dompdf = new DOMPDF();
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "landscape");
@@ -847,7 +915,7 @@
 		            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
 					    <h2 style="margin: 0px;">Inventory Management System</h2>
 					    <p style="margin: 0px;">'.$branch_name.'</p>
-					    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+					    <p style="margin: 0px;">'.$export_contact.'</p>
 					</div>
 
 		        ';
@@ -915,7 +983,11 @@
 					';
 				}
 			
-				$html .= '</table>';
+				$html .= '</table>
+						  <div class="col-md-12 d-flex mt-3" style="display: flex; position: relative">
+					        <p class="text-sm ml-auto" style="position: absolute; right: 0;">Printed by: <br> <span class="text-muted">' . ucwords($logged_in_user) . '</span></p>
+					        <p class="text-sm ml-auto" style="position: absolute; left: 0;">From branch: <br> <span class="text-muted">' . ucwords($branch_name) . '</span></p>
+					      </div>';
 				$dompdf = new DOMPDF();
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "landscape");
@@ -939,6 +1011,7 @@
 	        }
 			
 			if(mysqli_num_rows($sql) > 0) {
+
 			
 				$html = '';
 				// Header with Logo, Business Name, Address, and Contact
@@ -946,39 +1019,59 @@
 		            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
 					    <h2 style="margin: 0px;">Inventory Management System</h2>
 					    <p style="margin: 0px;">'.$branch_name.'</p>
-					    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+					    <p style="margin: 0px;">'.$export_contact.'</p>
 					</div>
 
 		        ';
 
 				$html .= '
-					<h2 style="text-align: center; margin-bottom: 20px;">Product Records</h2>
-					<hr style="border-color: #ddd; margin: 10px 0;">
-		            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
-			            <thead style="background-color: #f2f2f2;">
-			                <tr>
-			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Product ID</th>
-			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
-			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
-			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Stock</th>
-			                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
-			                </tr>
-			            </thead>
-			            <tbody id="users_data">	
-				';
-			
+				    <h2 style="text-align: center; margin-bottom: 20px;">Product Records</h2>
+				    <hr style="border-color: #ddd; margin: 10px 0;">
+				    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
+				        <thead style="background-color: #f2f2f2;">
+				            <tr>
+				                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Product ID</th>
+				                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
+				                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
+				                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Stock</th>';
+								if ($assigned_branch == 0) {
+								    $html .= '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Branch</th>';
+								}
+					  $html .= '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
+				            </tr>
+				        </thead>
+				        <tbody id="users_data">    
+				    ';
+
 				foreach($sql as $row) {
+					$branch = '';
+					if ($row['branch'] == 1) {
+                      $branch = 'M.H.del Pilar St, Calamba, Laguna';
+                    } elseif ($row['branch'] == 2) {
+                      $branch = 'Mabuhay City Road Cabuyao, Laguna';
+                    } else {
+                      $branch = 'Admin by Superadmin';
+                    }
+
 					$html .= '
 						<tr>
 							<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_Id'] . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['cat_name']) . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['prod_name']) . '</td>
-	                        <<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_stock'] . '</td>
-	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
+	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_stock'] . '</td>';
+	                        if ($assigned_branch == 0) {
+	                        	$html .= '<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $branch . '</td>';
+	                        }
+                  $html .= '<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
 						</tr>
 					';
 				}
-				$html .= '</table>';
+				$html .= '</table>
+						  <div class="col-md-12 d-flex mt-3" style="display: flex; position: relative">
+					        <p class="text-sm ml-auto" style="position: absolute; right: 0;">Printed by: <br> <span class="text-muted">' . ucwords($logged_in_user) . '</span></p>
+					        <p class="text-sm ml-auto" style="position: absolute; left: 0;">From branch: <br> <span class="text-muted">' . ucwords($branch_name) . '</span></p>
+					      </div>';
+					      
 				$dompdf = new DOMPDF();
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "portrait");
@@ -1009,9 +1102,11 @@
 		            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
 					    <h2 style="margin: 0px;">Inventory Management System</h2>
 					    <p style="margin: 0px;">'.$branch_name.'</p>
-					    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+					    <p style="margin: 0px;">'.$export_contact.'</p>
 					</div>
 		        ';
+
+
 
 				$html .= '
 				<h2 style="text-align: center; margin-bottom: 20px;">Archived Product Records</h2>
@@ -1019,27 +1114,47 @@
 	            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
 		            <thead style="background-color: #f2f2f2;">
 		                <tr>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Product ID</th>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Stock</th>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
-		                </tr>
+			                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Product ID</th>
+			                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
+			                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
+			                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Stock</th>';
+							if ($assigned_branch == 0) {
+							    $html .= '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Branch</th>';
+							}
+				  $html .= '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
+			            </tr>
 		            </thead>
 		            <tbody id="users_data">	
 			    ';
 				foreach($sql as $row) {
-					$html .= '
+					$branch = '';
+					if ($row['branch'] == 1) {
+                      $branch = 'M.H.del Pilar St, Calamba, Laguna';
+                    } elseif ($row['branch'] == 2) {
+                      $branch = 'Mabuhay City Road Cabuyao, Laguna';
+                    } else {
+                      $branch = 'Admin by Superadmin';
+                    }
+
+                    $html .= '
 						<tr>
 							<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_Id'] . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['cat_name']) . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['prod_name']) . '</td>
-	                        <<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_stock'] . '</td>
-	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
+	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_stock'] . '</td>';
+	                        if ($assigned_branch == 0) {
+	                        	$html .= '<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $branch . '</td>';
+	                        }
+                  	$html .= '<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
 						</tr>
 					';
+
 				}
-				$html .= '</table>';
+				$html .= '</table>
+						  <div class="col-md-12 d-flex mt-3" style="display: flex; position: relative">
+					        <p class="text-sm ml-auto" style="position: absolute; right: 0;">Printed by: <br> <span class="text-muted">' . ucwords($logged_in_user) . '</span></p>
+					        <p class="text-sm ml-auto" style="position: absolute; left: 0;">From branch: <br> <span class="text-muted">' . ucwords($branch_name) . '</span></p>
+					      </div>';
 				$dompdf = new DOMPDF();
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "portrait");
@@ -1069,7 +1184,7 @@
 		            <div style="text-align: center; margin-bottom: 10px; padding-bottom: 10px;">
 					    <h2 style="margin: 0px;">Inventory Management System</h2>
 					    <p style="margin: 0px;">'.$branch_name.'</p>
-					    <p style="margin: 0px;">Contact: (123) 456-7890 | Email: info@example.com</p>
+					    <p style="margin: 0px;">'.$export_contact.'</p>
 					</div>
 		        ';
 
@@ -1079,27 +1194,46 @@
 	            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
 		            <thead style="background-color: #f2f2f2;">
 		                <tr>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Product ID</th>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Stock</th>
-		                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
-		                </tr>
+			                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Product ID</th>
+			                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
+			                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Name</th>
+			                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Stock</th>';
+							if ($assigned_branch == 0) {
+							    $html .= '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Branch</th>';
+							}
+				  $html .= '<th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Date Added</th>
+			            </tr>
 		            </thead>
 		            <tbody id="users_data">	
 			    ';
 				foreach($sql as $row) {
-					$html .= '
+					$branch = '';
+					if ($row['branch'] == 1) {
+                      $branch = 'M.H.del Pilar St, Calamba, Laguna';
+                    } elseif ($row['branch'] == 2) {
+                      $branch = 'Mabuhay City Road Cabuyao, Laguna';
+                    } else {
+                      $branch = 'Admin by Superadmin';
+                    }
+
+                    $html .= '
 						<tr>
 							<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_Id'] . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['cat_name']) . '</td>
 	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . ucwords($row['prod_name']) . '</td>
-	                        <<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_stock'] . '</td>
-	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
+	                        <td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $row['prod_stock'] . '</td>';
+	                        if ($assigned_branch == 0) {
+	                        	$html .= '<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . $branch . '</td>';
+	                        }
+                  	$html .= '<td style="border: 1px solid #ddd; padding: 12px; text-align: left;">' . date("F d, Y", strtotime($row['date_added'])) . '</td>
 						</tr>
 					';
 				}
-				$html .= '</table>';
+				$html .= '</table>
+						  <div class="col-md-12 d-flex mt-3" style="display: flex; position: relative">
+					        <p class="text-sm ml-auto" style="position: absolute; right: 0;">Printed by: <br> <span class="text-muted">' . ucwords($logged_in_user) . '</span></p>
+					        <p class="text-sm ml-auto" style="position: absolute; left: 0;">From branch: <br> <span class="text-muted">' . ucwords($branch_name) . '</span></p>
+					      </div>';
 				$dompdf = new DOMPDF();
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "portrait");
@@ -1294,9 +1428,16 @@
 
 		// PRODUCT RECORDS EXCEL EXPORT
 		elseif($ExcelExport == 'Product') {
-			$product = [
-		        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Date Added']
-		      ];
+			if($assigned_branch == 0) {
+				$product = [
+			        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Branch', 'Date Added']
+			      ];
+			} else {
+				$product = [
+			        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Date Added']
+			      ];
+			}
+			
 
 		      $id = 0;
 
@@ -1310,8 +1451,22 @@
 		      $res = mysqli_query($conn, $sql);
 		      if (mysqli_num_rows($res) > 0) {
 		        foreach ($res as $row) {
-		          $id++;
-		          $product = array_merge($product, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], date("F d, Y", strtotime($row['date_added'])) )));
+	        	$branch = '';
+				if ($row['branch'] == 1) {
+                  $branch = 'M.H.del Pilar St, Calamba, Laguna';
+                } elseif ($row['branch'] == 2) {
+                  $branch = 'Mabuhay City Road Cabuyao, Laguna';
+                } else {
+                  $branch = 'Admin by Superadmin';
+                }
+
+	            $id++;
+	            if($assigned_branch == 0) {
+					$product = array_merge($product, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], $branch, date("F d, Y", strtotime($row['date_added'])) )));
+				} else {
+					$product = array_merge($product, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], date("F d, Y", strtotime($row['date_added'])) )));
+				}
+		          
 		        }
 		      } else {
 		        $_SESSION['message'] = "No record found in the database.";
@@ -1334,9 +1489,16 @@
 
 		// ARCHIVED PRODUCT RECORDS EXCEL EXPORT
 		elseif($ExcelExport == 'Archived') {
-			$product_archived = [
-		        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Status', 'Date Added']
-		      ];
+			
+		    if($assigned_branch == 0) {
+				$product_archived = [
+			        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Branch', 'Status', 'Date Added']
+			      ];
+			} else {
+				$product_archived = [
+			        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Status', 'Date Added']
+			      ];
+			}
 
 		      $id = 0;
 		      $sql = '';
@@ -1349,8 +1511,21 @@
 		      $res = mysqli_query($conn, $sql);
 		      if (mysqli_num_rows($res) > 0) {
 		        foreach ($res as $row) {
-		          $id++;
-		          $product_archived = array_merge($product_archived, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], 'Archived', date("F d, Y", strtotime($row['date_added'])) )));
+		        	$branch = '';
+					if ($row['branch'] == 1) {
+	                  $branch = 'M.H.del Pilar St, Calamba, Laguna';
+	                } elseif ($row['branch'] == 2) {
+	                  $branch = 'Mabuhay City Road Cabuyao, Laguna';
+	                } else {
+	                  $branch = 'Admin by Superadmin';
+	                }
+		            $id++;
+		            if($assigned_branch == 0) {
+		            	$product_archived = array_merge($product_archived, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], $branch, 'Archived', date("F d, Y", strtotime($row['date_added'])) )));
+					} else {
+						$product_archived = array_merge($product_archived, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], 'Archived', date("F d, Y", strtotime($row['date_added'])) )));
+					}
+		          
 		        }
 		      } else {
 		        $_SESSION['message'] = "No record found in the database.";
@@ -1373,9 +1548,16 @@
 
 		// LOW STOCK PRODUCT RECORDS EXCEL EXPORT
 		elseif($ExcelExport == 'ProductLowStack') {
-			$product_archived = [
-		        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Status', 'Date Added']
-		      ];
+			
+		        if($assigned_branch == 0) {
+					$product_archived = [
+				        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Branch', 'Status', 'Date Added']
+				      ];
+				} else {
+					$product_archived = [
+				        ['No.', 'Product ID', 'Category', 'Product Name', 'Product Stock', 'Status', 'Date Added']
+				      ];
+				}
 
 		      $id = 0;
 		      $sql = '';
@@ -1388,8 +1570,21 @@
 		      $res = mysqli_query($conn, $sql);
 		      if (mysqli_num_rows($res) > 0) {
 		        foreach ($res as $row) {
+		        	$branch = '';
+					if ($row['branch'] == 1) {
+	                  $branch = 'M.H.del Pilar St, Calamba, Laguna';
+	                } elseif ($row['branch'] == 2) {
+	                  $branch = 'Mabuhay City Road Cabuyao, Laguna';
+	                } else {
+	                  $branch = 'Admin by Superadmin';
+	                }
 		          $id++;
-		          $product_archived = array_merge($product_archived, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], 'Archived', date("F d, Y", strtotime($row['date_added'])) )));
+		            if($assigned_branch == 0) {
+		            	$product_archived = array_merge($product_archived, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], $branch, 'Archived', date("F d, Y", strtotime($row['date_added'])) )));
+					} else {
+						$product_archived = array_merge($product_archived, array(array($id, $row['prod_Id'], ucwords($row['cat_name']), ucwords($row['prod_name']), $row['prod_stock'], 'Archived', date("F d, Y", strtotime($row['date_added'])) )));
+					}
+		          
 		        }
 		      } else {
 		        $_SESSION['message'] = "No record found in the database.";
@@ -1420,5 +1615,35 @@
 	}
 
 // ************************************* END EXPORT TO EXCEL PROCESSES ************************************* \\
+
+
+// ************************************* SCAN QR CODE OF PRODUCT ******************************************* \\
+// QR CODE SCANNING - SCANQRCODE.PHP
+if (isset($_POST['productQR'])) {
+    $productQR = $_POST['productQR'];
+
+    // Assuming $productQR contains the format prod_Id-prod_name
+    list($prod_Id, $prod_name) = explode('-', $productQR);
+
+    // Perform a query to fetch the corresponding product details
+    $check = mysqli_query($conn, "SELECT * FROM product WHERE prod_Id='$prod_Id' AND prod_name='$prod_name'");
+
+    if (mysqli_num_rows($check) > 0) {
+        $row = mysqli_fetch_array($check);
+        $p_Id = $row['p_Id'];
+        $prod_name = $row['prod_name'];
+        $prod_Id = $row['prod_Id'];
+        header('Location: ../product_view.php?p_Id='.$p_Id.'');
+        // echo "Product Name: $prod_name<br>";
+        // echo "Product ID: $prod_Id<br>";
+    } else {
+        $_SESSION['message'] = "There is no product record found with this QR Code.";
+        $_SESSION['text'] = "Please try again.";
+        $_SESSION['status'] = "error";
+        header("Location: ../index.php");
+    }
+}
+
+// ************************************* SCAN QR CODE OF PRODUCT ******************************************* \\
 
 ?>

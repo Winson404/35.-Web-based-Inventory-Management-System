@@ -57,7 +57,7 @@
 									<?php elseif($row['status'] == 1): ?>
 									<span class="badge bg-success pt-1">Approved</span>
 									<?php else: ?>
-									<span class="badge bg-danger pt-1">Danger</span>
+									<span class="badge bg-danger pt-1">Denied</span>
 									<?php endif; ?>
 								</td>
 								<td>

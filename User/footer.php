@@ -1,51 +1,6 @@
 
 
-<div class="homepageNotified">
-    <div class="homepageContainer">
-      <div class="homepageNotifiedContainer">
-        <div class="emailForm">
-          <h3>Get Notified Of An Any Updates!</h3>
-          <p>qwertyuiopqwertyuiopwertyu
-            qwertyuioqwertyuiowertyuiowertyuio
-          qwertyuiopwertyuiopwertyuiopertyuioperty</p>
-          <form action="">
-            <div class="formContainer">
-              <input type="text" placeholder="Email Address" />
-              <button>Notify</button>
-            </div>
-          </form>
-        </div>
-        <div class="video">
-          <iframe src="https://www.youtube.com/embed/48VkVOHYGWw" frameborder="0"></iframe>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="socials">
-    <div class="homepageContainer">
-      <h3 class="socialHeader">Say Hi & Get In Touch</h3>
-      <p class="socialText">qwertyuiopwertyuiuid   dfwfdfguwgfghf dffyfyfyuqsfysff</p>
-      <div class="socialIconsContainer">
-        <a href=""><i class="fa fa-twitter"></i></a>
-        <a href=""><i class="fa fa-facebook"></i></a>
-        <a href=""><i class="fa fa-pinterest"></i></a>
-        <a href=""><i class="fa fa-google-plus"></i></a>
-        <a href=""><i class="fa fa-linkedin"></i></a>
-        <a href=""><i class="fa fa-youtube"></i></a>
-      </div>
-      
-    </div>
-  </div>
-  <div class="footer">
-    <div class="homepageContainer">
-      <a href="">Contact</a>
-      <a href="">Download</a>
-      <a href="">Press</a>
-      <a href="">Email</a>
-      <a href="">Support</a>
-      <a href="">Privacy Policy</a>
-    </div>
-  </div>
+
 
 
 <script src="../plugins/jquery/jquery.min.js"></script>

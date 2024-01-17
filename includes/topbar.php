@@ -268,7 +268,7 @@
       if (willDelete) {
         // Make an AJAX request to the PHP file
         $.ajax({
-          url: '../Includes/ajax_autoLogout.php',
+          url: '../includes/ajax_autoLogout.php',
           type: 'POST',
           data: { 
             id: '<?php echo $id; ?>', 

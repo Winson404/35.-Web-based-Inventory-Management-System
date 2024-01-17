@@ -4,10 +4,22 @@
     $type = $_SESSION['type'];
     $Id = $_SESSION['Id'];
 
+    
+    
+    $branch_name = '';
     $row = '';
     if($type === 'Client') {
       $client = mysqli_query($conn, "SELECT * FROM clients WHERE Id='$Id'");
       $row = mysqli_fetch_array($client);
+      $logged_in_user = $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'];
+      $client_branch = $row['client_branch'];
+      if($client_branch == 0) {
+        $branch_name = 'Unknown branch';
+      } elseif($client_branch == 1) {
+        $branch_name = 'M.H.del Pilar St, Calamba, Laguna';
+      } else {
+        $branch_name = 'Mabuhay City Road Cabuyao, Laguna';
+      }
     } else {
       $mech = mysqli_query($conn, "SELECT * FROM mechanic WHERE Id='$Id'");
       $row = mysqli_fetch_array($mech);
