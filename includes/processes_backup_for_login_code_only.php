@@ -20,7 +20,7 @@
 
 	// USERS LOGIN - LOGIN.PHP
 	if(isset($_POST['login'])) {
-
+		$branch_type = $_POST['branch_type'];
 		$email       = $_POST['email'];
 		$password    = md5($_POST['password']);
 
@@ -41,19 +41,59 @@
 		    }
 		}
 
-
-		$check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
-		if(mysqli_num_rows($check)===1) {
-			$row = mysqli_fetch_array($check);
-			$log_ID = $row['user_Id'];
-			$login_time = date("Y-m-d h:i A");
-			$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
-			$_SESSION['login_attempts'] = 0;
-    		$_SESSION['last_login_attempt'] = time();
-			$_SESSION['admin_Id'] = $row['user_Id'];
-			$_SESSION['login_time'] = $login_time;
-			header("Location: ../Admin/dashboard.php");
-			exit();
+		if($branch_type == 'branch-1') {
+			$check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
+			if(mysqli_num_rows($check)===1) {
+				$row = mysqli_fetch_array($check);
+				$assigned_branch = $row['assigned_branch'];
+				if($assigned_branch == 0 || $assigned_branch == 1) {
+					$log_ID = $row['user_Id'];
+					$login_time = date("Y-m-d h:i A");
+					$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
+					$_SESSION['login_attempts'] = 0;
+		    		$_SESSION['last_login_attempt'] = time();
+					$_SESSION['admin_Id'] = $row['user_Id'];
+					$_SESSION['login_time'] = $login_time;
+					header("Location: ../Admin/dashboard.php");
+					exit();
+				} else {
+					$_SESSION['login_attempts']++;
+				    $_SESSION['last_login_attempt'] = time();
+					displayErrorMessage("You cannot login in this branch.", "../login.php?page=branch-1");
+				}
+				
+			} else {
+				$_SESSION['login_attempts']++;
+			    $_SESSION['last_login_attempt'] = time();
+				displayErrorMessage("Incorrect password.", "../login.php?page=branch-1");
+			}
+		} if($branch_type == 'branch-2') {
+			$check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
+			if(mysqli_num_rows($check)===1) {
+				$row = mysqli_fetch_array($check);
+				$assigned_branch = $row['assigned_branch'];
+				if($assigned_branch == 0 || $assigned_branch == 2) {
+					$log_ID = $row['user_Id'];
+					$login_time = date("Y-m-d h:i A");
+					$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
+					$_SESSION['login_attempts'] = 0;
+		    		$_SESSION['last_login_attempt'] = time();
+					$_SESSION['admin_Id'] = $row['user_Id'];
+					$_SESSION['login_time'] = $login_time;
+					header("Location: ../Admin/dashboard.php");
+					exit();
+				} else {
+					$_SESSION['login_attempts']++;
+				    $_SESSION['last_login_attempt'] = time();
+					displayErrorMessage("You cannot login in this branch.", "../login.php?page=branch-2");
+				}
+				
+			} else {
+				$_SESSION['login_attempts']++;
+			    $_SESSION['last_login_attempt'] = time();
+				displayErrorMessage("Incorrect password.", "../login.php?page=branch-2");
+			}
+			
 		} else {
 			$check2 = mysqli_query($conn, "SELECT * FROM clients WHERE email='$email' AND password='$password'");
 			if(mysqli_num_rows($check2)===1) {
@@ -77,14 +117,33 @@
 					header("Location: ../User/index.php");
 					exit();
 				} else {
-				    $_SESSION['login_attempts']++;
-				    $_SESSION['last_login_attempt'] = time();
-					displayErrorMessage("Incorrect password.", "../login.php");
+				    $check = mysqli_query($conn, "SELECT * FROM users WHERE email='$email' AND password='$password'");
+					if(mysqli_num_rows($check)===1) {
+						$row = mysqli_fetch_array($check);
+						$assigned_branch = $row['assigned_branch'];
+						if($assigned_branch == 0) {
+							$log_ID = $row['user_Id'];
+							$login_time = date("Y-m-d h:i A");
+							$login = mysqli_query($conn, "INSERT INTO log_history (user_Id, login_time) VALUES ('$log_ID', '$login_time')");
+							$_SESSION['login_attempts'] = 0;
+				    		$_SESSION['last_login_attempt'] = time();
+							$_SESSION['admin_Id'] = $row['user_Id'];
+							$_SESSION['login_time'] = $login_time;
+							header("Location: ../Admin/dashboard.php");
+							exit();
+						} else {
+							$_SESSION['login_attempts']++;
+						    $_SESSION['last_login_attempt'] = time();
+							displayErrorMessage("Only clients can login here.", "../login.php");
+						}
+					} else {
+						$_SESSION['login_attempts']++;
+					    $_SESSION['last_login_attempt'] = time();
+						displayErrorMessage("Incorrect password.", "../login.php");
+					}
 				}
 			}
-		}	
-
-
+		}
 	}
 
 
@@ -672,10 +731,9 @@
 // ************************************* EXPORT TO PDF PROCESSES ************************************* \\
 
 	// EXPORT CLIENT RECORDS TO PDF
-	if(isset($_GET['pdfExport']) && isset($_GET['assigned_branch']) && isset($_GET['print'])) {
+	if(isset($_GET['pdfExport']) && isset($_GET['assigned_branch'])) {
 		$pdfExport       = $_GET['pdfExport'];
 		$assigned_branch = $_GET['assigned_branch'];
-		$sort_by = $_GET['print'];
 		$branch_name = '';
 		$export_contact = '';
 		if($assigned_branch == 0) {
@@ -691,73 +749,12 @@
 
 		// CLIENT PDF EXPORT
 		if($pdfExport == 'Client') {
-			  $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND DATE(date_registered)='$dailyDate' ORDER BY firstname");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND DATE(date_registered)='$dailyDate' ORDER BY firstname");
-		          } 
-		        } else {
-		          header('Location: report_client.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		         $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-
-		          if ($assigned_branch == 0) {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate' ORDER BY firstname");
-		          } else {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate' ORDER BY firstname");
-		          } 
-		        } else {
-		          header('Location: report_client.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if ($assigned_branch == 0) {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear' ORDER BY firstname");
-		          } else {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear' ORDER BY firstname");
-		          }
-		        } else {
-		          header('Location: report_client.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if ($assigned_branch == 0) {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND YEAR(date_registered) = '$yearlyDate' ORDER BY firstname");
-		          } else {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND YEAR(date_registered) = '$yearlyDate' ORDER BY firstname");
-		          }
-		        } else {
-		          header('Location: report_client.php');
-		        }
-		      } else {
-		      	
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 ORDER BY firstname");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch ORDER BY firstname");
-		        }
-		      }
+			$sql = '';
+			if($assigned_branch == 0) {
+	          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 ORDER BY firstname");
+	        } else {
+	          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch ORDER BY firstname");
+	        }
 			
 			if(mysqli_num_rows($sql) > 0) {
 			
@@ -773,7 +770,7 @@
 		        ';
 
 				$html .= '
-					<h2 style="text-align: center; margin-bottom: 20px;">Client Records '.$range.'</h2>
+					<h2 style="text-align: center; margin-bottom: 20px;">Client Records</h2>
 					<hr style="border-color: #ddd; margin: 10px 0;">
 		            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
 			            <thead style="background-color: #f2f2f2;">
@@ -811,86 +808,23 @@
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("A4", "portrait");
 				$dompdf->render();
-				$dompdf->stream("Client records ".$range.".pdf");
+				$dompdf->stream("Client records.pdf");
 			} else {
 				$_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_client.php");
+		        header("Location: ../Admin/client.php");
 			}
 		}
 
 		// SUPPLIER PDF EXPORT
 		elseif($pdfExport == 'Supplier') {
-
-		  $sql = '';
-	      $range = '';
-	      if ($sort_by == 'Daily') {
-	        if (isset($_SESSION['dailyDate'])) {
-	          $dailyDate = $_SESSION['dailyDate'];
-	          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-	          if($assigned_branch == 0) {
-	            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND DATE(date_registered)='$dailyDate' ORDER BY firstname");
-	          } else {
-	            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND DATE(date_registered)='$dailyDate' ORDER BY firstname");
-	          } 
-	        } else {
-	          header('Location: report_users.php');
-	        }
-	      } else if($sort_by == 'Weekly') {
-	        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-	          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-	          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-	          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-	          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-	          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-	         
-	          if($assigned_branch == 0) {
-	            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate' ORDER BY firstname");
-	          } else {
-	            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate' ORDER BY firstname");
-	          }
-	        } else {
-	          header('Location: report_users.php');
-	        }
-	      } else if ($sort_by == 'Monthly') {
-	        if (isset($_SESSION['monthlyMonth'])) {
-	          $monthlyMonth = $_SESSION['monthlyMonth'];
-	          $currentYear = date('Y');
-	          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-	          if($assigned_branch == 0) {
-	            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear' ORDER BY firstname");
-	          } else {
-	            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear' ORDER BY firstname");
-	          }
-	        } else {
-	          header('Location: report_users.php');
-	        }
-	      } else if ($sort_by == 'Yearly') {
-	        if (isset($_SESSION['yearlyDate'])) {
-	          $yearlyDate = $_SESSION['yearlyDate'];
-	          $currentYear = date('Y');
-	          $range = 'on year '.$yearlyDate;
-	          if($assigned_branch == 0) {
-	            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND YEAR(date_registered) = '$yearlyDate' ORDER BY firstname");
-	          } else {
-	            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND YEAR(date_registered) = '$yearlyDate' ORDER BY firstname");
-	          }
-	        } else {
-	          header('Location: report_users.php');
-	        }
-	      } else {
-	        
-	        if($assigned_branch == 0) {
-	          $range = 'in 2 branches';
+			$sql = '';
+			if($assigned_branch == 0) {
 	          $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' ORDER BY firstname");
 	        } else {
-	          $range = '';
-	          $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' ORDER BY firstname");
+	          $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND assigned_branch=$assigned_branch ORDER BY firstname ");
 	        }
-	      }
-			
 			
 			if(mysqli_num_rows($sql) > 0) {
 			
@@ -906,7 +840,7 @@
 		        ';
 
 				$html .= '
-					<h2 style="text-align: center; margin-bottom: 20px;">Supplier Records '.$range.'</h2>
+					<h2 style="text-align: center; margin-bottom: 20px;">Supplier Records</h2>
 					<hr style="border-color: #ddd; margin: 10px 0;">
 		            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
 			            <thead style="background-color: #f2f2f2;">
@@ -955,85 +889,24 @@
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "landscape");
 				$dompdf->render();
-				$dompdf->stream("Supplier records ".$range.".pdf");
+				$dompdf->stream("Supplier records.pdf");
 			} else {
 				$_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_users.php");
+		        header("Location: ../Admin/users.php");
 			}
 		}
 
 		// SCHEDULE PDF EXPORT
 		elseif($pdfExport == 'Schedule') {
-			  $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND DATE(schedule.selectedDate)='$dailyDate' ORDER BY schedule.selectedDate");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND DATE(schedule.selectedDate)='$dailyDate' ORDER BY schedule.selectedDate");
-		          } 
-		        } else {
-		          header('Location: report_schedule.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		         $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-
-		          if($assigned_branch == 0) {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND DATE(schedule.selectedDate) BETWEEN '$startDate' AND '$endDate' ORDER BY schedule.selectedDate");
-		                  } else {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND DATE(schedule.selectedDate) BETWEEN '$startDate' AND '$endDate' ORDER BY schedule.selectedDate");
-		                  }
-		        } else {
-		          header('Location: report_schedule.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND MONTH(schedule.selectedDate) = '$monthlyMonth' AND YEAR(schedule.selectedDate) = '$currentYear' ORDER BY schedule.selectedDate");
-		                  } else {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND MONTH(schedule.selectedDate) = '$monthlyMonth' AND YEAR(schedule.selectedDate) = '$currentYear' ORDER BY schedule.selectedDate");
-		                  } 
-		        } else {
-		          header('Location: report_schedule.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND YEAR(schedule.selectedDate) = '$yearlyDate' ORDER BY schedule.selectedDate");
-		                  } else {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND YEAR(schedule.selectedDate) = '$yearlyDate' ORDER BY schedule.selectedDate");
-		                  }
-		        } else {
-		          header('Location: report_schedule.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() ORDER BY schedule.selectedDate");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch ORDER BY schedule.selectedDate");
-		        }
-		      }
-
+			$sql = '';
+			if($assigned_branch == 0) {
+	          $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() ORDER BY selectedDate");
+	        } else {
+	          $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch ORDER BY selectedDate");
+	        }
+			
 			if(mysqli_num_rows($sql) > 0) {
 			
 				$html = '';
@@ -1048,7 +921,7 @@
 		        ';
 
 				$html .= '
-					<h2 style="text-align: center; margin-bottom: 20px;">Schedule Records '.$range.'</h2>
+					<h2 style="text-align: center; margin-bottom: 20px;">Schedule Records</h2>
 					<hr style="border-color: #ddd; margin: 10px 0;">
 		            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
 			            <thead style="background-color: #f2f2f2;">
@@ -1119,83 +992,23 @@
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "landscape");
 				$dompdf->render();
-				$dompdf->stream("Schedule records ".$range.".pdf");
+				$dompdf->stream("Schedule records.pdf");
 			} else {
 				$_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_schedule.php");
+		        header("Location: ../Admin/schedule.php");
 			}
 		}
 
 		// PRODUCT RECORDS PDF EXPORT
 		elseif($pdfExport == 'Product') {
-			  $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          }
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 ORDER BY product.prod_Id");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
-		        }
-		      }
+			$sql = '';
+			if($assigned_branch == 0) {
+	          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 ORDER BY product.prod_Id");
+	        } else {
+	          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
+	        }
 			
 			if(mysqli_num_rows($sql) > 0) {
 
@@ -1212,7 +1025,7 @@
 		        ';
 
 				$html .= '
-				    <h2 style="text-align: center; margin-bottom: 20px;">Product Records '.$range.'</h2>
+				    <h2 style="text-align: center; margin-bottom: 20px;">Product Records</h2>
 				    <hr style="border-color: #ddd; margin: 10px 0;">
 				    <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
 				        <thead style="background-color: #f2f2f2;">
@@ -1263,85 +1076,24 @@
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "portrait");
 				$dompdf->render();
-				$dompdf->stream("Product records ".$range.".pdf");
+				$dompdf->stream("Product records.pdf");
 
 			} else {
 				$_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_product.php");
+		        header("Location: ../Admin/product.php");
 			}
 		}
 
 		// ARCHIVED PRODUCT RECORDS PDF EXPORT
 		elseif($pdfExport == 'Archived') {
-			  $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          }
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 ORDER BY product.prod_Id");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
-		        }
-		      }
-
+			$sql = '';
+			if($assigned_branch == 0) {
+	          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 ORDER BY product.prod_Id");
+	        } else {
+	          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
+	        }
 			
 			if(mysqli_num_rows($sql) > 0) {
 				$html = '';
@@ -1357,7 +1109,7 @@
 
 
 				$html .= '
-				<h2 style="text-align: center; margin-bottom: 20px;">Archived Product Records '.$range.'</h2>
+				<h2 style="text-align: center; margin-bottom: 20px;">Archived Product Records</h2>
 				<hr style="border-color: #ddd; margin: 10px 0;">
 	            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
 		            <thead style="background-color: #f2f2f2;">
@@ -1407,84 +1159,23 @@
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "portrait");
 				$dompdf->render();
-				$dompdf->stream("Archived Product records ".$range.".pdf");
+				$dompdf->stream("Archived Product records.pdf");
 			} else {
 				$_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_product_archived.php");
+		        header("Location: ../Admin/product_archived.php");
 			}
 		}
 
 		// LOW STOCK PRODUCT RECORDS PDF EXPORT
 		elseif($pdfExport == 'ProductLowStack') {
-			  $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          }
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 ORDER BY product.prod_Id");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
-		        }
-		      }
-
+			$sql = '';
+			if($assigned_branch == 0) {
+	          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 ORDER BY product.prod_Id");
+	        } else {
+	          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
+	        }
 			
 			if(mysqli_num_rows($sql) > 0) {
 				$html = '';
@@ -1498,7 +1189,7 @@
 		        ';
 
 				$html .= '
-				<h2 style="text-align: center; margin-bottom: 20px;">Low Stock Product Records '.$range.'</h2>
+				<h2 style="text-align: center; margin-bottom: 20px;">Low Stock Product Records</h2>
 				<hr style="border-color: #ddd; margin: 10px 0;">
 	            <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
 		            <thead style="background-color: #f2f2f2;">
@@ -1547,12 +1238,12 @@
 				$dompdf->loadHtml($html);
 				$dompdf->setPaper("Letter", "portrait");
 				$dompdf->render();
-				$dompdf->stream("Low Stock Product records ".$range.".pdf");
+				$dompdf->stream("Low Stock Product records.pdf");
 			} else {
 				$_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_product_low_stock.php");
+		        header("Location: ../Admin/product_low_stock.php");
 			}
 		}
 
@@ -1572,10 +1263,9 @@
 // ************************************* EXPORT TO EXCEL PROCESSES ************************************* \\
 
 	// EXPORT CLIENT RECORDS TO EXCEL
-	if(isset($_GET['ExcelExport']) && isset($_GET['assigned_branch']) && isset($_GET['print'])) {
+	if(isset($_GET['ExcelExport']) && isset($_GET['assigned_branch'])) {
 		$ExcelExport = $_GET['ExcelExport'];
 		$assigned_branch = $_GET['assigned_branch'];
-		$sort_by = $_GET['print'];
 
 		// CLIENT EXCEL EXPORT
 		if($ExcelExport == 'Client') {
@@ -1586,75 +1276,15 @@
 
 		      $id = 0;
 		      $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND DATE(date_registered)='$dailyDate' ORDER BY firstname");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND DATE(date_registered)='$dailyDate' ORDER BY firstname");
-		          } 
-		        } else {
-		          header('Location: report_client.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		         $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-
-		          if ($assigned_branch == 0) {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate' ORDER BY firstname");
-		          } else {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate' ORDER BY firstname");
-		          } 
-		        } else {
-		          header('Location: report_client.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if ($assigned_branch == 0) {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear' ORDER BY firstname");
-		          } else {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear' ORDER BY firstname");
-		          }
-		        } else {
-		          header('Location: report_client.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if ($assigned_branch == 0) {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND YEAR(date_registered) = '$yearlyDate' ORDER BY firstname");
-		          } else {
-		              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND YEAR(date_registered) = '$yearlyDate' ORDER BY firstname");
-		          }
-		        } else {
-		          header('Location: report_client.php');
-		        }
-		      } else {
-		      	
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 ORDER BY firstname");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch ORDER BY firstname");
-		        }
-		      }
+		      if($assigned_branch == 0) {
+	            $sql = "SELECT * FROM clients WHERE is_verified=1 ORDER BY firstname";
+	          } else {
+	          	$sql = "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch ORDER BY firstname";
+	          }
 		      
-		      if (mysqli_num_rows($sql) > 0) {
-		        foreach ($sql as $row) {
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
 		          $id++;
 		          $name = $row['firstname']. ' ' .$row['middlename']. ' ' .$row['lastname']. ' ' .$row['suffix'];
 		          // $address = $row['house_no']. ' ' .$row['street_name']. ', ' .$row['purok']. ' ' .$row['zone']. ' ' .$row['barangay']. ', ' .$row['municipality']. ', ' .$row['province']. ' ' .$row['region'];
@@ -1664,11 +1294,11 @@
 		        $_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_client.php");
+		        header("Location: ../Admin/client.php");
 		      }
 
 		      $xlsx = SimpleXLSXGen::fromArray($client);
-		      $xlsx->downloadAs('Client records '.$range.'.xlsx'); // This will download the file to your local system
+		      $xlsx->downloadAs('Client records.xlsx'); // This will download the file to your local system
 
 		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
 
@@ -1676,7 +1306,7 @@
 
 		      print_r($client);
 
-		      header('Location: ../Admin/report_client.php');
+		      header('Location: ../Admin/client.php');
 
 		}
 
@@ -1689,75 +1319,15 @@
 
 		      $id = 0;
 		      $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND DATE(date_registered)='$dailyDate' ORDER BY firstname");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND DATE(date_registered)='$dailyDate' ORDER BY firstname");
-		          } 
-		        } else {
-		          header('Location: report_users.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-		         
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate' ORDER BY firstname");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate' ORDER BY firstname");
-		          }
-		        } else {
-		          header('Location: report_users.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear' ORDER BY firstname");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear' ORDER BY firstname");
-		          }
-		        } else {
-		          header('Location: report_users.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND YEAR(date_registered) = '$yearlyDate' ORDER BY firstname");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND YEAR(date_registered) = '$yearlyDate' ORDER BY firstname");
-		          }
-		        } else {
-		          header('Location: report_users.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' ORDER BY firstname");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' ORDER BY firstname");
-		        }
-		      }
+		      if($assigned_branch == 0) {
+	            $sql = "SELECT * FROM users WHERE user_type = 'User' ORDER BY firstname";
+	          } else {
+	          	$sql = "SELECT * FROM users WHERE user_type = 'User' AND assigned_branch='$assigned_branch' ORDER BY firstname";
+	          }
 		      
-		      if (mysqli_num_rows($sql) > 0) {
-		        foreach ($sql as $row) {
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
 		          $id++;
 		          $name = $row['firstname']. ' ' .$row['middlename']. ' ' .$row['lastname']. ' ' .$row['suffix'];
 		          $address = $row['house_no']. ' ' .$row['street_name']. ', ' .$row['purok']. ' ' .$row['zone']. ' ' .$row['barangay']. ', ' .$row['municipality']. ', ' .$row['province']. ' ' .$row['region'];
@@ -1767,11 +1337,11 @@
 		        $_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_client.php");
+		        header("Location: ../Admin/users.php");
 		      }
 
 		      $xlsx = SimpleXLSXGen::fromArray($users);
-		      $xlsx->downloadAs('Supplier records '.$range.'.xlsx'); // This will download the file to your local system
+		      $xlsx->downloadAs('Supplier records.xlsx'); // This will download the file to your local system
 
 		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
 
@@ -1791,75 +1361,15 @@
 
 		      $id = 0;
 		      $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND DATE(schedule.selectedDate)='$dailyDate' ORDER BY schedule.selectedDate");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND DATE(schedule.selectedDate)='$dailyDate' ORDER BY schedule.selectedDate");
-		          } 
-		        } else {
-		          header('Location: report_schedule.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		         $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-
-		          if($assigned_branch == 0) {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND DATE(schedule.selectedDate) BETWEEN '$startDate' AND '$endDate' ORDER BY schedule.selectedDate");
-		                  } else {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND DATE(schedule.selectedDate) BETWEEN '$startDate' AND '$endDate' ORDER BY schedule.selectedDate");
-		                  }
-		        } else {
-		          header('Location: report_schedule.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND MONTH(schedule.selectedDate) = '$monthlyMonth' AND YEAR(schedule.selectedDate) = '$currentYear' ORDER BY schedule.selectedDate");
-		                  } else {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND MONTH(schedule.selectedDate) = '$monthlyMonth' AND YEAR(schedule.selectedDate) = '$currentYear' ORDER BY schedule.selectedDate");
-		                  } 
-		        } else {
-		          header('Location: report_schedule.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND YEAR(schedule.selectedDate) = '$yearlyDate' ORDER BY schedule.selectedDate");
-		                  } else {
-		                    $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND YEAR(schedule.selectedDate) = '$yearlyDate' ORDER BY schedule.selectedDate");
-		                  }
-		        } else {
-		          header('Location: report_schedule.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() ORDER BY schedule.selectedDate");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch ORDER BY schedule.selectedDate");
-		        }
-		      }
+		      if($assigned_branch == 0) {
+	            $sql = "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() ORDER BY selectedDate";
+	          } else {
+	          	$sql = "SELECT * FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch ORDER BY selectedDate";
+	          }
 		      
-		      if (mysqli_num_rows($sql) > 0) {
-		        foreach ($sql as $row) {
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
 		          $id++;
 
 		          $mech_Id = $row['mechanic_Id'];
@@ -1901,11 +1411,11 @@
 		        $_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_schedule.php");
+		        header("Location: ../Admin/schedule.php");
 		      }
 
 		      $xlsx = SimpleXLSXGen::fromArray($schedule);
-		      $xlsx->downloadAs('Schedule records '.$range.'.xlsx'); // This will download the file to your local system
+		      $xlsx->downloadAs('Schedule records.xlsx'); // This will download the file to your local system
 
 		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
 
@@ -1913,7 +1423,7 @@
 
 		      print_r($schedule);
 
-		      header('Location: ../Admin/report_schedule.php');
+		      header('Location: ../Admin/schedule.php');
 		}
 
 		// PRODUCT RECORDS EXCEL EXPORT
@@ -1930,75 +1440,17 @@
 			
 
 		      $id = 0;
-		      $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          }
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
 
-		          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 ORDER BY product.prod_Id");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
-		        }
-		      }
-		     
-		      if (mysqli_num_rows($sql) > 0) {
-		        foreach ($sql as $row) {
+		      $sql = '';
+		      if($assigned_branch == 0) {
+	            $sql = "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 ORDER BY product.prod_Id";
+	          } else {
+	          	$sql = "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.branch=$assigned_branch ORDER BY product.prod_Id";
+	          }
+		      
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
 	        	$branch = '';
 				if ($row['branch'] == 1) {
                   $branch = 'M.H.del Pilar St, Calamba, Laguna';
@@ -2020,11 +1472,11 @@
 		        $_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_product.php");
+		        header("Location: ../Admin/product.php");
 		      }
 
 		      $xlsx = SimpleXLSXGen::fromArray($product);
-		      $xlsx->downloadAs('Archived Product records '.$range.'.xlsx'); // This will download the file to your local system
+		      $xlsx->downloadAs('Product records.xlsx'); // This will download the file to your local system
 
 		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
 
@@ -2032,7 +1484,7 @@
 
 		      print_r($product);
 
-		      header('Location: ../Admin/report_product.php');
+		      header('Location: ../Admin/product.php');
 		}
 
 		// ARCHIVED PRODUCT RECORDS EXCEL EXPORT
@@ -2050,75 +1502,15 @@
 
 		      $id = 0;
 		      $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          }
-		        } else {
-		          header('Location: report_product_archived.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product_archived.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product_archived.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product_archived.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 ORDER BY product.prod_Id");
-		        } else {
-		           $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
-		        }
-		      }
+		      if($assigned_branch == 0) {
+	            $sql = "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 ORDER BY product.prod_Id";
+	          } else {
+	          	$sql = "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch ORDER BY product.prod_Id";
+	          }
 		      
-		      
-		      if (mysqli_num_rows($sql) > 0) {
-		        foreach ($sql as $row) {
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
 		        	$branch = '';
 					if ($row['branch'] == 1) {
 	                  $branch = 'M.H.del Pilar St, Calamba, Laguna';
@@ -2139,11 +1531,11 @@
 		        $_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_product_archived.php");
+		        header("Location: ../Admin/product_archived.php");
 		      }
 
 		      $xlsx = SimpleXLSXGen::fromArray($product_archived);
-		      $xlsx->downloadAs('Archived Product records '.$range.' .xlsx'); // This will download the file to your local system
+		      $xlsx->downloadAs('Archived Product records.xlsx'); // This will download the file to your local system
 
 		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
 
@@ -2151,7 +1543,7 @@
 
 		      print_r($product_archived);
 
-		      header('Location: ../Admin/report_product_archived.php');
+		      header('Location: ../Admin/product_archived.php');
 		}
 
 		// LOW STOCK PRODUCT RECORDS EXCEL EXPORT
@@ -2169,74 +1561,15 @@
 
 		      $id = 0;
 		      $sql = '';
-		      $range = '';
-		      if ($sort_by == 'Daily') {
-		        if (isset($_SESSION['dailyDate'])) {
-		          $dailyDate = $_SESSION['dailyDate'];
-		          $range = 'on '.date('F d, Y', strtotime($dailyDate));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch AND DATE(product.date_added)='$dailyDate' ORDER BY product.prod_Id");
-		          }
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if($sort_by == 'Weekly') {
-		        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
-		          $weeklyStartDate = $_SESSION['weeklyStartDate'];
-		          $weeklyEndDate = $_SESSION['weeklyEndDate'];
-		          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
-		          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
-
-		          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Monthly') {
-		        if (isset($_SESSION['monthlyMonth'])) {
-		          $monthlyMonth = $_SESSION['monthlyMonth'];
-		          $currentYear = date('Y');
-		          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else if ($sort_by == 'Yearly') {
-		        if (isset($_SESSION['yearlyDate'])) {
-		          $yearlyDate = $_SESSION['yearlyDate'];
-		          $currentYear = date('Y');
-		          $range = 'on year '.$yearlyDate;
-		          if($assigned_branch == 0) {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } else {
-		            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch AND YEAR(product.date_added) = '$yearlyDate' ORDER BY product.prod_Id");
-		          } 
-		        } else {
-		          header('Location: report_product.php');
-		        }
-		      } else {
-		        
-		        if($assigned_branch == 0) {
-		          $range = 'in 2 branches';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 ORDER BY product.prod_Id");
-		        } else {
-		          $range = '';
-		          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch ORDER BY product.prod_Id");
-		        }
-		      }
-
-		      if (mysqli_num_rows($sql) > 0) {
-		        foreach ($sql as $row) {
+		      if($assigned_branch == 0) {
+	            $sql = "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 ORDER BY product.prod_Id";
+	          } else {
+	          	$sql = "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=0 AND product.prod_stock <= 15 AND product.branch=$assigned_branch ORDER BY product.prod_Id";
+	          }
+		      
+		      $res = mysqli_query($conn, $sql);
+		      if (mysqli_num_rows($res) > 0) {
+		        foreach ($res as $row) {
 		        	$branch = '';
 					if ($row['branch'] == 1) {
 	                  $branch = 'M.H.del Pilar St, Calamba, Laguna';
@@ -2257,11 +1590,11 @@
 		        $_SESSION['message'] = "No record found in the database.";
 		        $_SESSION['text'] = "Please try again.";
 		        $_SESSION['status'] = "error";
-		        header("Location: ../Admin/report_product_low_stock.php");
+		        header("Location: ../Admin/product_low_stock.php");
 		      }
 
 		      $xlsx = SimpleXLSXGen::fromArray($product_archived);
-		      $xlsx->downloadAs('Low Stock Product records '.$range.'.xlsx'); // This will download the file to your local system
+		      $xlsx->downloadAs('Low Stock Product records.xlsx'); // This will download the file to your local system
 
 		      // $xlsx->saveAs('resident.xlsx'); // This will save the file to your server
 
@@ -2269,7 +1602,7 @@
 
 		      print_r($product_archived);
 
-		      header('Location: ../Admin/report_product_low_stock.php');
+		      header('Location: ../Admin/product_low_stock.php');
 		}
 
 		else {

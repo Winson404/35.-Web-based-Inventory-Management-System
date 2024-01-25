@@ -41,27 +41,25 @@ border-radius: 5px;
 </div>
 <div class="banner">
 	<div class="homepageContainer p-5">
-		<div class="row">
-			<div class="col-lg-12 col-md-12 mb-2">
-				<div class="bannerHeader" style="margin-top: -120px;">
-					<h1>RBF</h1>
-					<p style="margin-top: -20px;">Online Scheduling</p>
-					<button id="scanButton" class="btn btn-sm" style="background-color: #f685a2; color: white;"><i class="fa-solid fa-camera"></i> Scan QR</button>
-				</div>
+	<div class="row">
+		<div class="col-lg-12 col-md-12 mb-2">
+			<div class="bannerHeader" style="margin-top: -140px;">
+				<h2 style="font-size: 50px; color: #f685a2;"><b>RBF</b></h2>
+				<p style="margin-top: -20px; font-size: 30px;">Motorshop and Accessories</p>
+				<button id="scanButton" class="btn btn-sm" style="background-color: #f685a2; color: white;"><i class="fa-solid fa-camera"></i> Scan QR</button>
 			</div>
-			<!-- Right Section -->
-			<div class="col-lg-4 col-md-4 col-sm-12 col-12 bg-light" id="containerScanner" style="display: none;">
-				<div class="card-header text-center justify-content-center d-flex p-0 ">
-					<div class="col-12">
-						<p>Place the QR Code</p>
-					</div>
-				</div>
-				<form action="includes/processes.php" method="POST" class="form-horizontal">
-					<input type="hidden" name="productQR" id="productQR" class="form-control" autofocus>
-				</form>
-				<div class="card-body p-0">
-					<div class="d-block m-auto bg-dark">
-					<video id="preview" width="100%" class="shadow-sm" style="border: 2px solid gray;"></video>
+		</div>
+		<!-- Right Section -->
+		<div class="col-lg-5 col-md-5 col-sm-12 col-12 bg-light" id="containerScanner" style="display: none;">
+			<div class="card-header text-center justify-content-center p-0 m-0">
+				<p>Place the QR Code</p>
+			</div>
+			<form action="includes/processes.php" method="POST" class="form-horizontal">
+				<input type="hidden" name="productQR" id="productQR" class="form-control" autofocus>
+			</form>
+			<div class="card-body p-0">
+				<div class="d-block m-auto bg-dark">
+				<video id="preview" width="100%" class="shadow-sm" style="border: 2px solid gray;"></video>
 				</div>
 			</div>
 			<div class="m-2">
@@ -69,32 +67,27 @@ border-radius: 5px;
 			</div>
 		</div>
 	</div>
-	<div class="col-md-8 position-absolute" style="right:10px; top:70px">
+	<!-- <div class="col-md-8 position-absolute" style="right:10px; top:70px">
 		<div class="row d-flex justify-content-end">
-			<!-- First Div -->
 			<div class="col-md-3 bg-red">
 				
 				<div style="display: flex; flex-direction: column; width: 60px; border-radius: 50%; position: absolute; right: 0;">
 					<a href="login.php?page=branch-1" class="hover-effect">
 						<div style="height: 60px; border-radius: 50%; overflow: hidden; display: flex;">
-							<!-- Picture goes here -->
 							<img src="images/user.png" alt="Branch Picture 1" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
 						</div>
 						<span class="hover-text"><b>Admin 1</b></span>
 					</a>
 					<a href="login.php?page=branch-2" class="hover-effect">
 						<div style="height: 60px; border-radius: 50%; overflow: hidden;">
-							<!-- Picture goes here -->
 							<img src="images/user.png" alt="Branch Picture 2" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
 						</div>
 						<span class="hover-text"><b>Admin 2</b></span>
 					</a>
 				</div>
 			</div>
-			
-			
 		</div>
-	</div>
+	</div> -->
 </div>
 </div>
 </div>

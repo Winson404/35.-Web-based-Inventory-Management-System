@@ -1,14 +1,83 @@
 <title>IMS | Client records</title>
 <?php 
     include 'navbar.php'; 
-	$export_contact = '';
-	if($assigned_branch == 0) {
+    $export_contact = '';
+	  if($assigned_branch == 0) {
       $export_contact = 'Contact: +63 992 268 7202';
     } elseif($assigned_branch == 1) {
       $export_contact = 'Contact: +63 992 268 7202 | Email: rbfmotorshop@gmail.com;';
     } else {
       $export_contact = 'Contact: +63 992 268 7202 | Email: rbfmotorshop2@gmail.com;';
     }
+
+    if(isset($_GET['print'])) {
+      $sort_by = $_GET['print'];
+
+      $sql = '';
+      $range = '';
+      if ($sort_by == 'Daily') {
+        if (isset($_SESSION['dailyDate'])) {
+          $dailyDate = $_SESSION['dailyDate'];
+          $range = 'on '.date('F d, Y', strtotime($dailyDate));
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND DATE(date_registered)='$dailyDate'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND DATE(date_registered)='$dailyDate'");
+          } 
+        } else {
+          header('Location: report_client.php');
+        }
+      } else if($sort_by == 'Weekly') {
+        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
+          $weeklyStartDate = $_SESSION['weeklyStartDate'];
+          $weeklyEndDate = $_SESSION['weeklyEndDate'];
+          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
+          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
+
+         $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
+
+          if ($assigned_branch == 0) {
+              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate'");
+          } else {
+              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate'");
+          } 
+        } else {
+          header('Location: report_client.php');
+        }
+      } else if ($sort_by == 'Monthly') {
+        if (isset($_SESSION['monthlyMonth'])) {
+          $monthlyMonth = $_SESSION['monthlyMonth'];
+          $currentYear = date('Y');
+          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
+          if ($assigned_branch == 0) {
+              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear'");
+          } else {
+              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear'");
+          }
+        } else {
+          header('Location: report_client.php');
+        }
+      } else if ($sort_by == 'Yearly') {
+        if (isset($_SESSION['yearlyDate'])) {
+          $yearlyDate = $_SESSION['yearlyDate'];
+          $currentYear = date('Y');
+          $range = 'on year '.$yearlyDate;
+          if ($assigned_branch == 0) {
+              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND YEAR(date_registered) = '$yearlyDate'");
+          } else {
+              $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch AND YEAR(date_registered) = '$yearlyDate'");
+          }
+        } else {
+          header('Location: report_client.php');
+        }
+      } else {
+        // $range = 'in 2 branches';
+        if($assigned_branch == 0) {
+          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1");
+        } else {
+          $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch");
+        }
+      }
 ?>
 <style>
   div.card-body #printElement div.header {
@@ -61,7 +130,7 @@
             <div class="card">
               <div class="card-header p-2">
                 <button id="printButton" class="btn btn-success btn-sm float-right mr-2"><i class="fa-solid fa-print"></i> Print</button>
-                <a href="client.php" class="btn bg-secondary btn-sm float-right mr-2"><i class="fas fa-arrow-left"></i> Back</a>
+                <a href="report_client.php" class="btn bg-secondary btn-sm float-right mr-2"><i class="fas fa-arrow-left"></i> Back</a>
               </div>
               <div class="card-body">
                  <section id="printElement">
@@ -70,7 +139,7 @@
                       <small class="header-texts"><?= $branch_name ?></small> <br>
                       <small  class="header-texts"><?= $export_contact ?></small>
                   </div>
-                  <p class="title-text"><b>Client Records</b></p>
+                  <p class="title-text"><b>Client Records <?= $range ?></b></p>
                   <table>
                     <thead>
                       <tr> 
@@ -84,12 +153,6 @@
                     </thead>
                     <tbody id="users_data">
                         <?php 
-                          $sql = '';
-                          if($assigned_branch == 0) {
-                            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1");
-                          } else {
-                            $sql = mysqli_query($conn, "SELECT * FROM clients WHERE is_verified=1 AND client_branch=$assigned_branch");
-                          }
                           if(mysqli_num_rows($sql) > 0) {
                           while ($row = mysqli_fetch_array($sql)) {
                             $name = $row['firstname'].' '.$row['middlename'].' '.$row['lastname'].' '.$row['suffix'];
@@ -104,7 +167,7 @@
                       </tr>
                       <?php } } else { ?>
                         <tr style="border: 1px solid #ddd; padding: 5px; text-align: left;">
-                          <td colspan="4" style="text-align: center;">No record found in the database</td>
+                          <td colspan="6" style="text-align: center;">No record found in the database</td>
                         </tr>
                       <?php } ?>
 
@@ -120,6 +183,7 @@
             </div>
           </div>
         </div>
+      
       </div>
     </section>
   </div>
@@ -133,7 +197,9 @@
 <br>
 <br>
 <br>
+
 <script src="../includes/print.js"></script>
+<?php } else { include '../includes/404.php'; } ?>
 <?php include '../includes/footer.php';  ?>
  <script>
    $(window).on('load', function() {

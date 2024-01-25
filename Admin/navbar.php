@@ -84,7 +84,7 @@
         </div> -->
 
       <!-- Sidebar Menu -->
-      <nav class="mt-4">
+      <nav class="mt-4 mb-3">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
           <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >DASHBOARD</li>
@@ -106,11 +106,9 @@
                 basename($_SERVER['PHP_SELF']) == 'users.php' || 
                 basename($_SERVER['PHP_SELF']) == 'users_mgmt.php' || 
                 basename($_SERVER['PHP_SELF']) == 'users_view.php' ||
-                basename($_SERVER['PHP_SELF']) == 'users_print.php' ||
                 basename($_SERVER['PHP_SELF']) == 'client.php' || 
                 basename($_SERVER['PHP_SELF']) == 'client_mgmt.php' || 
-                basename($_SERVER['PHP_SELF']) == 'client_view.php' ||
-                basename($_SERVER['PHP_SELF']) == 'client_print.php'      
+                basename($_SERVER['PHP_SELF']) == 'client_view.php'
                 ) ? 'active' : ''; 
               ?>
             "><i class="fa-solid fa-users-gear"></i><p>&nbsp;&nbsp;System Users<i class="right fas fa-angle-left"></i></p></a>
@@ -123,11 +121,9 @@
                 basename($_SERVER['PHP_SELF']) == 'users.php' || 
                 basename($_SERVER['PHP_SELF']) == 'users_mgmt.php' || 
                 basename($_SERVER['PHP_SELF']) == 'users_view.php' ||
-                basename($_SERVER['PHP_SELF']) == 'users_print.php' ||
                 basename($_SERVER['PHP_SELF']) == 'client.php' || 
                 basename($_SERVER['PHP_SELF']) == 'client_mgmt.php' || 
-                basename($_SERVER['PHP_SELF']) == 'client_view.php' ||
-                basename($_SERVER['PHP_SELF']) == 'client_print.php'              
+                basename($_SERVER['PHP_SELF']) == 'client_view.php'
                 ) ? 'style="display: block;"' : ''; 
               ?>
             > 
@@ -143,7 +139,7 @@
 
               <!-- <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >SUPPLIERS</li> -->
               <li class="nav-item">
-                <a href="users.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'users.php' || basename($_SERVER['PHP_SELF']) == 'users_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'users_view.php' || basename($_SERVER['PHP_SELF']) == 'users_print.php') ? 'active' : ''; ?>">
+                <a href="users.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'users.php' || basename($_SERVER['PHP_SELF']) == 'users_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'users_view.php') ? 'active' : ''; ?>">
                   <i class="fas fa-truck"></i>
                   <p>&nbsp;Supplier records</p>
                 </a>
@@ -151,7 +147,7 @@
 
               <!-- <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >CLIENT</li> -->
               <li class="nav-item">
-                <a href="client.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'client.php' || basename($_SERVER['PHP_SELF']) == 'client_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'client_print.php') ? 'active' : ''; ?>">
+                <a href="client.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'client.php' || basename($_SERVER['PHP_SELF']) == 'client_mgmt.php') ? 'active' : ''; ?>">
                   <i class="fas fa-users"></i>
                   <p>&nbsp;&nbsp;Client records</p>
                 </a>
@@ -183,11 +179,8 @@
                 basename($_SERVER['PHP_SELF']) == 'product.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_mgmt.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_view.php' || 
-                basename($_SERVER['PHP_SELF']) == 'product_print.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_archived.php' ||
-                basename($_SERVER['PHP_SELF']) == 'product_archived_print.php' ||
-                basename($_SERVER['PHP_SELF']) == 'product_low_stock.php' ||
-                basename($_SERVER['PHP_SELF']) == 'product_low_stock_print.php'
+                basename($_SERVER['PHP_SELF']) == 'product_low_stock.php'
                 ) ? 'active' : ''; 
               ?>
             "><i class="fas fa-shopping-cart"></i><p>&nbsp;&nbsp;Manage products<i class="right fas fa-angle-left"></i></p></a>
@@ -197,16 +190,13 @@
                 basename($_SERVER['PHP_SELF']) == 'product.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_mgmt.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_view.php' || 
-                basename($_SERVER['PHP_SELF']) == 'product_print.php' || 
                 basename($_SERVER['PHP_SELF']) == 'product_archived.php' ||
-                basename($_SERVER['PHP_SELF']) == 'product_archived_print.php' ||
-                basename($_SERVER['PHP_SELF']) == 'product_low_stock.php' ||
-                basename($_SERVER['PHP_SELF']) == 'product_low_stock_print.php'
+                basename($_SERVER['PHP_SELF']) == 'product_low_stock.php'
                 ) ? 'style="display: block;"' : ''; 
               ?>
             > 
               <li class="nav-item">
-                  <a href="product.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'product.php' || basename($_SERVER['PHP_SELF']) == 'product_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'product_view.php' || basename($_SERVER['PHP_SELF']) == 'product_print.php') ? 'active' : ''; ?>">
+                  <a href="product.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'product.php' || basename($_SERVER['PHP_SELF']) == 'product_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'product_view.php') ? 'active' : ''; ?>">
                       <i class="fas fa-shopping-cart"></i>
                       <p>&nbsp;&nbsp;Product records</p>
                   </a>
@@ -214,7 +204,7 @@
 
               <!-- <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >SUPPLIERS</li> -->
               <li class="nav-item">
-                <a href="product_archived.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'product_archived.php' || basename($_SERVER['PHP_SELF']) == 'product_archived_print.php') ? 'active' : ''; ?>">
+                <a href="product_archived.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'product_archived.php') ? 'active' : ''; ?>">
                   <i class="fas fa-shopping-cart"></i>
                   <p>&nbsp;Archived products</p>
                 </a>
@@ -224,11 +214,107 @@
 
           <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >SCHEDULES</li>
           <li class="nav-item">
-              <a href="schedule.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'schedule.php' || basename($_SERVER['PHP_SELF']) == 'schedule_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'schedule_view.php' || basename($_SERVER['PHP_SELF']) == 'schedule_print.php') ? 'active' : ''; ?>">
+              <a href="schedule.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'schedule.php' || basename($_SERVER['PHP_SELF']) == 'schedule_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'schedule_view.php') ? 'active' : ''; ?>">
                   <i class="fa-solid fa-calendar-days"></i>
                   <p>&nbsp;&nbsp;Schedule records</p>
               </a>
           </li>
+
+
+
+
+
+
+
+
+
+
+          <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >REPORTS</li>
+          <li class="nav-item">
+            <a href="#" class="nav-link 
+              <?php 
+              echo (
+                basename($_SERVER['PHP_SELF']) == 'report_users.php' || 
+                basename($_SERVER['PHP_SELF']) == 'users_print.php' || 
+                basename($_SERVER['PHP_SELF']) == 'report_client.php' || 
+                basename($_SERVER['PHP_SELF']) == 'client_print.php' || 
+                basename($_SERVER['PHP_SELF']) == 'report_product.php' || 
+                basename($_SERVER['PHP_SELF']) == 'product_print.php' || 
+                basename($_SERVER['PHP_SELF']) == 'report_product_archived.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_archived_print.php' ||
+                basename($_SERVER['PHP_SELF']) == 'report_product_low_stock.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_low_stock_print.php' ||
+                basename($_SERVER['PHP_SELF']) == 'report_schedule.php' ||
+                basename($_SERVER['PHP_SELF']) == 'schedule_print.php'
+                ) ? 'active' : ''; 
+              ?>
+            "><i class="fas fa-chart-bar"></i><p>&nbsp;&nbsp;Manage reports<i class="right fas fa-angle-left"></i></p></a>
+            <ul class="nav nav-treeview" 
+              <?php 
+              echo (
+                basename($_SERVER['PHP_SELF']) == 'report_users.php' || 
+                basename($_SERVER['PHP_SELF']) == 'users_print.php' || 
+                basename($_SERVER['PHP_SELF']) == 'report_client.php' || 
+                basename($_SERVER['PHP_SELF']) == 'client_print.php' || 
+                basename($_SERVER['PHP_SELF']) == 'report_product.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_print.php' || 
+                basename($_SERVER['PHP_SELF']) == 'report_product_archived.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_archived_print.php' ||
+                basename($_SERVER['PHP_SELF']) == 'report_product_low_stock.php' ||
+                basename($_SERVER['PHP_SELF']) == 'product_low_stock_print.php' ||
+                basename($_SERVER['PHP_SELF']) == 'report_schedule.php' ||
+                basename($_SERVER['PHP_SELF']) == 'schedule_print.php'
+                ) ? 'style="display: block;"' : ''; 
+              ?>
+            > 
+              <li class="nav-item">
+                <a href="report_users.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'report_users.php' || basename($_SERVER['PHP_SELF']) == 'users_print.php') ? 'active' : ''; ?>">
+                  <i class="fas fa-truck"></i>
+                  <p>&nbsp;Supplier report</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="report_client.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'report_client.php' || basename($_SERVER['PHP_SELF']) == 'client_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'client_print.php') ? 'active' : ''; ?>">
+                  <i class="fas fa-users"></i>
+                  <p>&nbsp;&nbsp;Client report</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="report_product.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'report_product.php' || basename($_SERVER['PHP_SELF']) == 'product_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'product_view.php' || basename($_SERVER['PHP_SELF']) == 'product_print.php') ? 'active' : ''; ?>">
+                  <i class="fas fa-shopping-cart"></i>
+                  <p>&nbsp;&nbsp;Product report</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="report_product_archived.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'report_product_archived.php' || basename($_SERVER['PHP_SELF']) == 'product_archived_print.php') ? 'active' : ''; ?>">
+                  <i class="fas fa-shopping-cart"></i>
+                  <p>&nbsp;Archived products</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="report_product_low_stock.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'report_product_low_stock.php' || basename($_SERVER['PHP_SELF']) == 'product_low_stock_print.php') ? 'active' : ''; ?>">
+                  <i class="fas fa-shopping-cart"></i>
+                  <p>&nbsp;Critical product numbers</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="report_schedule.php" class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'report_schedule.php' || basename($_SERVER['PHP_SELF']) == 'schedule_mgmt.php' || basename($_SERVER['PHP_SELF']) == 'schedule_view.php' || basename($_SERVER['PHP_SELF']) == 'schedule_print.php') ? 'active' : ''; ?>">
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <p>&nbsp;&nbsp;Schedule report</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+
+
+
+
+
+
+
+
+
 
           <li class="nav-header text-secondary" style="margin-bottom: -10px; margin-top: -5px;" >LOG HISTORY</li>
           <li class="nav-item">

@@ -1,14 +1,82 @@
 <title>IMS | Archived Product records</title>
 <?php 
     include 'navbar.php'; 
-	$export_contact = '';
-	if($assigned_branch == 0) {
+    $export_contact = '';
+    if($assigned_branch == 0) {
       $export_contact = 'Contact: +63 992 268 7202';
     } elseif($assigned_branch == 1) {
       $export_contact = 'Contact: +63 992 268 7202 | Email: rbfmotorshop@gmail.com;';
     } else {
       $export_contact = 'Contact: +63 992 268 7202 | Email: rbfmotorshop2@gmail.com;';
     }
+
+    if(isset($_GET['print'])) {
+      $sort_by = $_GET['print'];
+
+      $sql = '';
+      $range = '';
+      if ($sort_by == 'Daily') {
+        if (isset($_SESSION['dailyDate'])) {
+          $dailyDate = $_SESSION['dailyDate'];
+          $range = 'on '.date('F d, Y', strtotime($dailyDate));
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND DATE(product.date_added)='$dailyDate'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND DATE(product.date_added)='$dailyDate'");
+          }
+        } else {
+          header('Location: report_product.php');
+        }
+      } else if($sort_by == 'Weekly') {
+        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
+          $weeklyStartDate = $_SESSION['weeklyStartDate'];
+          $weeklyEndDate = $_SESSION['weeklyEndDate'];
+          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
+          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
+
+          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND DATE(product.date_added) BETWEEN '$startDate' AND '$endDate'");
+          } 
+        } else {
+          header('Location: report_product.php');
+        }
+      } else if ($sort_by == 'Monthly') {
+        if (isset($_SESSION['monthlyMonth'])) {
+          $monthlyMonth = $_SESSION['monthlyMonth'];
+          $currentYear = date('Y');
+          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND MONTH(product.date_added) = '$monthlyMonth' AND YEAR(product.date_added) = '$currentYear'");
+          } 
+        } else {
+          header('Location: report_product.php');
+        }
+      } else if ($sort_by == 'Yearly') {
+        if (isset($_SESSION['yearlyDate'])) {
+          $yearlyDate = $_SESSION['yearlyDate'];
+          $currentYear = date('Y');
+          $range = 'on year '.$yearlyDate;
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND YEAR(product.date_added) = '$yearlyDate'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch AND YEAR(product.date_added) = '$yearlyDate'");
+          } 
+        } else {
+          header('Location: report_product.php');
+        }
+      } else {
+        // $range = 'in 2 branches';
+        if($assigned_branch == 0) {
+          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1");
+        } else {
+          $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch");
+        }
+      }
 ?>
 
 <style>
@@ -62,7 +130,7 @@
             <div class="card">
               <div class="card-header p-2">
                 <button id="printButton" class="btn btn-success btn-sm float-right mr-2"><i class="fa-solid fa-print"></i> Print</button>
-                <a href="product_archived.php" class="btn bg-secondary btn-sm float-right mr-2"><i class="fas fa-arrow-left"></i> Back</a>
+                <a href="report_product_archived.php" class="btn bg-secondary btn-sm float-right mr-2"><i class="fas fa-arrow-left"></i> Back</a>
               </div>
               <div class="card-body">
                  <section id="printElement">
@@ -71,7 +139,7 @@
                       <small class="header-texts"><?= $branch_name ?></small> <br>
                       <small  class="header-texts"><?= $export_contact ?></small>
                   </div>
-                  <p class="title-text"><b>Archived Product Records</b></p>
+                  <p class="title-text"><b>Archived Product Records <?= $range ?></b></p>
                   <table>
                     <thead>
                       <tr> 
@@ -86,13 +154,7 @@
                       </tr>
                     </thead>
                     <tbody id="users_data">
-                        <?php 
-                          $sql = '';
-                          if($assigned_branch == 0) {
-                            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1");
-                          } else {
-                            $sql = mysqli_query($conn, "SELECT * FROM product JOIN category ON product.cat_Id=category.cat_Id WHERE product.is_archived=1 AND product.branch=$assigned_branch");
-                          }
+                        <?php                          
                           if(mysqli_num_rows($sql) > 0) {
                           while ($row = mysqli_fetch_array($sql)) {
                         ?>
@@ -147,7 +209,7 @@
 <br>
 <br>
 <script src="../includes/print.js"></script>
-<?php include '../includes/footer.php';  ?>
+<?php } else { include '../includes/404.php'; } include '../includes/footer.php';  ?>
  <script>
    $(window).on('load', function() {
     document.getElementById("printButton").click();

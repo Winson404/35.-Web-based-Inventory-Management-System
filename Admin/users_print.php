@@ -1,14 +1,85 @@
 <title>IMS | Supplier records</title>
 <?php 
     include 'navbar.php'; 
-	$export_contact = '';
-	if($assigned_branch == 0) {
+    $export_contact = '';
+    if($assigned_branch == 0) {
       $export_contact = 'Contact: +63 992 268 7202';
     } elseif($assigned_branch == 1) {
       $export_contact = 'Contact: +63 992 268 7202 | Email: rbfmotorshop@gmail.com;';
     } else {
       $export_contact = 'Contact: +63 992 268 7202 | Email: rbfmotorshop2@gmail.com;';
     }
+
+    if(isset($_GET['print'])) {
+      $sort_by = $_GET['print'];
+
+      $sql = '';
+      $range = '';
+      if ($sort_by == 'Daily') {
+        if (isset($_SESSION['dailyDate'])) {
+          $dailyDate = $_SESSION['dailyDate'];
+          $range = 'on '.date('F d, Y', strtotime($dailyDate));
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND DATE(date_registered)='$dailyDate'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND DATE(date_registered)='$dailyDate'");
+          } 
+        } else {
+          header('Location: report_users.php');
+        }
+      } else if($sort_by == 'Weekly') {
+        if (isset($_SESSION['weeklyStartDate']) && isset($_SESSION['weeklyEndDate'])) {
+          $weeklyStartDate = $_SESSION['weeklyStartDate'];
+          $weeklyEndDate = $_SESSION['weeklyEndDate'];
+          $startDate = date('Y-m-d', strtotime($weeklyStartDate));
+          $endDate = date('Y-m-d', strtotime($weeklyEndDate));
+
+          $range = 'between ' . strtoupper(date("F d, Y", strtotime($weeklyStartDate))) . ' - ' . strtoupper(date("F d, Y", strtotime($weeklyEndDate)));
+         
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND DATE(date_registered) BETWEEN '$startDate' AND '$endDate'");
+          }
+        } else {
+          header('Location: report_users.php');
+        }
+      } else if ($sort_by == 'Monthly') {
+        if (isset($_SESSION['monthlyMonth'])) {
+          $monthlyMonth = $_SESSION['monthlyMonth'];
+          $currentYear = date('Y');
+          $range = 'on the month of '.strtoupper(date("F", strtotime("$currentYear-$monthlyMonth-01"))) . " $currentYear";
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND MONTH(date_registered) = '$monthlyMonth' AND YEAR(date_registered) = '$currentYear'");
+          }
+        } else {
+          header('Location: report_users.php');
+        }
+      } else if ($sort_by == 'Yearly') {
+        if (isset($_SESSION['yearlyDate'])) {
+          $yearlyDate = $_SESSION['yearlyDate'];
+          $currentYear = date('Y');
+          $range = 'on year '.$yearlyDate;
+          if($assigned_branch == 0) {
+            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' AND YEAR(date_registered) = '$yearlyDate'");
+          } else {
+            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' AND YEAR(date_registered) = '$yearlyDate'");
+          }
+        } else {
+          header('Location: report_users.php');
+        }
+      } else {
+        // $range = 'in 2 branches';
+        if($assigned_branch == 0) {
+          $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' ");
+        } else {
+          $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' ");
+        }
+      }
+
+
 ?>
 
 <style>
@@ -58,11 +129,11 @@
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-md-s12">
+          <div class="col-md-12">
             <div class="card">
               <div class="card-header p-2">
                 <button id="printButton" class="btn btn-success btn-sm float-right mr-2"><i class="fa-solid fa-print"></i> Print</button>
-                <a href="users.php" class="btn bg-secondary btn-sm float-right mr-2"><i class="fas fa-arrow-left"></i> Back</a>
+                <a href="report_users.php" class="btn bg-secondary btn-sm float-right mr-2"><i class="fas fa-arrow-left"></i> Back</a>
               </div>
               <div class="card-body">
                  <section id="printElement">
@@ -71,7 +142,7 @@
                       <small class="header-texts"><?= $branch_name ?></small> <br>
                       <small  class="header-texts"><?= $export_contact ?></small>
                   </div>
-                  <p class="title-text"><b>Supplier Records</b></p>
+                  <p class="title-text"><b>Supplier Records <?= $range ?></b></p>
                   <table>
                     <thead>
                       <tr> 
@@ -90,12 +161,7 @@
                     </thead>
                     <tbody id="users_data">
                         <?php 
-                          $sql = '';
-                          if($assigned_branch == 0) {
-                            $sql = mysqli_query($conn, "SELECT * FROM users WHERE user_type = 'User' ");
-                          } else {
-                            $sql = mysqli_query($conn, "SELECT * FROM users WHERE assigned_branch=$assigned_branch AND user_type = 'User' ");
-                          }
+                          
                           if(mysqli_num_rows($sql) > 0) {
                           while ($row = mysqli_fetch_array($sql)) {
                             $name = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'] . ' ' . $row['suffix'];
@@ -145,7 +211,7 @@
 <br>
 <br>
 <script src="../includes/print.js"></script>
-<?php include '../includes/footer.php';  ?>
+<?php } else { include '../includes/404.php'; } include '../includes/footer.php';  ?>
  <script>
    $(window).on('load', function() {
     document.getElementById("printButton").click();

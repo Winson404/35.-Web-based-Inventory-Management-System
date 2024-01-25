@@ -93,11 +93,11 @@
       <li class="nav-item d-none d-sm-inline-block">
         <a href="dashboard.php" class="nav-link">Home</a>
       </li>
-      <?php if($row['user_type'] !== 'Admin'): ?>
+     <!--  <?php //if($row['user_type'] !== 'Admin'): ?>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="contact-us.php" class="nav-link">Contact</a>
       </li>
-    <?php endif; ?>
+    <?php// endif; ?> -->
     </ul>
 
 
@@ -108,26 +108,46 @@
         <a class="mt-3">Today is <?php //echo date("l"); ?> | <?php// echo date("F d, Y"); ?></a>
       </li> -->
        <!-- Messages Dropdown Menu -->
-      <!-- <li class="nav-item dropdown">
+      <?php 
+        $sql = '';
+        if($assigned_branch == 0) {
+          $sql = mysqli_query($conn, "SELECT *, schedule.date_added AS date_schedules FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() ORDER BY schedule.selectedDate AND schedule.status=0 LIMIT 5");
+        } else {
+          $sql = mysqli_query($conn, "SELECT *, schedule.date_added AS date_schedules FROM schedule JOIN clients ON schedule.client_Id = clients.Id WHERE schedule.selectedDate >= CURDATE() AND clients.client_branch=$assigned_branch AND schedule.status=0 ORDER BY schedule.selectedDate LIMIT 5");
+        }
+        $count_sql = mysqli_num_rows($sql);
+      ?>
+      
+      <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="fa-solid fa-user"></i><?php //echo ' '.$row['firstname'].' '.$row['lastname'].' '; ?><i class="fa-solid fa-caret-down"></i>
+          <i class="fa-solid fa-calendar-alt"></i>
+          <span class="badge badge-danger navbar-badge"><?php if($count_sql > 0) { echo $count_sql; } else { echo 0; } ?></span>
         </a>
+        <?php 
+          if($count_sql > 0) {
+        ?>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <a href="profile.php" class="dropdown-item">
+          <a href="#" class="dropdown-item">
+            <?php while($row_all_sched = mysqli_fetch_array($sql)) { ?>
             <div class="media">
-              <img src="../images-users/<?php //echo $row['image']; ?>" alt="User Image" class="mr-3 img-circle" height="50" width="50">
-              <div class="media-body">
-                  <h3 class="dropdown-item-title"><?php //echo ' '.$row['firstname'].' '.$row['lastname'].' '.$row['suffix'].' '; ?></h3>
-                  <p class="text-sm text-muted"><?php //echo $row['user_type']; ?></p>
+              <div class="media-body mb-2">
+                <h3 class="dropdown-item-title"><i class="fa-solid fa-user"></i>: <?php echo ucwords($row_all_sched['firstname'].' '.$row_all_sched['middlename'].' '.$row_all_sched['lastname'].' '.$row_all_sched['suffix']); ?></h3>
+                <p class="text-sm">Service: <?php if($row_all_sched['services'] == 'Others') { echo $row_all_sched['otherServices']; } else { echo $row_all_sched['services']; } ?></p>
+                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> <?= $row_all_sched['date_schedules'] ?></p>
               </div>
             </div>
+            <?php } ?>
           </a>
           <div class="dropdown-divider"></div>
-            <a type="button" href="profile.php" class="dropdown-item">&nbsp;<i class="fa-solid fa-gear"></i>&nbsp;&nbsp; Profile settings</a>
-          <div class="dropdown-divider"></div>
-           <a href="#" class="d-flex justify-content-start dropdown-item dropdown-footer" onclick="logout()">&nbsp;<i class="fa-solid fa-power-off"></i>&nbsp;&nbsp; Logout</a>
+          <a href="schedule.php" class="dropdown-item dropdown-footer">See all schedules</a>
         </div>
-      </li> -->
+        <?php } else { ?>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item dropdown-footer">No Pending Schedules</a>
+        </div>
+        <?php } ?>
+      </li>
 
       <!-- Navbar Search -->
       <!-- <li class="nav-item">
@@ -165,7 +185,7 @@
       
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comments"></i>
+          <i class="fa-solid fa-bell"></i>
           <span class="badge badge-danger navbar-badge"><?php if($count_all > 0) { echo $count_all; } else { echo 0; } ?></span>
         </a>
         <?php 
@@ -178,19 +198,19 @@
               <img src="../images-product/<?php echo $row_all_prod['prod_image']; ?>" alt="User Avatar" class="img-circle mr-2" style="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; height: 45px; width: 45px; border-radius: 50%;">
               <div class="media-body mb-2">
                 <h3 class="dropdown-item-title"><?= $row_all_prod['prod_name'] ?></h3>
-                <p class="text-sm">Stock: <?= $row_all_prod['prod_stock'] ?></p>
+                <p class="text-sm">Low stock: <?= $row_all_prod['prod_stock'] ?></p>
                 <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> <?= $row_all_prod['date_added'] ?></p>
               </div>
             </div>
             <?php } ?>
           </a>
           <div class="dropdown-divider"></div>
-          <a href="product_low_stock.php" class="dropdown-item dropdown-footer">See All Critical Products</a>
+          <a href="product_low_stock.php" class="dropdown-item dropdown-footer">See all products</a>
         </div>
         <?php } else { ?>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">No Products in Critical Level</a>
+          <a href="#" class="dropdown-item dropdown-footer">No Products in Critical Number</a>
         </div>
         <?php } ?>
       </li>

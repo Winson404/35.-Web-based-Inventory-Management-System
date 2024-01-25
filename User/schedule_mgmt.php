@@ -183,18 +183,20 @@
 			</div>
 	
 <?php
-	require_once 'footer.php';
-	$query = mysqli_query($conn, "SELECT * FROM schedule");
+  require_once 'footer.php';
+  $query = mysqli_query($conn, "SELECT * FROM schedule s JOIN clients c ON s.client_Id=c.Id");
 
-	$scheduledDates = array();
+  $scheduledDates = array();
 
-	while ($row = mysqli_fetch_assoc($query)) {
-	    $scheduledDates[] = array(
-	        'title' => $row['services'].' '.$row['selectedTime'],
-	        'start' => $row['selectedDate'],
-	        'backgroundColor' => 'green'
-	    );
-	}
+  while ($row = mysqli_fetch_assoc($query)) {
+      $client_name = ucwords($row['firstname'].' '.$row['lastname']);
+      $scheduledDates[] = array(
+          'title' => $client_name.' '.$row['selectedTime'],
+          // 'title' => $row['services'].' '.$row['selectedTime'],
+          'start' => $row['selectedDate'],
+          'backgroundColor' => 'green'
+      );
+  }
 
 // Close the database connection if needed
 

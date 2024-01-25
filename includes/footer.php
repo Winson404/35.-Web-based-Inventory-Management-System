@@ -339,7 +339,90 @@ To encourage and develop a safe motorcycle riding culture, we offer excellent mo
   });
 
 
+  function showDateInputs() {
+  var sortBy = $('#sortBy').val();
+  var dateInputsContainer = $('#dateInputs');
+  dateInputsContainer.empty(); // Clear previous inputs
 
+  if (sortBy === 'daily') {
+    dateInputsContainer.append('<label for="dailyDate">Date:</label>' +
+      '<input type="date" class="form-control form-control-sm" id="dailyDate" name="dailyDate" required>');
+  } else if (sortBy === 'weekly') {
+    // Create a form row for horizontal layout
+    dateInputsContainer.append('<div class="form-row"></div>');
+
+    // Add start date input to the form row
+    dateInputsContainer.find('.form-row').append('<div class="form-group col-md-6">' +
+      '<label for="weeklyStartDate">Start Date:</label>' +
+      '<input type="date" class="form-control form-control-sm" id="weeklyStartDate" name="weeklyStartDate" required>' +
+      '</div>');
+
+    // Add end date input to the form row
+    dateInputsContainer.find('.form-row').append('<div class="form-group col-md-6">' +
+      '<label for="weeklyEndDate">End Date (7th day):</label>' +
+      '<input type="date" class="form-control form-control-sm" id="weeklyEndDate" name="weeklyEndDate" required readonly>' +
+      '</div>');
+
+    // Add an event listener to the start date input
+    $('#weeklyStartDate').on('change', function () {
+      // Calculate and set the value of the end date input to be the 7th day
+      var startDate = new Date($(this).val());
+      var endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 6);
+      
+      // Format the date as 'YYYY-MM-DD' and set the value of the end date input
+      var formattedEndDate = endDate.toISOString().split('T')[0];
+      $('#weeklyEndDate').val(formattedEndDate);
+    });
+  } else if (sortBy === 'monthly') {
+    // For simplicity, let's assume a fixed set of months
+    dateInputsContainer.append('<label for="monthlyMonth">Month:</label>' +
+      '<select class="form-control form-control-sm" id="monthlyMonth" name="monthlyMonth" required>' +
+      '<option value="" selected disabled>Select month</option>' +
+      '<option value="01">January</option>' +
+      '<option value="02">February</option>' +
+      '<option value="03">March</option>' +
+      '<option value="04">April</option>' +
+      '<option value="05">May</option>' +
+      '<option value="06">June</option>' +
+      '<option value="07">July</option>' +
+      '<option value="08">August</option>' +
+      '<option value="09">September</option>' +
+      '<option value="10">October</option>' +
+      '<option value="11">November</option>' +
+      '<option value="12">December</option>' +
+      '</select>');
+  } else if (sortBy === 'yearly') {
+    dateInputsContainer.append('<label for="yearly">Date:</label>' +
+    '<input type="number" class="form-control form-control-sm" id="yearly" name="yearlyDate" required placeholder="2000" min="1000" step="1">');
+
+      // Add an input event listener to enforce the maximum length
+      $('#yearly').on('input', function() {
+        if ($(this).val().length > 4) {
+          $(this).val($(this).val().slice(0, 4));
+        }
+      });
+  } else if (sortBy === 'custom') {
+    // Create a form row for horizontal layout
+    dateInputsContainer.append('<div class="form-row"></div>');
+
+    // Add start date input to the form row
+    dateInputsContainer.find('.form-row').append('<div class="form-group col-md-6">' +
+      '<label for="StartDate">Start Date:</label>' +
+      '<input type="date" class="form-control form-control-sm" id="StartDate" name="StartDate" required>' +
+      '</div>');
+
+    // Add end date input to the form row
+    dateInputsContainer.find('.form-row').append('<div class="form-group col-md-6">' +
+      '<label for="EndDate">End Date:</label>' +
+      '<input type="date" class="form-control form-control-sm" id="EndDate" name="EndDate" required>' +
+      '</div>');
+  } 
+
+  // Update the name attribute of the submit button
+  var submitButton = $('#sortingForm button[type="submit"]');
+  submitButton.attr('name', sortBy);
+}
   
 </script>
 </body>

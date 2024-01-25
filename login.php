@@ -14,61 +14,9 @@
     </div>
     <div class="loginBody" style="margin-top: -40px;">
       <form action="includes/processes.php" method="POST">
-        <?php 
-          if(isset($_GET['page'])) {
-            $page = $_GET['page'];
-            if($page == 'branch-1') {
-        ?>
 
-
-          <div class="loginInputsContainer d-none">
-            <label for="email">Email Branch 1</label>
-          <div class="loginInputsContainer d-none">
-            <input type="text" name="branch_type" value="branch-1" required>
-            <input type="email" placeholder="email@gmail.com" name="email" id="email" onkeydown="validation()" onkeyup="validation()" value="rbfmotorshop@gmail.com" required>
-            <!-- FOR INVALID EMAIL -->
-            <div class="input-group mt-1 mb-3">
-              <small id="text" style="font-style: italic;color: #f685a2;"></small>
-            </div>
-          </div>
-          </div>
           <div class="loginInputsContainer">
-            <label for="password">Password</label>
-            <input placeholder="Password" name="password" type="password" id="password" required>
-          </div>
-          <p class="text-white mt-2">Back to<a href="index.php" style="color: #f685a2;"> home</a></p>
-          <div class="loginButtonContainer">
-            <button type="submit" class="btn" name="login" id="submit_button">Login</button>
-          </div>
-
-
-        <?php } elseif($page == 'branch-2') { ?>
-
-
-          <div class="loginInputsContainer d-none">
-            <label for="email">Email branch 2</label>
-            <input type="text" name="branch_type" value="branch-2" required>
-            <input type="email" placeholder="email@gmail.com" name="email" id="email" onkeydown="validation()" onkeyup="validation()" value="rbfmotorshopadmin2@gmail.com" required>
-            <!-- FOR INVALID EMAIL -->
-            <div class="input-group mt-1 mb-3">
-              <small id="text" style="font-style: italic;color: #f685a2;"></small>
-            </div>
-          </div>
-          <div class="loginInputsContainer">
-            <label for="password">Password</label>
-            <input placeholder="Password" name="password" type="password" id="password" required>
-          </div>
-          <p class="text-white mt-2">Back to<a href="index.php" style="color: #f685a2;"> home</a></p>
-          <div class="loginButtonContainer">
-            <button type="submit" class="btn" name="login" id="submit_button">Login</button>
-          </div>
-
-              
-           <?php } else { ?>
-
-
-            <div class="loginInputsContainer">
-            <label for="email">Email client</label>
+            <label for="email">Email</label>
             <input type="hidden" name="branch_type" value="client" required>
             <input type="email" placeholder="email@gmail.com" name="email" id="email" onkeydown="validation()" onkeyup="validation()" required>
             <!-- FOR INVALID EMAIL -->
@@ -97,44 +45,6 @@
             <button type="submit" class="btn" name="login" id="submit_button">Login</button>
           </div>
 
-
-        <?php }
-          } else {
-        ?>
-
-
-          <div class="loginInputsContainer">
-            <label for="email">Email client</label>
-            <input type="hidden" name="branch_type" value="client" required>
-            <input type="email" placeholder="email@gmail.com" name="email" id="email" onkeydown="validation()" onkeyup="validation()" required>
-            <!-- FOR INVALID EMAIL -->
-            <div class="input-group mt-1 mb-3">
-              <small id="text" style="font-style: italic;color: #f685a2;"></small>
-            </div>
-          </div>
-          <div class="loginInputsContainer">
-            <label for="password">Password</label>
-            <input placeholder="Password" name="password" type="password" id="password" required>
-          </div>
-          <div class="d-flex justify-content-between text-light">
-            <div class="icheck-primary text-light">
-              <input type="checkbox" id="remember" onclick="myFunction()">
-              <label for="remember">
-                Show password
-              </label>
-            </div>
-            <div class="icheck-primary text-light">
-              <p class="float-right"><a href="forgot_password.php" style="color: #f685a2;">Forgot Password?</a></p>
-            </div>
-          </div>
-          <p class="text-white">New to the site? <a href="register.php" style="color: #f685a2;">Register here!</a></p>
-          <p class="text-white">Back to<a href="index.php" style="color: #f685a2;"> home</a></p>
-          <div class="loginButtonContainer">
-            <button type="submit" class="btn" name="login" id="submit_button">Login</button>
-          </div>
-
-        <?php } ?>
-        
       </form>
     </div>
   </div>

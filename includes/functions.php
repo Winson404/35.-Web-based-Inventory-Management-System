@@ -720,12 +720,24 @@
 		$prod_stock   = mysqli_real_escape_string($conn, ucwords($_POST['prod_stock']));
 		$file         = basename($_FILES["fileToUpload"]["name"]);
 
+		$check = mysqli_query($conn, "SELECT * FROM product WHERE p_Id = $p_Id");
+		$row   = mysqli_fetch_array($check);
+		$exist_stock = $row['prod_stock'];
+		$exist_date_added = $row['date_added'];
+
+		$date_updated = '';
+		if ($prod_stock > $exist_stock) {
+			$date_updated = date('Y-m-d');
+		} else {
+			$date_updated = $exist_date_added;
+		}
+
 		if(empty($file)) {
 			$check2 = mysqli_query($conn, "SELECT * FROM product WHERE prod_name='$prod_name' AND p_Id!='$p_Id'");
 		    if (mysqli_num_rows($check2) > 0) {
 		        displayErrorMessage("Product name already exists.", $page);
 		    } else {
-			$update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock' WHERE p_Id='$p_Id'");
+			$update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', date_added='$date_updated' WHERE p_Id='$p_Id'");
             displayUpdateMessage($update, "Product information has been updated!", $page);
         	}
 		} else {
@@ -757,7 +769,7 @@
 			    }
 
 			    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-			        $update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_image='$file' WHERE p_Id='$p_Id'");
+			        $update = mysqli_query($conn, "UPDATE product SET cat_Id='$cat_Id', prod_Id='$prod_Id', prod_name='$prod_name', prod_name='$prod_name', prod_stock='$prod_stock', prod_image='$file', date_added='$date_updated' WHERE p_Id='$p_Id'");
 	            	displayUpdateMessage($update, "Product information has been updated!", $page);
 			    } else {
 			        displayErrorMessage("There was an error uploading your file.", $page);
@@ -842,8 +854,14 @@
 		$selectedTime  = $_POST['selectedTime'];
 		$services      = $_POST['services'];
 		$otherServices = $_POST['otherServices'];
-		$save = mysqli_query($conn, "INSERT INTO schedule (client_Id, selectedDate, selectedTime, services, otherServices, date_added) VALUES ('$client_Id', '$selectedDate', '$selectedTime', '$services', '$otherServices', NOW())");
-    	displaySaveMessage($save, $page);
+
+		$check = mysqli_query($conn, "SELECT sched_Id FROM schedule WHERE selectedDate='$selectedDate'");
+		if(mysqli_num_rows($check) >= 5 ) {
+			displayErrorMessage("Schedules for today are fully loaded. Try again next time.", $page);
+		} else {
+			$save = mysqli_query($conn, "INSERT INTO schedule (client_Id, selectedDate, selectedTime, services, otherServices, date_added) VALUES ('$client_Id', '$selectedDate', '$selectedTime', '$services', '$otherServices', NOW())");
+    		displaySaveMessage($save, $page);
+		}
 	}
 	
 
